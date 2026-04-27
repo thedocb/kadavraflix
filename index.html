@@ -1147,21 +1147,33 @@
     });
   }
 
- // 2. RADAR DİNLEYİCİ (Sıralama Hatası Çözüldü)
+ // 2. RADAR DİNLEYİCİ (Klonlanma Hatası ve Sıralama Çözüldü)
   function listenTayfa() {
     database.ref('tayfa_akis').on('value', (snapshot) => {
       const row = document.getElementById('tayfa-row');
       if (!row) return;
       row.innerHTML = '';
       
-      let data = [];
-      snapshot.forEach(child => { data.push(child.val()); }); 
+      let rawData = [];
+      snapshot.forEach(child => { rawData.push(child.val()); }); 
       
-      // İŞTE SİHİRLİ SATIR: Firebase'in kafasına göre dizmesini engeller, zamana göre kesin sıralar
-      data.sort((a, b) => b.timestamp - a.timestamp);
+      // 1. AŞAMA: Firebase'den gelen listeyi saate göre en yeniden en eskiye diz
+      rawData.sort((a, b) => b.timestamp - a.timestamp);
       
-      // Sadece en son izlenen 10 kişiyi göster
-      data.slice(0, 10).forEach(watch => {
+      // 2. AŞAMA: GÜMRÜK KAPISI (Aynı adamı 2 kere alma)
+      let uniqueData = [];
+      let seenUsers = new Set();
+      
+      rawData.forEach(watch => {
+        // Eğer bu kullanıcıyı daha önce görmediysek...
+        if (!seenUsers.has(watch.user)) {
+          seenUsers.add(watch.user); // Adamı listeye işaretle (bir daha alma)
+          uniqueData.push(watch);    // Ekrana basılacak listeye ekle
+        }
+      });
+      
+      // 3. AŞAMA: Sadece benzersiz ve en güncel olan ilk 10 kişiyi ekrana bas
+      uniqueData.slice(0, 10).forEach(watch => {
         if (!watch.poster) return;
         const div = document.createElement('div');
         div.className = 'card-wrap relative group';
