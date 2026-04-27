@@ -992,119 +992,77 @@
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
-    // ════════════════════ 1. TAYFA NE İZLİYOR (ŞUKU SİSTEMİYLE BERABER) ════════════════════
-    function broadcastToTayfa(item, episode) {
-      const user = localStorage.getItem('kadavra_vip_user') || 'Kayıtsız Ruh';
-      const title = (item.title || item.name || '');
-      const epText = episode ? ` (S${episode.season_number} B${episode.episode_number})` : '';
-      const safeUser = user.replace(/[.#$\[\]]/g, '_'); 
-      // Update ile gönderiyoruz ki eski like'lar (şukular) silinmesin
-      database.ref('tayfa_akis/' + safeUser).update({
-        user: user,
-        title: title + epText,
-        poster: item.poster_path,
-        type: item.media_type || 'movie',
-        id: item.id,
-        timestamp: Date.now()
+   // ════════════════════ 1. TAYFA NE İZLİYOR (ŞUKU SİSTEMİ) ════════════════════
+  function broadcastToTayfa(item, episode) {
+    const user = localStorage.getItem('kadavra_vip_user') || 'Kayıtsız Ruh';
+    const title = (item.title || item.name || '');
+    const epText = episode ? ` (S${episode.season_number} B${episode.episode_number})` : '';
+    const safeUser = user.replace(/[.#$\[\]]/g, '_'); 
+    
+    // "set" yerine "update" kullanıyoruz ki önceden atılan şukular silinmesin
+    database.ref('tayfa_akis/' + safeUser).update({
+      user: user,
+      title: title + epText,
+      poster: item.poster_path,
+      type: item.media_type || 'movie',
+      id: item.id,
+      timestamp: Date.now()
+    });
+  }
+
+  function listenTayfa() {
+    database.ref('tayfa_akis').on('value', (snapshot) => {
+      const row = document.getElementById('tayfa-row');
+      if (!row) return;
+      row.innerHTML = '';
+      
+      let rawData = [];
+      snapshot.forEach(child => { 
+        let val = child.val();
+        val._safeUser = child.key; // Şuku göndermek için id'yi saklıyoruz
+        rawData.push(val); 
+      }); 
+      
+      rawData.sort((a, b) => b.timestamp - a.timestamp); // En yeni en başa
+      
+      let uniqueData = []; let seenUsers = new Set();
+      rawData.forEach(watch => {
+        if (!seenUsers.has(watch.user)) { seenUsers.add(watch.user); uniqueData.push(watch); }
       });
-    }
-
-    function listenTayfa() {
-      database.ref('tayfa_akis').on('value', (snapshot) => {
-        const row = document.getElementById('tayfa-row');
-        if (!row) return;
-        row.innerHTML = '';
+      
+      uniqueData.slice(0, 10).forEach(watch => {
+        if (!watch.poster) return;
+        const likeCount = watch.likes ? Object.keys(watch.likes).length : 0;
+        const div = document.createElement('div');
+        div.className = 'card-wrap relative group';
         
-        let rawData = [];
-        snapshot.forEach(child => { 
-          let val = child.val();
-          val._safeUser = child.key; // Şuku göndermek için kullanıcının firebase idsini tutuyoruz
-          rawData.push(val); 
-        }); 
-        
-        // ZAMAN SIRALAMASI: En yeni en başa
-        rawData.sort((a, b) => b.timestamp - a.timestamp);
-        
-        // KLON ENGELLEYİCİ: Her kullanıcı 1 kez
-        let uniqueData = []; let seenUsers = new Set();
-        rawData.forEach(watch => {
-          if (!seenUsers.has(watch.user)) { seenUsers.add(watch.user); uniqueData.push(watch); }
-        });
-        
-        uniqueData.slice(0, 10).forEach(watch => {
-          if (!watch.poster) return;
-          const likeCount = watch.likes ? Object.keys(watch.likes).length : 0;
-          const div = document.createElement('div');
-          div.className = 'card-wrap relative group';
-          div.innerHTML = `
-            <div class="absolute top-2 left-2 z-20 bg-purple-900/90 text-purple-100 text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded shadow-lg flex items-center gap-1.5 border border-purple-500/50">
-              <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span> ${watch.user}
-            </div>
-            <button onclick="event.stopPropagation(); giveSuku('${watch._safeUser}')" class="absolute top-2 right-2 z-30 bg-black/80 hover:bg-purple-600 border border-purple-500/50 text-white text-[10px] font-bold px-2 py-1 rounded transition-colors opacity-0 group-hover:opacity-100 flex items-center gap-1">
-              👍 ${likeCount > 0 ? likeCount : 'Şukula'}
-            </button>
-            <img class="card-img" src="${IMG_BASE}w342${watch.poster}" loading="lazy" />
-            <p class="card-title">${watch.title}</p>
-          `;
-          div.addEventListener('click', () => searchSelect(watch.id, watch.type));
-          row.appendChild(div);
-        });
+        // Afiş tasarımı ve ŞUKU BUTONU
+        div.innerHTML = `
+          <div class="absolute top-2 left-2 z-20 bg-purple-900/90 text-purple-100 text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded shadow-lg flex items-center gap-1.5 border border-purple-500/50">
+            <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span> ${watch.user}
+          </div>
+          <button onclick="event.stopPropagation(); giveSuku('${watch._safeUser}', '${watch.user}')" class="absolute top-2 right-2 z-30 bg-black/80 hover:bg-purple-600 border border-purple-500/50 text-white text-[10px] font-bold px-2 py-1 rounded transition-all opacity-0 group-hover:opacity-100 flex items-center gap-1 backdrop-blur-sm">
+            👍 ${likeCount > 0 ? likeCount : 'Şukunu Ver'}
+          </button>
+          <img class="card-img" src="${IMG_BASE}w342${watch.poster}" loading="lazy" />
+          <p class="card-title">${watch.title}</p>
+        `;
+        div.addEventListener('click', () => searchSelect(watch.id, watch.type));
+        row.appendChild(div);
       });
-    }
+    });
+  }
 
-    function giveSuku(targetUserKey) {
-      const myUser = localStorage.getItem('kadavra_vip_user');
-      if(!myUser) return;
-      const safeMe = myUser.replace(/[.#$\[\]]/g, '_');
-      const ref = database.ref(`tayfa_akis/${targetUserKey}/likes/${safeMe}`);
-      ref.once('value').then(snap => {
-        if(snap.exists()) { ref.remove(); } // Zaten şukuladıysa geri al
-        else { ref.set(true); showToast(`Şukunu verdin pampik!`); }
-      });
-    }
-
-    // ════════════════════ 2. FİLM YORUM SİSTEMİ ════════════════════
-    function postComment() {
-      if(!currentItem) return;
-      const input = document.getElementById('comment-input');
-      const text = input.value.trim();
-      const user = localStorage.getItem('kadavra_vip_user') || 'Gizemli Pampik';
-      if(text === '') return;
-      database.ref('comments/' + currentItem.id).push({ user: user, text: text, timestamp: Date.now() });
-      input.value = ''; 
-      showToast('Yorumun mekana düştü!');
-    }
-
-    function loadComments(itemId) {
-      const list = document.getElementById('comments-list');
-      const avatar = document.getElementById('comment-avatar');
-      const currentUser = localStorage.getItem('kadavra_vip_user') || '?';
-      if(avatar) avatar.textContent = currentUser.charAt(0).toUpperCase();
-      list.innerHTML = '<p class="text-purple-400 text-sm">Yorumlar çekiliyor...</p>';
-
-      database.ref('comments/' + itemId).on('value', (snapshot) => {
-        if(!snapshot.exists()) { list.innerHTML = '<p class="text-purple-400 text-sm">Henüz kimse yorum yapmamış. İlk raconu sen kes!</p>'; return; }
-        list.innerHTML = '';
-        let comments = [];
-        snapshot.forEach(child => { comments.push(child.val()); }); 
-        comments.sort((a,b) => b.timestamp - a.timestamp); // En yeni yorum en üstte
-
-        comments.forEach(comment => {
-          const date = new Date(comment.timestamp).toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' });
-          const div = document.createElement('div');
-          div.className = 'bg-purple-950/30 border border-purple-800/30 p-3 rounded-xl mb-3';
-          div.innerHTML = `
-            <div class="flex items-center justify-between mb-1">
-              <span class="text-purple-300 font-bold text-sm">${comment.user}</span>
-              <span class="text-purple-600 text-[10px]">${date}</span>
-            </div>
-            <p class="text-purple-100 text-sm break-words">${comment.text}</p>
-          `;
-          list.appendChild(div);
-        });
-      });
-    }
-
+  function giveSuku(targetUserKey, targetUserName) {
+    const myUser = localStorage.getItem('kadavra_vip_user');
+    if(!myUser) return;
+    const safeMe = myUser.replace(/[.#$\[\]]/g, '_');
+    const ref = database.ref(`tayfa_akis/${targetUserKey}/likes/${safeMe}`);
+    ref.once('value').then(snap => {
+      if(snap.exists()) { ref.remove(); } // Zaten şukuladıysa şukuyu geri al
+      else { ref.set(true); showToast(`${targetUserName} pampiğine şukunu verdin!`); }
+    });
+  }
     // ════════════════════ 3. YERALTI SOHBET (CHAT) MOTORU ════════════════════
     let chatOpen = false; let chatFirstLoad = true;
 
