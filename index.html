@@ -9,6 +9,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍿</text></svg>">
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
   
   <meta property="og:title" content="Kadavraflix - Yeraltı Sineması">
   <meta property="og:description" content="Parolayı biliyorsan içeri gir. Kalitenin tek adresi.">
@@ -298,16 +300,21 @@
   </style>
 </head>
 <body>
-  <div id="login-screen" class="fixed inset-0 z-[1000] bg-dark-base flex items-center justify-center p-6">
+  <div id="login-screen" class="fixed inset-0 z-[1000] bg-dark-base flex items-center justify-center p-6 transition-opacity duration-500">
   <div class="max-w-md w-full bg-dark-panel border border-purple-900/50 p-8 rounded-2xl shadow-[0_0_50px_#7c3aed44] text-center">
-    <h1 class="neon-text font-display text-4xl mb-6">KADAVRAFLIX</h1>
-    <p class="text-purple-300 text-sm mb-6">Mekana giriş için parolayı fısılda pampikoloşto...</p>
-    <input type="password" id="pass-input" placeholder="Şifre..." 
-      class="w-full bg-purple-950/40 border border-purple-800/40 rounded-xl px-4 py-3 text-center text-white focus:outline-none focus:border-purple-500 mb-4">
-    <button onclick="checkPass()" class="neon-btn w-full py-3 rounded-xl text-white font-bold uppercase tracking-widest text-sm">
-      İçeri Gir
+    <h1 class="neon-text font-display text-4xl mb-2">KADAVRAFLIX</h1>
+    <p class="text-purple-300 text-sm mb-6 uppercase tracking-widest font-bold border-b border-purple-800/50 pb-4">V.I.P. ÜYE GİRİŞİ</p>
+    
+    <input type="text" id="username-input" placeholder="Kullanıcı Adın (Örn: Can)..." 
+      class="w-full bg-purple-950/40 border border-purple-800/40 rounded-xl px-4 py-3 text-center text-white focus:outline-none focus:border-purple-500 mb-3">
+      
+    <input type="password" id="invite-input" placeholder="Davetiye Kodun (Key)..." 
+      class="w-full bg-purple-950/40 border border-purple-800/40 rounded-xl px-4 py-3 text-center text-white focus:outline-none focus:border-purple-500 mb-5">
+      
+    <button onclick="checkInvite()" class="neon-btn w-full py-3 rounded-xl text-white font-bold uppercase tracking-widest text-sm">
+      Mekana Ak
     </button>
-    <p id="pass-error" class="text-red-500 text-xs mt-4 hidden">Ulan yanlış şifre! Sen bizim tayfadan mısın?</p>
+    <p id="invite-error" class="text-red-500 text-xs mt-4 hidden">Geçersiz Davetiye Kodu! Kapıdan çevrildin pampik.</p>
   </div>
 </div>
 
@@ -403,6 +410,11 @@
     <section id="series">
       <h2 class="section-title mb-5">POPÜLER <span>DİZİLER</span></h2>
       <div id="series-row" class="slider-track"></div>
+      <section id="tayfa-izliyor-section">
+      <h2 class="section-title mb-5">TAYFA ŞU AN <span>NE İZLİYOR?</span></h2>
+      <div id="tayfa-row" class="slider-track">
+        </div>
+    </section>
     </section>
   </div>
 
@@ -1100,35 +1112,80 @@
       row.appendChild(div);
     });
   }
-  // ════════════════════ KAPI KONTROL MOTORU ════════════════════
-  function checkPass() {
-    const input = document.getElementById('pass-input').value;
-    const error = document.getElementById('pass-error');
-    const login = document.getElementById('login-screen');
-    
-    // ŞİFREYİ BURADAN DEĞİŞTİREBİLİRSİN KINGO
-    const dogruSifre = 'yürüyen uçak'; 
+// ════════════════════ ONAYLI ÜYELİK MOTORU ════════════════════
+  
+  // BURAYA İSTEDİĞİN KADAR DAVETİYE KODU EKLEYEBİLİRSİN KINGO:
+  const gecerliKodlar = [
+    'KADAVRA-VIP-1', 
+    'CAN-BABA-34', 
+    'ALIBEYKOY-99',
+    'yürüyen uçak' // Eskisi de kalsın istersen dursun
+  ];
 
-    if (input === dogruSifre) {
-      // Şifre doğruysa giriş ekranını yok et
+  function checkInvite() {
+    const user = document.getElementById('username-input').value.trim();
+    const code = document.getElementById('invite-input').value.trim();
+    const error = document.getElementById('invite-error');
+    const login = document.getElementById('login-screen');
+
+    if (user === '') {
+      error.textContent = 'Kullanıcı adını boş bırakma kanki!';
+      error.classList.remove('hidden');
+      return;
+    }
+
+    if (gecerliKodlar.includes(code)) {
+      // Kod doğruysa adamı içeri al ve tarayıcısına damgayı vur (bir daha sormasın diye)
+      localStorage.setItem('kadavra_vip_user', user);
+      localStorage.setItem('kadavra_vip_code', code);
+      
       login.style.opacity = '0';
       setTimeout(() => {
         login.remove();
         loadHistory();
         loadWatchlist();
-        showToast('Hoş geldin pampik, mekan senin!');
+        showToast(`Hoş geldin V.I.P. Üye: ${user} 👑`);
       }, 300);
-      // Siteyi sadece şifre bilinince başlatıyoruz
+      
       init(); 
     } else {
+      error.textContent = 'Geçersiz Davetiye Kodu! Kapıdan çevrildin pampik.';
       error.classList.remove('hidden');
-      document.getElementById('pass-input').value = '';
+      document.getElementById('invite-input').value = '';
     }
   }
 
-  // Sayfa açılır açılmaz init() fonksiyonunun çalışmasını engellememiz lazım
-  // O yüzden en alttaki init(); satırını SİL veya başına // koy.
-  // // init(); <-- Bu şekilde olsun.
+  // SİTEYE TEKRAR GİRENLER İÇİN OTOMATİK KAPI AÇICI
+  function autoLoginCheck() {
+    const savedCode = localStorage.getItem('kadavra_vip_code');
+    const savedUser = localStorage.getItem('kadavra_vip_user');
+    const login = document.getElementById('login-screen');
+
+    if (gecerliKodlar.includes(savedCode)) {
+      // Adamın kodu zaten kayıtlıysa, giriş ekranını hiç gösterme
+      login.style.display = 'none';
+      loadHistory();
+      loadWatchlist();
+      showToast(`Tekrar hoş geldin pampik: ${savedUser} 🍿`);
+      init();
+    }
+  }
+
+  // Profil İkonunu Otomatik Güncelleme Şovu
+  window.addEventListener('DOMContentLoaded', () => {
+    const user = localStorage.getItem('kadavra_vip_user');
+    if(user) {
+      const profileBadge = document.querySelector('.rounded-full.bg-gradient-to-br');
+      if(profileBadge) {
+        // Kullanıcının baş harfini logoya yazar
+        profileBadge.textContent = user.charAt(0).toUpperCase();
+        profileBadge.title = user;
+      }
+    }
+  });
+
+  // Sayfa yüklendiğinde otomatik girişi kontrol et
+  autoLoginCheck();
 </script>
 </body>
 </html>
