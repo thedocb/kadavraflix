@@ -1147,15 +1147,18 @@
     });
   }
 
-  // 2. RADAR DİNLEYİCİ
+ // 2. RADAR DİNLEYİCİ (Sıralama Hatası Çözüldü)
   function listenTayfa() {
-    database.ref('tayfa_akis').orderByChild('timestamp').on('value', (snapshot) => {
+    database.ref('tayfa_akis').on('value', (snapshot) => {
       const row = document.getElementById('tayfa-row');
       if (!row) return;
       row.innerHTML = '';
       
-      const data = [];
-      snapshot.forEach(child => { data.unshift(child.val()); }); 
+      let data = [];
+      snapshot.forEach(child => { data.push(child.val()); }); 
+      
+      // İŞTE SİHİRLİ SATIR: Firebase'in kafasına göre dizmesini engeller, zamana göre kesin sıralar
+      data.sort((a, b) => b.timestamp - a.timestamp);
       
       // Sadece en son izlenen 10 kişiyi göster
       data.slice(0, 10).forEach(watch => {
