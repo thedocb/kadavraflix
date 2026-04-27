@@ -580,13 +580,18 @@
   }
 
   // ════════════════════ INIT ════════════════════
-  async function init() {
+ async function init() {
     if (!API_KEY || API_KEY === 'BURAYA_API_KEY_GELECEK') {
       showToast('⚠️ Lütfen API anahtarınızı girin!', true);
       loadDemoData();
       return;
     }
     try {
+      // ÖNCE HAFIZADAKİ LİSTELERİ ÇAĞIRALIM
+      loadHistory(); 
+      loadWatchlist();
+      
+      // SONRA DİĞER VERİLERİ YÜKLEYELİM
       await Promise.all([loadHero(), loadTrending(), loadMovies(), loadSeries()]);
     } catch(e) {
       console.error(e);
@@ -1102,6 +1107,8 @@ function openPlayer(item, episode) {
       login.style.opacity = '0';
       setTimeout(() => {
         login.remove();
+        loadHistory();
+        loadWatchlist();
         showToast('Hoş geldin pampik, mekan senin!');
       }, 300);
       // Siteyi sadece şifre bilinince başlatıyoruz
