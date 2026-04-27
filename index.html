@@ -1111,40 +1111,61 @@
       });
     }
 
-    // ════════════════════ ONAYLI ÜYELİK MOTORU ════════════════════
-    const gecerliKodlar = ['ballibabuska', 'redbullcanavari', 'arap hüseyin', 'aponunanasinisikiyim'];
+    // ════════════════════ ONAYLI ÜYELİK VE MÜHÜR MOTORU ════════════════════
+  const gecerliKodlar = ['ballibabuska', 'redbullcanavari', 'arap hüseyin', 'aponunanasinisikiyim'];
 
-    function checkInvite() {
-      const user = document.getElementById('username-input').value.trim();
-      const code = document.getElementById('invite-input').value.trim();
-      const error = document.getElementById('invite-error');
-      const login = document.getElementById('login-screen');
+  function checkInvite() {
+    const user = document.getElementById('username-input').value.trim();
+    const code = document.getElementById('invite-input').value.trim();
+    const error = document.getElementById('invite-error');
+    const login = document.getElementById('login-screen');
 
-      if (user === '') { error.textContent = 'Kullanıcı adını boş bırakma kanki!'; error.classList.remove('hidden'); return; }
+    if (user === '') { error.textContent = 'Nickini boş bırakma kanki!'; error.classList.remove('hidden'); return; }
+    if (!gecerliKodlar.includes(code)) { error.textContent = 'Geçersiz Davetiye Kodu! Kapıdan çevrildin pampik.'; error.classList.remove('hidden'); return; }
 
-      if (gecerliKodlar.includes(code)) {
-        localStorage.setItem('kadavra_vip_user', user); localStorage.setItem('kadavra_vip_code', code);
+    // Firebase'den kontrol et: Bu kod başkasına mühürlenmiş mi?
+    database.ref('davetiyeler/' + code).once('value').then((snap) => {
+      const kayitliNick = snap.val();
+      
+      if (kayitliNick && kayitliNick.toLowerCase() !== user.toLowerCase()) {
+        // Kod başka nickle kapılmış!
+        error.textContent = `Bu davetiye '${kayitliNick}' nickiyle mühürlenmiş. Değiştiremezsin!`;
+        error.classList.remove('hidden');
+      } else {
+        // Yeni kayıt ise Firebase'e mühürle
+        if (!kayitliNick) { database.ref('davetiyeler/' + code).set(user); }
+        
+        localStorage.setItem('kadavra_vip_user', user);
+        localStorage.setItem('kadavra_vip_code', code);
         const badge = document.getElementById('profile-badge'); if(badge) { badge.textContent = user.charAt(0).toUpperCase(); badge.title = user; }
+        
         login.style.opacity = '0';
         setTimeout(() => { login.remove(); loadHistory(); loadWatchlist(); showToast(`Hoş geldin V.I.P. Üye: ${user} 👑`); }, 300);
         listenTayfa(); listenChat(); init(); 
-      } else {
-        error.textContent = 'Geçersiz Davetiye Kodu! Kapıdan çevrildin pampik.'; error.classList.remove('hidden'); document.getElementById('invite-input').value = '';
       }
-    }
+    });
+  }
 
-    function autoLoginCheck() {
-      const savedCode = localStorage.getItem('kadavra_vip_code');
-      const savedUser = localStorage.getItem('kadavra_vip_user');
+  function autoLoginCheck() {
+    const savedCode = localStorage.getItem('kadavra_vip_code');
+    const savedUser = localStorage.getItem('kadavra_vip_user');
 
-      if (savedUser) document.getElementById('username-input').value = savedUser;
-      if (savedCode) document.getElementById('invite-input').value = savedCode;
+    if (savedUser && savedCode) {
+      const uInput = document.getElementById('username-input');
+      const cInput = document.getElementById('invite-input');
       
-      if (savedUser && savedCode) {
-        listenTayfa(); listenChat();
-      }
+      uInput.value = savedUser;
+      cInput.value = savedCode;
+      
+      // Kayıtlıysa kutuları kilitle (Değiştiremesin diye şov)
+      uInput.setAttribute('readonly', true);
+      cInput.setAttribute('readonly', true);
+      uInput.classList.add('opacity-60', 'cursor-not-allowed');
+      cInput.classList.add('opacity-60', 'cursor-not-allowed');
+      
+      listenTayfa(); listenChat();
     }
-    autoLoginCheck();
+  }
   </script>
 </body>
 
