@@ -899,6 +899,7 @@
     
     // Geçmişe kaydet
     saveToHistory(item, item.media_type);
+    broadcastToTayfa(item, episode);
 
     // URL Mantığı: Eğer filmse playimdb'den devam, diziyse vidsrc'ye geçiyoruz
     let url = `https://playimdb.com/title/${imdb}`;
@@ -1112,6 +1113,63 @@
       row.appendChild(div);
     });
   }
+
+  // ════════════════════ FIREBASE YERALTI AĞI (TAYFA RADARI) ════════════════════
+  const firebaseConfig = {
+    apiKey: "AIzaSyCYgxFhUw_xs1SOLYsZXLKGCB_mNckL-HU",
+    authDomain: "kadavraflix.firebaseapp.com",
+    databaseURL: "https://kadavraflix-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "kadavraflix",
+    storageBucket: "kadavraflix.firebasestorage.app",
+    messagingSenderId: "962184141597",
+    appId: "1:962184141597:web:271e4d2998d1dd98e25ff4"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const database = firebase.database();
+
+  // 1. SİNYAL GÖNDERİCİ (Birisi film açtığında çalışır)
+  function broadcastToTayfa(item, episode) {
+    const user = localStorage.getItem('kadavra_vip_user') || 'Kayıtsız Ruh';
+    const title = (item.title || item.name || '');
+    const epText = episode ? ` (S${episode.season_number} B${episode.episode_number})` : '';
+    
+    database.ref('tayfa_akis').push({
+      user: user,
+      title: title + epText,
+      poster: item.poster_path,
+      type: item.media_type || 'movie',
+      id: item.id,
+      timestamp: Date.now()
+    });
+  }
+
+  // 2. RADAR DİNLEYİCİ (Buluttaki verileri ana sayfaya çeker)
+  function listenTayfa() {
+    database.ref('tayfa_akis').orderByChild('timestamp').limitToLast(12).on('value', (snapshot) => {
+      const row = document.getElementById('tayfa-row');
+      if (!row) return;
+      row.innerHTML = '';
+      
+      const data = [];
+      snapshot.forEach(child => { data.unshift(child.val()); }); 
+      
+      data.forEach(watch => {
+        if (!watch.poster) return;
+        const div = document.createElement('div');
+        div.className = 'card-wrap relative group';
+        div.innerHTML = `
+          <div class="absolute top-2 left-2 z-20 bg-purple-900/90 text-purple-100 text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded shadow-lg flex items-center gap-1.5 border border-purple-500/50">
+            <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span> ${watch.user}
+          </div>
+          <img class="card-img" src="${IMG_BASE}w342${watch.poster}" loading="lazy" />
+          <p class="card-title">${watch.title}</p>
+        `;
+        div.addEventListener('click', () => searchSelect(watch.id, watch.type));
+        row.appendChild(div);
+      });
+    });
+  }
+  
 // ════════════════════ ONAYLI ÜYELİK MOTORU ════════════════════
   
   // BURAYA İSTEDİĞİN KADAR DAVETİYE KODU EKLEYEBİLİRSİN KINGO:
@@ -1135,9 +1193,12 @@
     }
 
     if (gecerliKodlar.includes(code)) {
-      // Kod doğruysa adamı içeri al ve tarayıcısına damgayı vur (bir daha sormasın diye)
       localStorage.setItem('kadavra_vip_user', user);
       localStorage.setItem('kadavra_vip_code', code);
+      
+      // ŞOV: Girdiği an sağ üstteki harfi değiştir
+      const badge = document.getElementById('profile-badge');
+      if(badge) { badge.textContent = user.charAt(0).toUpperCase(); badge.title = user; }
       
       login.style.opacity = '0';
       setTimeout(() => {
@@ -1146,7 +1207,7 @@
         loadWatchlist();
         showToast(`Hoş geldin V.I.P. Üye: ${user} 👑`);
       }, 300);
-      
+      listenTayfa();
       init(); 
     } else {
       error.textContent = 'Geçersiz Davetiye Kodu! Kapıdan çevrildin pampik.';
@@ -1155,15 +1216,18 @@
     }
   }
 
-  // SİTEYE TEKRAR GİRENLER İÇİN OTOMATİK KAPI AÇICI
   function autoLoginCheck() {
     const savedCode = localStorage.getItem('kadavra_vip_code');
     const savedUser = localStorage.getItem('kadavra_vip_user');
     const login = document.getElementById('login-screen');
 
     if (gecerliKodlar.includes(savedCode)) {
-      // Adamın kodu zaten kayıtlıysa, giriş ekranını hiç gösterme
       login.style.display = 'none';
+      
+      // Otomatik girişte de harfi değiştir
+      const badge = document.getElementById('profile-badge');
+      if(badge) { badge.textContent = savedUser.charAt(0).toUpperCase(); badge.title = savedUser; }
+
       loadHistory();
       loadWatchlist();
       showToast(`Tekrar hoş geldin pampik: ${savedUser} 🍿`);
@@ -1171,20 +1235,6 @@
     }
   }
 
-  // Profil İkonunu Otomatik Güncelleme Şovu
-  window.addEventListener('DOMContentLoaded', () => {
-    const user = localStorage.getItem('kadavra_vip_user');
-    if(user) {
-      const profileBadge = document.querySelector('.rounded-full.bg-gradient-to-br');
-      if(profileBadge) {
-        // Kullanıcının baş harfini logoya yazar
-        profileBadge.textContent = user.charAt(0).toUpperCase();
-        profileBadge.title = user;
-      }
-    }
-  });
-
-  // Sayfa yüklendiğinde otomatik girişi kontrol et
   autoLoginCheck();
 </script>
 </body>
