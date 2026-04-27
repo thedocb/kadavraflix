@@ -861,7 +861,7 @@
     }
   }
 
-  // ════════════════════ PLAYER ════════════════════
+// ════════════════════ PLAYER ════════════════════
   function playEpisode(ep) {
     openPlayer(currentItem, ep);
   }
@@ -871,7 +871,7 @@
     openPlayer(currentItem, null);
   }
 
-function openPlayer(item, episode) {
+  function openPlayer(item, episode) {
     const imdb = item.imdb_id;
     if (!imdb) {
       showToast('🎬 IMDB ID bulunamadı, lütfen tekrar deneyin.');
@@ -881,12 +881,12 @@ function openPlayer(item, episode) {
     // Geçmişe kaydet
     saveToHistory(item, item.media_type);
 
-    // URL Mantığı: Eğer episode varsa dizi formatı, yoksa film formatı
+    // URL Mantığı: Eğer filmse playimdb'den devam, diziyse vidsrc'ye geçiyoruz
     let url = `https://playimdb.com/title/${imdb}`;
     
     if (episode) {
-      // Dizi bölümleri için URL'yi güncelliyoruz: /tv/imdb_id/sezon/bolum
-      url = `https://playimdb.com/tv/${imdb}/${episode.season_number}/${episode.episode_number}`;
+      // Dizi bölümleri için jilet gibi çalışan format:
+      url = `https://vidsrc.xyz/embed/tv?imdb=${imdb}&season=${episode.season_number}&episode=${episode.episode_number}`;
     }
 
     const title = (item.title || item.name || '') + (episode ? ` – Sezon ${episode.season_number} Bölüm ${episode.episode_number}` : '');
