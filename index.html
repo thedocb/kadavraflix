@@ -602,13 +602,23 @@
 
 <body>
   <div id="login-screen" class="fixed inset-0 z-[1000] bg-dark-base flex items-center justify-center p-6 transition-opacity duration-500">
-    <div class="max-w-md w-full bg-dark-panel border border-purple-900/50 p-8 rounded-2xl shadow-[0_0_50px_#7c3aed44] text-center relative">
-      <h1 class="neon-text font-display text-4xl mb-2">KADAVRAFLIX</h1>
-      <p class="text-purple-300 text-sm mb-6 uppercase tracking-widest font-bold border-b border-purple-800/50 pb-4">V.I.P. ÜYE GİRİŞİ</p>
-      <input type="text" id="username-input" placeholder="Kullanıcı Adın (Örn: Can)..." class="w-full bg-purple-950/40 border border-purple-800/40 rounded-xl px-4 py-3 text-center text-white focus:outline-none focus:border-purple-500 mb-3">
-      <input type="password" id="invite-input" placeholder="Davetiye Kodun (Key)..." class="w-full bg-purple-950/40 border border-purple-800/40 rounded-xl px-4 py-3 text-center text-white focus:outline-none focus:border-purple-500 mb-5">
-      <button onclick="checkInvite()" class="neon-btn w-full py-3 rounded-xl text-white font-bold uppercase tracking-widest text-sm">Mekana Ak</button>
-      <p id="invite-error" class="text-red-500 text-xs mt-4 hidden">Geçersiz Davetiye Kodu! Kapıdan çevrildin pampik.</p>
+    <div class="max-w-md w-full bg-dark-panel border border-purple-900/50 p-8 rounded-2xl shadow-[0_0_50px_#7c3aed44] text-center relative overflow-hidden">
+      
+      <div class="flex mb-6 border-b border-purple-800/50 pb-4">
+        <button id="tab-login" onclick="toggleAuth('login')" class="flex-1 text-purple-100 font-bold tracking-widest pb-2 border-b-2 border-purple-500 transition-colors">GİRİŞ YAP</button>
+        <button id="tab-register" onclick="toggleAuth('register')" class="flex-1 text-purple-400 font-bold tracking-widest pb-2 border-b-2 border-transparent transition-colors">KAYIT OL</button>
+      </div>
+
+      <h1 class="neon-text font-display text-4xl mb-6">KADAVRAFLIX</h1>
+      
+      <input type="text" id="auth-nick" placeholder="Kullanıcı Adın (Örn: Fraude)..." class="w-full bg-purple-950/40 border border-purple-800/40 rounded-xl px-4 py-3 text-center text-white focus:outline-none focus:border-purple-500 mb-3">
+      
+      <input type="password" id="auth-pass" placeholder="Şifren (Örn: 123fenerbahce)..." class="w-full bg-purple-950/40 border border-purple-800/40 rounded-xl px-4 py-3 text-center text-white focus:outline-none focus:border-purple-500 mb-3">
+
+      <input type="text" id="auth-ref" placeholder="Referans Kodun (Sadece Kayıt İçin)..." class="w-full bg-purple-950/40 border border-purple-800/40 rounded-xl px-4 py-3 text-center text-white focus:outline-none focus:border-purple-500 mb-5 hidden">
+        
+      <button onclick="handleAuth()" id="auth-btn" class="neon-btn w-full py-3 rounded-xl text-white font-bold uppercase tracking-widest text-sm">Mekana Ak</button>
+      <p id="auth-error" class="text-red-500 text-xs mt-4 hidden">Hata mesajı burada çıkacak.</p>
     </div>
   </div>
 
@@ -1111,61 +1121,138 @@
       });
     }
 
-    // ════════════════════ ONAYLI ÜYELİK VE MÜHÜR MOTORU ════════════════════
-  const gecerliKodlar = ['ballibabuska', 'redbullcanavari', 'arap hüseyin', 'aponunanasinisikiyim'];
+   // ════════════════════ ONAYLI ÜYELİK & KAYIT MOTORU (LEJYON SİSTEMİ) ════════════════════
+  const gecerliReferanslar = ['501.lejyon', 'ballibabuska', 'redbullcanavari', 'arap hüseyin', 'aponunanasinisikiyim'];
+  let authMode = 'login'; // 'login' veya 'register'
 
-  function checkInvite() {
-    const user = document.getElementById('username-input').value.trim();
-    const code = document.getElementById('invite-input').value.trim();
-    const error = document.getElementById('invite-error');
-    const login = document.getElementById('login-screen');
+  // Sekmeler arası geçiş animasyonu
+  function toggleAuth(mode) {
+    authMode = mode;
+    const refInput = document.getElementById('auth-ref');
+    const btn = document.getElementById('auth-btn');
+    const tabLogin = document.getElementById('tab-login');
+    const tabRegister = document.getElementById('tab-register');
+    document.getElementById('auth-error').classList.add('hidden'); // Hata varsa temizle
 
-    if (user === '') { error.textContent = 'Nickini boş bırakma kanki!'; error.classList.remove('hidden'); return; }
-    if (!gecerliKodlar.includes(code)) { error.textContent = 'Geçersiz Davetiye Kodu! Kapıdan çevrildin pampik.'; error.classList.remove('hidden'); return; }
-
-    // Firebase'den kontrol et: Bu kod başkasına mühürlenmiş mi?
-    database.ref('davetiyeler/' + code).once('value').then((snap) => {
-      const kayitliNick = snap.val();
-      
-      if (kayitliNick && kayitliNick.toLowerCase() !== user.toLowerCase()) {
-        // Kod başka nickle kapılmış!
-        error.textContent = `Bu davetiye '${kayitliNick}' nickiyle mühürlenmiş. Değiştiremezsin!`;
-        error.classList.remove('hidden');
-      } else {
-        // Yeni kayıt ise Firebase'e mühürle
-        if (!kayitliNick) { database.ref('davetiyeler/' + code).set(user); }
-        
-        localStorage.setItem('kadavra_vip_user', user);
-        localStorage.setItem('kadavra_vip_code', code);
-        const badge = document.getElementById('profile-badge'); if(badge) { badge.textContent = user.charAt(0).toUpperCase(); badge.title = user; }
-        
-        login.style.opacity = '0';
-        setTimeout(() => { login.remove(); loadHistory(); loadWatchlist(); showToast(`Hoş geldin V.I.P. Üye: ${user} 👑`); }, 300);
-        listenTayfa(); listenChat(); init(); 
-      }
-    });
-  }
-
-  function autoLoginCheck() {
-    const savedCode = localStorage.getItem('kadavra_vip_code');
-    const savedUser = localStorage.getItem('kadavra_vip_user');
-
-    if (savedUser && savedCode) {
-      const uInput = document.getElementById('username-input');
-      const cInput = document.getElementById('invite-input');
-      
-      uInput.value = savedUser;
-      cInput.value = savedCode;
-      
-      // Kayıtlıysa kutuları kilitle (Değiştiremesin diye şov)
-      uInput.setAttribute('readonly', true);
-      cInput.setAttribute('readonly', true);
-      uInput.classList.add('opacity-60', 'cursor-not-allowed');
-      cInput.classList.add('opacity-60', 'cursor-not-allowed');
-      
-      listenTayfa(); listenChat();
+    if (mode === 'register') {
+      refInput.classList.remove('hidden');
+      btn.textContent = 'Mekana Kaydol ve Ak';
+      tabRegister.classList.replace('text-purple-400', 'text-purple-100');
+      tabRegister.classList.replace('border-transparent', 'border-purple-500');
+      tabLogin.classList.replace('text-purple-100', 'text-purple-400');
+      tabLogin.classList.replace('border-purple-500', 'border-transparent');
+    } else {
+      refInput.classList.add('hidden');
+      btn.textContent = 'İçeri Gir';
+      tabLogin.classList.replace('text-purple-400', 'text-purple-100');
+      tabLogin.classList.replace('border-transparent', 'border-purple-500');
+      tabRegister.classList.replace('text-purple-100', 'text-purple-400');
+      tabRegister.classList.replace('border-purple-500', 'border-transparent');
     }
   }
+
+  // Butona basıldığında Firebase'e soran ana motor
+  function handleAuth() {
+    const nick = document.getElementById('auth-nick').value.trim();
+    const pass = document.getElementById('auth-pass').value.trim();
+    const ref = document.getElementById('auth-ref').value.trim();
+    const error = document.getElementById('auth-error');
+
+    if (!nick || !pass) { 
+      error.textContent = 'Nick ve Şifre boş olamaz kanki!'; 
+      error.classList.remove('hidden'); 
+      return; 
+    }
+    
+    // Veritabanı isimlerinde garip harf engellemesi
+    const safeNick = nick.toLowerCase().replace(/[.#$\[\]]/g, '_'); 
+
+    if (authMode === 'register') {
+      // 1. KAYIT OLMA MODU
+      if (!gecerliReferanslar.includes(ref)) {
+        error.textContent = 'Referans kodu patlak! Lejyondan değilsin galiba?'; 
+        error.classList.remove('hidden'); 
+        return;
+      }
+      
+      database.ref('kullanicilar/' + safeNick).once('value').then((snap) => {
+        if (snap.exists()) {
+          error.textContent = 'Bu nick çoktan kapılmış kral, başka bir şey bul.'; 
+          error.classList.remove('hidden');
+        } else {
+          // Başarılı Kayıt: Firebase'e yaz
+          database.ref('kullanicilar/' + safeNick).set({ sifre: pass, refKodu: ref });
+          girisBasarili(nick, pass);
+        }
+      });
+
+    } else {
+      // 2. GİRİŞ YAPMA MODU (Referans kodu gerektirmez)
+      database.ref('kullanicilar/' + safeNick).once('value').then((snap) => {
+        if (!snap.exists()) {
+          error.textContent = 'Böyle bir pampik yok, önce "Kayıt Ol" sekmesine geç!'; 
+          error.classList.remove('hidden');
+        } else {
+          const dbData = snap.val();
+          if (dbData.sifre !== pass) {
+            error.textContent = 'Şifre yanlış kanki, zorlama!'; 
+            error.classList.remove('hidden');
+          } else {
+            girisBasarili(nick, pass); // Başarılı giriş
+          }
+        }
+      });
+    }
+  }
+
+  // Giriş başarılı olunca sayfayı açan fonksiyon
+  function girisBasarili(user, pass) {
+    localStorage.setItem('kadavra_vip_user', user);
+    localStorage.setItem('kadavra_vip_pass', pass); // Adamın şifresini hafızaya atıyoruz ki sonraki girişlerde uğraşmasın
+    
+    const badge = document.getElementById('profile-badge'); 
+    if(badge) { badge.textContent = user.charAt(0).toUpperCase(); badge.title = user; }
+    
+    const loginScreen = document.getElementById('login-screen');
+    if (loginScreen) {
+      loginScreen.style.opacity = '0';
+      setTimeout(() => { 
+        loginScreen.remove(); 
+        loadHistory(); 
+        loadWatchlist(); 
+        showToast(`Hoş geldin V.I.P. Üye: ${user} 👑`); 
+      }, 300);
+    }
+    
+    listenTayfa(); listenChat(); init(); 
+  }
+
+  // Sayfayı yenileyince tekrar şifre sormasın diye otomatik kontrol
+  function autoLoginCheck() {
+    const savedUser = localStorage.getItem('kadavra_vip_user');
+    const savedPass = localStorage.getItem('kadavra_vip_pass');
+
+    if (savedUser && savedPass) {
+      const safeNick = savedUser.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      
+      // Arkada Firebase'e sorup doğrular
+      database.ref('kullanicilar/' + safeNick).once('value').then((snap) => {
+         if(snap.exists() && snap.val().sifre === savedPass) {
+            const loginScreen = document.getElementById('login-screen');
+            if(loginScreen) loginScreen.style.display = 'none';
+            
+            const badge = document.getElementById('profile-badge'); 
+            if(badge) { badge.textContent = savedUser.charAt(0).toUpperCase(); badge.title = savedUser; }
+            
+            listenTayfa(); listenChat(); init();
+            loadHistory(); loadWatchlist(); showToast(`Tekrar hoş geldin pampik: ${savedUser} 🍿`);
+         }
+      });
+    }
+  }
+
+  // Motoru çalıştır
+  autoLoginCheck();
   </script>
 </body>
 
