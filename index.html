@@ -301,6 +301,22 @@
 </head>
 <body>
   <div id="login-screen" class="fixed inset-0 z-[1000] bg-dark-base flex items-center justify-center p-6 transition-opacity duration-500">
+    <div id="chat-sidebar" class="fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-[#0a0010]/95 backdrop-blur-xl border-l border-purple-900/50 z-[2000] transform translate-x-full transition-transform duration-300 flex flex-col shadow-[-10px_0_30px_rgba(0,0,0,0.8)]">
+  <div class="px-4 py-4 border-b border-purple-900/50 flex justify-between items-center bg-gradient-to-r from-purple-900/20 to-transparent">
+    <span class="font-display text-2xl text-purple-200 tracking-widest">YERALTI SOHBET</span>
+    <button onclick="toggleChat()" class="text-purple-400 hover:text-white text-3xl leading-none mb-1">&times;</button>
+  </div>
+  
+  <div id="chat-messages" class="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
+     </div>
+  
+  <div class="p-3 border-t border-purple-900/50 bg-[#0a0010]">
+    <div class="flex gap-2">
+      <input type="text" id="chat-input" placeholder="Mekana seslen..." class="flex-1 bg-purple-950/40 border border-purple-800/40 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500" onkeypress="if(event.key === 'Enter') sendChatMessage()">
+      <button onclick="sendChatMessage()" class="neon-btn px-4 py-2 rounded-xl text-white font-bold text-sm">At</button>
+    </div>
+  </div>
+</div>
   <div class="max-w-md w-full bg-dark-panel border border-purple-900/50 p-8 rounded-2xl shadow-[0_0_50px_#7c3aed44] text-center">
     <h1 class="neon-text font-display text-4xl mb-2">KADAVRAFLIX</h1>
     <p class="text-purple-300 text-sm mb-6 uppercase tracking-widest font-bold border-b border-purple-800/50 pb-4">V.I.P. ÜYE GİRİŞİ</p>
@@ -359,6 +375,13 @@
       </svg>
       <div id="search-results" class="absolute top-full mt-2 left-0 w-72 bg-[#160030] border border-purple-800/50 rounded-xl overflow-hidden shadow-2xl hidden z-50"></div>
     </div>
+    <button id="chat-btn" onclick="toggleChat()" class="relative w-8 h-8 rounded-full bg-purple-900/40 border border-purple-500/50 flex items-center justify-center text-sm hover:bg-purple-800 transition-colors hidden">
+      💬
+      <span id="chat-notif" class="absolute -top-1 -right-1 flex h-3 w-3 hidden">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+      </span>
+    </button>
     <div id="profile-badge" class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-600 to-purple-900 border border-purple-500/50 flex items-center justify-center text-xs font-bold cursor-pointer hover:shadow-[0_0_16px_#7c3aed88] transition-all select-none">K</div>
   </div>
 </nav>
@@ -1189,6 +1212,88 @@
       });
     });
   }
+
+  // ════════════════════ YERALTI SOHBET (CHAT) MOTORU ════════════════════
+  let chatOpen = false;
+  let chatFirstLoad = true;
+
+  function toggleChat() {
+    chatOpen = !chatOpen;
+    const sidebar = document.getElementById('chat-sidebar');
+    
+    if(chatOpen) {
+      sidebar.classList.remove('translate-x-full');
+      // Çekmece açılınca bildirimi ve sallanmayı iptal et
+      document.getElementById('chat-notif').classList.add('hidden');
+      document.getElementById('chat-btn').classList.remove('animate-bounce');
+      
+      // Kaydırma çubuğunu en alta indir
+      const box = document.getElementById('chat-messages');
+      box.scrollTop = box.scrollHeight;
+    } else {
+      sidebar.classList.add('translate-x-full');
+    }
+  }
+
+  function sendChatMessage() {
+    const input = document.getElementById('chat-input');
+    const text = input.value.trim();
+    if(!text) return;
+    
+    const user = localStorage.getItem('kadavra_vip_user') || 'Gizemli Pampik';
+    database.ref('yeralti_sohbet').push({ user: user, text: text, timestamp: Date.now() });
+    input.value = '';
+  }
+
+  function listenChat() {
+    // Giriş yapıldığı an Navbar'daki sohbet butonunu görünür yap
+    document.getElementById('chat-btn').classList.remove('hidden');
+
+    // Buluttaki son 50 mesajı sürekli dinle
+    database.ref('yeralti_sohbet').orderByChild('timestamp').limitToLast(50).on('value', snap => {
+      const box = document.getElementById('chat-messages');
+      if(!box) return;
+      box.innerHTML = '';
+      
+      let messageCount = 0;
+      
+      snap.forEach(child => {
+        messageCount++;
+        const msg = child.val();
+        const isMe = msg.user === localStorage.getItem('kadavra_vip_user');
+        
+        // Saati hesapla
+        const date = new Date(msg.timestamp).toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' });
+        
+        const div = document.createElement('div');
+        // Kendi mesajların sağda mor, başkası solda siyah
+        div.className = `max-w-[85%] rounded-xl p-2.5 flex flex-col ${isMe ? 'bg-purple-600/80 self-end rounded-br-sm' : 'bg-gray-800/80 self-start rounded-bl-sm border border-purple-900/50'}`;
+        div.innerHTML = `
+          <div class="flex justify-between items-baseline gap-3 mb-1">
+            <span class="text-[10px] ${isMe ? 'text-purple-200' : 'text-purple-400'} font-bold uppercase tracking-wider">${msg.user}</span>
+            <span class="text-[9px] opacity-60">${date}</span>
+          </div>
+          <div class="text-sm text-purple-50 break-words leading-snug">${msg.text}</div>
+        `;
+        box.appendChild(div);
+      });
+      
+      if(chatOpen) {
+        box.scrollTop = box.scrollHeight;
+      } else if (!chatFirstLoad && messageCount > 0) {
+        // Çekmece kapalıyken yeni mesaj gelirse BİLDİRİMİ YAK VE TİTRET
+        const notif = document.getElementById('chat-notif');
+        const btn = document.getElementById('chat-btn');
+        if(notif) notif.classList.remove('hidden');
+        if(btn) {
+          btn.classList.add('animate-bounce'); // Butonu 1 saniye zıplat
+          setTimeout(() => btn.classList.remove('animate-bounce'), 1000);
+        }
+      }
+      
+      chatFirstLoad = false;
+    });
+  }
   
 // ════════════════════ ONAYLI ÜYELİK MOTORU ════════════════════
   
@@ -1228,6 +1333,7 @@
         showToast(`Hoş geldin V.I.P. Üye: ${user} 👑`);
       }, 300);
       listenTayfa();
+      listenChat();
       init(); 
     } else {
       error.textContent = 'Geçersiz Davetiye Kodu! Kapıdan çevrildin pampik.';
