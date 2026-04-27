@@ -595,6 +595,14 @@
       .hero-title { font-size: 2.6rem !important; }
 
     }
+    /* ── Mobil (Telefon) İnce Ayarları ── */
+    @media(max-width: 640px) {
+      #chat-sidebar { width: 100vw !important; max-width: 100vw !important; }
+      #modal-title { font-size: 2.5rem !important; }
+      #modal-box { padding-top: 1rem; }
+      input[type="text"], input[type="password"] { font-size: 16px !important; }
+      #navbar .neon-text { font-size: 1.4rem !important; }
+    }
 
   </style>
 
@@ -603,7 +611,6 @@
 <body>
   <div id="login-screen" class="fixed inset-0 z-[1000] bg-dark-base flex items-center justify-center p-6 transition-opacity duration-500">
     <div class="max-w-md w-full bg-dark-panel border border-purple-900/50 p-8 rounded-2xl shadow-[0_0_50px_#7c3aed44] text-center relative overflow-hidden">
-      
       <div class="flex mb-6 border-b border-purple-800/50 pb-4">
         <button id="tab-login" onclick="toggleAuth('login')" class="flex-1 text-purple-100 font-bold tracking-widest pb-2 border-b-2 border-purple-500 transition-colors">GİRİŞ YAP</button>
         <button id="tab-register" onclick="toggleAuth('register')" class="flex-1 text-purple-400 font-bold tracking-widest pb-2 border-b-2 border-transparent transition-colors">KAYIT OL</button>
@@ -612,12 +619,10 @@
       <h1 class="neon-text font-display text-4xl mb-6">KADAVRAFLIX</h1>
       
       <input type="text" id="auth-nick" placeholder="Kullanıcı Adın (Örn: Fraude)..." class="w-full bg-purple-950/40 border border-purple-800/40 rounded-xl px-4 py-3 text-center text-white focus:outline-none focus:border-purple-500 mb-3">
-      
       <input type="password" id="auth-pass" placeholder="Şifren (Örn: 123fenerbahce)..." class="w-full bg-purple-950/40 border border-purple-800/40 rounded-xl px-4 py-3 text-center text-white focus:outline-none focus:border-purple-500 mb-3">
-
-      <input type="text" id="auth-ref" placeholder="Referans Kodun (Sadece Kayıt İçin)..." class="w-full bg-purple-950/40 border border-purple-800/40 rounded-xl px-4 py-3 text-center text-white focus:outline-none focus:border-purple-500 mb-5 hidden">
+      <input type="text" id="auth-ref" placeholder="Referans Kodun (Örn: 501.lejyon)..." class="w-full bg-purple-950/40 border border-purple-800/40 rounded-xl px-4 py-3 text-center text-white focus:outline-none focus:border-purple-500 mb-5 hidden">
         
-      <button onclick="handleAuth()" id="auth-btn" class="neon-btn w-full py-3 rounded-xl text-white font-bold uppercase tracking-widest text-sm">Mekana Ak</button>
+      <button onclick="handleAuth()" id="auth-btn" class="neon-btn w-full py-3 rounded-xl text-white font-bold uppercase tracking-widest text-sm">İçeri Gir</button>
       <p id="auth-error" class="text-red-500 text-xs mt-4 hidden">Hata mesajı burada çıkacak.</p>
     </div>
   </div>
@@ -842,7 +847,6 @@
       checkWatchlistStatus(item.id);
       document.body.style.overflow = 'hidden'; 
       
-      // YORUMLARI ÇEKME TETİĞİ
       loadComments(item.id);
 
       document.getElementById('modal-seasons-wrap').classList.add('hidden');
@@ -1002,77 +1006,159 @@
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
-   // ════════════════════ 1. TAYFA NE İZLİYOR (ŞUKU SİSTEMİ) ════════════════════
-  function broadcastToTayfa(item, episode) {
-    const user = localStorage.getItem('kadavra_vip_user') || 'Kayıtsız Ruh';
-    const title = (item.title || item.name || '');
-    const epText = episode ? ` (S${episode.season_number} B${episode.episode_number})` : '';
-    const safeUser = user.replace(/[.#$\[\]]/g, '_'); 
-    
-    // "set" yerine "update" kullanıyoruz ki önceden atılan şukular silinmesin
-    database.ref('tayfa_akis/' + safeUser).update({
-      user: user,
-      title: title + epText,
-      poster: item.poster_path,
-      type: item.media_type || 'movie',
-      id: item.id,
-      timestamp: Date.now()
-    });
-  }
-
-  function listenTayfa() {
-    database.ref('tayfa_akis').on('value', (snapshot) => {
-      const row = document.getElementById('tayfa-row');
-      if (!row) return;
-      row.innerHTML = '';
+    // ════════════════════ 1. TAYFA NE İZLİYOR (ŞUKU SİSTEMİYLE BERABER) ════════════════════
+    function broadcastToTayfa(item, episode) {
+      const user = localStorage.getItem('kadavra_vip_user') || 'Kayıtsız Ruh';
+      const title = (item.title || item.name || '');
+      const epText = episode ? ` (S${episode.season_number} B${episode.episode_number})` : '';
+      const safeUser = user.replace(/[.#$\[\]]/g, '_'); 
       
-      let rawData = [];
-      snapshot.forEach(child => { 
-        let val = child.val();
-        val._safeUser = child.key; // Şuku göndermek için id'yi saklıyoruz
-        rawData.push(val); 
-      }); 
-      
-      rawData.sort((a, b) => b.timestamp - a.timestamp); // En yeni en başa
-      
-      let uniqueData = []; let seenUsers = new Set();
-      rawData.forEach(watch => {
-        if (!seenUsers.has(watch.user)) { seenUsers.add(watch.user); uniqueData.push(watch); }
-      });
-      
-      uniqueData.slice(0, 10).forEach(watch => {
-        if (!watch.poster) return;
-        const likeCount = watch.likes ? Object.keys(watch.likes).length : 0;
-        const div = document.createElement('div');
-        div.className = 'card-wrap relative group';
+      const ref = database.ref('tayfa_akis/' + safeUser);
+      ref.once('value').then(snap => {
+        const data = snap.val();
+        let currentLikes = null;
         
-        // Afiş tasarımı ve ŞUKU BUTONU
-        div.innerHTML = `
-          <div class="absolute top-2 left-2 z-20 bg-purple-900/90 text-purple-100 text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded shadow-lg flex items-center gap-1.5 border border-purple-500/50">
-            <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span> ${watch.user}
-          </div>
-          <button onclick="event.stopPropagation(); giveSuku('${watch._safeUser}', '${watch.user}')" class="absolute top-2 right-2 z-30 bg-black/80 hover:bg-purple-600 border border-purple-500/50 text-white text-[10px] font-bold px-2 py-1 rounded transition-all opacity-0 group-hover:opacity-100 flex items-center gap-1 backdrop-blur-sm">
-            👍 ${likeCount > 0 ? likeCount : 'Şukunu Ver'}
-          </button>
-          <img class="card-img" src="${IMG_BASE}w342${watch.poster}" loading="lazy" />
-          <p class="card-title">${watch.title}</p>
-        `;
-        div.addEventListener('click', () => searchSelect(watch.id, watch.type));
-        row.appendChild(div);
-      });
-    });
-  }
+        // KRİTİK NOKTA: Adamın yeni açtığı film eskisinden farklıysa şukular SIFIRLANIR!
+        if (data && data.id === item.id) {
+          currentLikes = data.likes || null;
+        }
 
-  function giveSuku(targetUserKey, targetUserName) {
-    const myUser = localStorage.getItem('kadavra_vip_user');
-    if(!myUser) return;
-    const safeMe = myUser.replace(/[.#$\[\]]/g, '_');
-    const ref = database.ref(`tayfa_akis/${targetUserKey}/likes/${safeMe}`);
-    ref.once('value').then(snap => {
-      if(snap.exists()) { ref.remove(); } // Zaten şukuladıysa şukuyu geri al
-      else { ref.set(true); showToast(`${targetUserName} pampiğine şukunu verdin!`); }
-    });
-  }
+        ref.set({
+          user: user,
+          title: title + epText,
+          poster: item.poster_path,
+          type: item.media_type || 'movie',
+          id: item.id,
+          timestamp: Date.now(),
+          likes: currentLikes
+        });
+      });
+    }
+
+    function listenTayfa() {
+      database.ref('tayfa_akis').on('value', (snapshot) => {
+        const row = document.getElementById('tayfa-row');
+        if (!row) return;
+        row.innerHTML = '';
+        
+        let rawData = [];
+        snapshot.forEach(child => { 
+          let val = child.val();
+          val._safeUser = child.key; 
+          rawData.push(val); 
+        }); 
+        
+        // ZAMAN SIRALAMASI: En yeni en başa
+        rawData.sort((a, b) => b.timestamp - a.timestamp);
+        
+        // KLON ENGELLEYİCİ: Her kullanıcı 1 kez
+        let uniqueData = []; let seenUsers = new Set();
+        rawData.forEach(watch => {
+          if (!seenUsers.has(watch.user)) { seenUsers.add(watch.user); uniqueData.push(watch); }
+        });
+        
+        uniqueData.slice(0, 10).forEach(watch => {
+          if (!watch.poster) return;
+          const likersArray = watch.likes ? Object.keys(watch.likes) : [];
+          const likeCount = likersArray.length;
+          const likersText = likeCount > 0 ? likersArray.join(', ') : '';
+
+          const div = document.createElement('div');
+          div.className = 'card-wrap relative group';
+          div.innerHTML = `
+            <div class="absolute top-2 left-2 z-20 bg-purple-900/90 text-purple-100 text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded shadow-lg flex items-center gap-1.5 border border-purple-500/50">
+              <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span> ${watch.user}
+            </div>
+            
+            <button onclick="event.stopPropagation(); giveSuku('${watch._safeUser}', '${watch.user}')" class="absolute top-2 right-2 z-30 bg-black/80 hover:bg-purple-600 border border-purple-500/50 text-white text-[10px] font-bold px-2 py-1 rounded transition-colors opacity-0 group-hover:opacity-100 flex items-center gap-1 backdrop-blur-sm">
+              👍 ${likeCount > 0 ? likeCount : 'Şukunu Ver'}
+            </button>
+            
+            ${likeCount > 0 ? `<div class="absolute bottom-2 left-2 right-2 text-center text-[9px] text-purple-200 bg-black/80 rounded px-1 py-0.5 line-clamp-1 backdrop-blur-sm z-30 opacity-0 group-hover:opacity-100 transition-opacity">Kimler: ${likersText}</div>` : ''}
+
+            <img class="card-img" src="${IMG_BASE}w342${watch.poster}" loading="lazy" />
+            <p class="card-title">${watch.title}</p>
+          `;
+          div.addEventListener('click', () => searchSelect(watch.id, watch.type));
+          row.appendChild(div);
+        });
+      });
+    }
+
+    function giveSuku(targetUserKey, targetUserName) {
+      const myUser = localStorage.getItem('kadavra_vip_user');
+      if(!myUser) return;
+      const safeMe = myUser.replace(/[.#$\[\]]/g, '_');
+      const ref = database.ref(`tayfa_akis/${targetUserKey}/likes/${safeMe}`);
+      ref.once('value').then(snap => {
+        if(snap.exists()) { ref.remove(); } 
+        else { ref.set(true); showToast(`${targetUserName} pampiğine şukunu verdin!`); }
+      });
+    }
+
+    // ════════════════════ 2. FİLM YORUM SİSTEMİ ════════════════════
+    function postComment() {
+      if(!currentItem) return;
+      const input = document.getElementById('comment-input');
+      const text = input.value.trim();
+      const user = localStorage.getItem('kadavra_vip_user') || 'Gizemli Pampik';
+      if(text === '') return;
+      database.ref('comments/' + currentItem.id).push({ user: user, text: text, timestamp: Date.now() });
+      input.value = ''; 
+      showToast('Yorumun mekana düştü!');
+    }
+
+    function likeComment(itemId, commentKey) {
+      const myUser = localStorage.getItem('kadavra_vip_user');
+      if(!myUser) return;
+      const ref = database.ref(`comments/${itemId}/${commentKey}/likes/${myUser}`);
+      ref.once('value').then(snap => {
+        if(snap.exists()) ref.remove(); else ref.set(true);
+      });
+    }
+
+    function loadComments(itemId) {
+      const list = document.getElementById('comments-list');
+      const avatar = document.getElementById('comment-avatar');
+      const currentUser = localStorage.getItem('kadavra_vip_user') || '?';
+      if(avatar) avatar.textContent = currentUser.charAt(0).toUpperCase();
+      list.innerHTML = '<p class="text-purple-400 text-sm">Yorumlar çekiliyor...</p>';
+
+      database.ref('comments/' + itemId).on('value', (snapshot) => {
+        if(!snapshot.exists()) { list.innerHTML = '<p class="text-purple-400 text-sm">Henüz kimse yorum yapmamış. İlk raconu sen kes!</p>'; return; }
+        list.innerHTML = '';
+        let comments = [];
+        snapshot.forEach(child => { 
+          let val = child.val(); val._key = child.key; comments.push(val); 
+        }); 
+        comments.sort((a,b) => b.timestamp - a.timestamp); // En yeni yorum en üstte
+
+        comments.forEach(comment => {
+          const date = new Date(comment.timestamp).toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' });
+          const likersArray = comment.likes ? Object.keys(comment.likes) : [];
+          const likeCount = likersArray.length;
+          const likersText = likeCount > 0 ? likersArray.join(', ') : '';
+
+          const div = document.createElement('div');
+          div.className = 'bg-purple-950/30 border border-purple-800/30 p-3 rounded-xl mb-3 relative group';
+          div.innerHTML = `
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-purple-300 font-bold text-sm">${comment.user}</span>
+              <span class="text-purple-600 text-[10px]">${date}</span>
+            </div>
+            <p class="text-purple-100 text-sm break-words">${comment.text}</p>
+            <div class="mt-2 flex items-center gap-2">
+              <button onclick="likeComment('${itemId}', '${comment._key}')" class="text-[10px] text-purple-400 hover:text-purple-200 bg-purple-900/40 px-2 py-1 rounded transition-colors">
+                👍 ${likeCount > 0 ? likeCount : 'Şukunu Ver'}
+              </button>
+              ${likeCount > 0 ? `<span class="text-[9px] text-purple-500 opacity-0 group-hover:opacity-100 transition-opacity">Kimler: ${likersText}</span>` : ''}
+            </div>
+          `;
+          list.appendChild(div);
+        });
+      });
+    }
+
     // ════════════════════ 3. YERALTI SOHBET (CHAT) MOTORU ════════════════════
     let chatOpen = false; let chatFirstLoad = true;
 
@@ -1094,23 +1180,49 @@
       input.value = '';
     }
 
+    function likeChatMessage(msgKey) {
+      const myUser = localStorage.getItem('kadavra_vip_user');
+      if(!myUser) return;
+      const ref = database.ref(`yeralti_sohbet/${msgKey}/likes/${myUser}`);
+      ref.once('value').then(snap => { if(snap.exists()) ref.remove(); else ref.set(true); });
+    }
+
     function listenChat() {
       document.getElementById('chat-btn').classList.remove('hidden');
-      database.ref('yeralti_sohbet').orderByChild('timestamp').limitToLast(50).on('value', snap => {
+      database.ref('yeralti_sohbet').limitToLast(50).on('value', snap => {
         const box = document.getElementById('chat-messages'); if(!box) return;
         box.innerHTML = ''; let messageCount = 0;
         
-        snap.forEach(child => {
-          messageCount++; const msg = child.val();
+        let msgs = [];
+        snap.forEach(child => { let msg = child.val(); msg._key = child.key; msgs.push(msg); });
+        msgs.sort((a,b) => a.timestamp - b.timestamp); // Eskiden yeniye akar
+
+        msgs.forEach(msg => {
+          messageCount++; 
           const isMe = msg.user === localStorage.getItem('kadavra_vip_user');
           const date = new Date(msg.timestamp).toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' });
+          const likersArray = msg.likes ? Object.keys(msg.likes) : [];
+          const likeCount = likersArray.length;
+          const likersText = likeCount > 0 ? likersArray.join(', ') : '';
+
           const div = document.createElement('div');
-          div.className = `max-w-[85%] rounded-xl p-2.5 flex flex-col ${isMe ? 'bg-purple-600/80 self-end rounded-br-sm' : 'bg-gray-800/80 self-start rounded-bl-sm border border-purple-900/50'}`;
-          div.innerHTML = `<div class="flex justify-between items-baseline gap-3 mb-1"><span class="text-[10px] ${isMe ? 'text-purple-200' : 'text-purple-400'} font-bold uppercase tracking-wider">${msg.user}</span><span class="text-[9px] opacity-60">${date}</span></div><div class="text-sm text-purple-50 break-words leading-snug">${msg.text}</div>`;
+          div.className = `max-w-[85%] rounded-xl p-2.5 flex flex-col group relative ${isMe ? 'bg-purple-600/80 self-end rounded-br-sm' : 'bg-gray-800/80 self-start rounded-bl-sm border border-purple-900/50'}`;
+          div.innerHTML = `
+            <div class="flex justify-between items-baseline gap-3 mb-1">
+              <span class="text-[10px] ${isMe ? 'text-purple-200' : 'text-purple-400'} font-bold uppercase tracking-wider">${msg.user}</span>
+              <span class="text-[9px] opacity-60">${date}</span>
+            </div>
+            <div class="text-sm text-purple-50 break-words leading-snug">${msg.text}</div>
+            <div class="mt-1 flex items-center justify-end gap-1">
+              ${likeCount > 0 ? `<span class="text-[8px] text-purple-300 opacity-0 group-hover:opacity-100 transition-opacity mr-1">${likersText}</span>` : ''}
+              <button onclick="likeChatMessage('${msg._key}')" class="text-[10px] bg-black/40 px-1.5 py-0.5 rounded hover:bg-black/60 transition-colors ${likeCount > 0 ? 'text-purple-300' : 'text-gray-400 opacity-0 group-hover:opacity-100'}">
+                👍 ${likeCount > 0 ? likeCount : ''}
+              </button>
+            </div>
+          `;
           box.appendChild(div);
         });
         
-        // Chat açıksa en alta kaydır, kapalıysa ve yeni mesaj varsa bildirimi yak
         if(chatOpen) { box.scrollTop = box.scrollHeight; } 
         else if (!chatFirstLoad && messageCount > 0) {
           const notif = document.getElementById('chat-notif'); const btn = document.getElementById('chat-btn');
@@ -1121,138 +1233,110 @@
       });
     }
 
-   // ════════════════════ ONAYLI ÜYELİK & KAYIT MOTORU (LEJYON SİSTEMİ) ════════════════════
-  const gecerliReferanslar = ['501.lejyon', 'ballibabuska', 'redbullcanavari', 'arap hüseyin', 'aponunanasinisikiyim'];
-  let authMode = 'login'; // 'login' veya 'register'
+    // ════════════════════ ONAYLI ÜYELİK VE MÜHÜR MOTORU ════════════════════
+    const gecerliReferanslar = ['501.lejyon', 'ballibabuska', 'redbullcanavari', 'arap hüseyin', 'aponunanasinisikiyim'];
+    let authMode = 'login'; 
 
-  // Sekmeler arası geçiş animasyonu
-  function toggleAuth(mode) {
-    authMode = mode;
-    const refInput = document.getElementById('auth-ref');
-    const btn = document.getElementById('auth-btn');
-    const tabLogin = document.getElementById('tab-login');
-    const tabRegister = document.getElementById('tab-register');
-    document.getElementById('auth-error').classList.add('hidden'); // Hata varsa temizle
+    function toggleAuth(mode) {
+      authMode = mode;
+      const refInput = document.getElementById('auth-ref');
+      const btn = document.getElementById('auth-btn');
+      const tabLogin = document.getElementById('tab-login');
+      const tabRegister = document.getElementById('tab-register');
+      document.getElementById('auth-error').classList.add('hidden'); 
 
-    if (mode === 'register') {
-      refInput.classList.remove('hidden');
-      btn.textContent = 'Mekana Kaydol ve Ak';
-      tabRegister.classList.replace('text-purple-400', 'text-purple-100');
-      tabRegister.classList.replace('border-transparent', 'border-purple-500');
-      tabLogin.classList.replace('text-purple-100', 'text-purple-400');
-      tabLogin.classList.replace('border-purple-500', 'border-transparent');
-    } else {
-      refInput.classList.add('hidden');
-      btn.textContent = 'İçeri Gir';
-      tabLogin.classList.replace('text-purple-400', 'text-purple-100');
-      tabLogin.classList.replace('border-transparent', 'border-purple-500');
-      tabRegister.classList.replace('text-purple-100', 'text-purple-400');
-      tabRegister.classList.replace('border-purple-500', 'border-transparent');
-    }
-  }
-
-  // Butona basıldığında Firebase'e soran ana motor
-  function handleAuth() {
-    const nick = document.getElementById('auth-nick').value.trim();
-    const pass = document.getElementById('auth-pass').value.trim();
-    const ref = document.getElementById('auth-ref').value.trim();
-    const error = document.getElementById('auth-error');
-
-    if (!nick || !pass) { 
-      error.textContent = 'Nick ve Şifre boş olamaz kanki!'; 
-      error.classList.remove('hidden'); 
-      return; 
-    }
-    
-    // Veritabanı isimlerinde garip harf engellemesi
-    const safeNick = nick.toLowerCase().replace(/[.#$\[\]]/g, '_'); 
-
-    if (authMode === 'register') {
-      // 1. KAYIT OLMA MODU
-      if (!gecerliReferanslar.includes(ref)) {
-        error.textContent = 'Referans kodu patlak! Lejyondan değilsin galiba?'; 
-        error.classList.remove('hidden'); 
-        return;
+      if (mode === 'register') {
+        refInput.classList.remove('hidden');
+        btn.textContent = 'Mekana Kaydol ve Ak';
+        tabRegister.classList.replace('text-purple-400', 'text-purple-100');
+        tabRegister.classList.replace('border-transparent', 'border-purple-500');
+        tabLogin.classList.replace('text-purple-100', 'text-purple-400');
+        tabLogin.classList.replace('border-purple-500', 'border-transparent');
+      } else {
+        refInput.classList.add('hidden');
+        btn.textContent = 'İçeri Gir';
+        tabLogin.classList.replace('text-purple-400', 'text-purple-100');
+        tabLogin.classList.replace('border-transparent', 'border-purple-500');
+        tabRegister.classList.replace('text-purple-100', 'text-purple-400');
+        tabRegister.classList.replace('border-purple-500', 'border-transparent');
       }
-      
-      database.ref('kullanicilar/' + safeNick).once('value').then((snap) => {
-        if (snap.exists()) {
-          error.textContent = 'Bu nick çoktan kapılmış kral, başka bir şey bul.'; 
-          error.classList.remove('hidden');
-        } else {
-          // Başarılı Kayıt: Firebase'e yaz
-          database.ref('kullanicilar/' + safeNick).set({ sifre: pass, refKodu: ref });
-          girisBasarili(nick, pass);
-        }
-      });
+    }
 
-    } else {
-      // 2. GİRİŞ YAPMA MODU (Referans kodu gerektirmez)
-      database.ref('kullanicilar/' + safeNick).once('value').then((snap) => {
-        if (!snap.exists()) {
-          error.textContent = 'Böyle bir pampik yok, önce "Kayıt Ol" sekmesine geç!'; 
-          error.classList.remove('hidden');
-        } else {
-          const dbData = snap.val();
-          if (dbData.sifre !== pass) {
-            error.textContent = 'Şifre yanlış kanki, zorlama!'; 
-            error.classList.remove('hidden');
+    function handleAuth() {
+      const nick = document.getElementById('auth-nick').value.trim();
+      const pass = document.getElementById('auth-pass').value.trim();
+      const ref = document.getElementById('auth-ref').value.trim();
+      const error = document.getElementById('auth-error');
+
+      if (!nick || !pass) { error.textContent = 'Nick ve Şifre boş olamaz kanki!'; error.classList.remove('hidden'); return; }
+      
+      const safeNick = nick.toLowerCase().replace(/[.#$\[\]]/g, '_'); 
+
+      if (authMode === 'register') {
+        if (!gecerliReferanslar.includes(ref)) {
+          error.textContent = 'Referans kodu patlak! Lejyondan değilsin galiba?'; error.classList.remove('hidden'); return;
+        }
+        database.ref('kullanicilar/' + safeNick).once('value').then((snap) => {
+          if (snap.exists()) {
+            error.textContent = 'Bu nick çoktan kapılmış kral, başka bir şey bul.'; error.classList.remove('hidden');
           } else {
-            girisBasarili(nick, pass); // Başarılı giriş
+            database.ref('kullanicilar/' + safeNick).set({ sifre: pass, refKodu: ref });
+            girisBasarili(nick, pass);
           }
-        }
-      });
+        });
+      } else {
+        database.ref('kullanicilar/' + safeNick).once('value').then((snap) => {
+          if (!snap.exists()) {
+            error.textContent = 'Böyle bir pampik yok, önce "Kayıt Ol" sekmesine geç!'; error.classList.remove('hidden');
+          } else {
+            const dbData = snap.val();
+            if (dbData.sifre !== pass) {
+              error.textContent = 'Şifre yanlış kanki, zorlama!'; error.classList.remove('hidden');
+            } else {
+              girisBasarili(nick, pass); 
+            }
+          }
+        });
+      }
     }
-  }
 
-  // Giriş başarılı olunca sayfayı açan fonksiyon
-  function girisBasarili(user, pass) {
-    localStorage.setItem('kadavra_vip_user', user);
-    localStorage.setItem('kadavra_vip_pass', pass); // Adamın şifresini hafızaya atıyoruz ki sonraki girişlerde uğraşmasın
-    
-    const badge = document.getElementById('profile-badge'); 
-    if(badge) { badge.textContent = user.charAt(0).toUpperCase(); badge.title = user; }
-    
-    const loginScreen = document.getElementById('login-screen');
-    if (loginScreen) {
-      loginScreen.style.opacity = '0';
-      setTimeout(() => { 
-        loginScreen.remove(); 
-        loadHistory(); 
-        loadWatchlist(); 
-        showToast(`Hoş geldin V.I.P. Üye: ${user} 👑`); 
-      }, 300);
-    }
-    
-    listenTayfa(); listenChat(); init(); 
-  }
-
-  // Sayfayı yenileyince tekrar şifre sormasın diye otomatik kontrol
-  function autoLoginCheck() {
-    const savedUser = localStorage.getItem('kadavra_vip_user');
-    const savedPass = localStorage.getItem('kadavra_vip_pass');
-
-    if (savedUser && savedPass) {
-      const safeNick = savedUser.toLowerCase().replace(/[.#$\[\]]/g, '_');
+    function girisBasarili(user, pass) {
+      localStorage.setItem('kadavra_vip_user', user);
+      localStorage.setItem('kadavra_vip_pass', pass); 
       
-      // Arkada Firebase'e sorup doğrular
-      database.ref('kullanicilar/' + safeNick).once('value').then((snap) => {
-         if(snap.exists() && snap.val().sifre === savedPass) {
-            const loginScreen = document.getElementById('login-screen');
-            if(loginScreen) loginScreen.style.display = 'none';
-            
-            const badge = document.getElementById('profile-badge'); 
-            if(badge) { badge.textContent = savedUser.charAt(0).toUpperCase(); badge.title = savedUser; }
-            
-            listenTayfa(); listenChat(); init();
-            loadHistory(); loadWatchlist(); showToast(`Tekrar hoş geldin pampik: ${savedUser} 🍿`);
-         }
-      });
+      const badge = document.getElementById('profile-badge'); 
+      if(badge) { badge.textContent = user.charAt(0).toUpperCase(); badge.title = user; }
+      
+      const loginScreen = document.getElementById('login-screen');
+      if (loginScreen) {
+        loginScreen.style.opacity = '0';
+        setTimeout(() => { loginScreen.remove(); loadHistory(); loadWatchlist(); showToast(`Hoş geldin V.I.P. Üye: ${user} 👑`); }, 300);
+      }
+      listenTayfa(); listenChat(); init(); 
     }
-  }
 
-  // Motoru çalıştır
-  autoLoginCheck();
+    function autoLoginCheck() {
+      const savedUser = localStorage.getItem('kadavra_vip_user');
+      const savedPass = localStorage.getItem('kadavra_vip_pass');
+
+      if (savedUser && savedPass) {
+        const safeNick = savedUser.toLowerCase().replace(/[.#$\[\]]/g, '_');
+        database.ref('kullanicilar/' + safeNick).once('value').then((snap) => {
+           if(snap.exists() && snap.val().sifre === savedPass) {
+              const loginScreen = document.getElementById('login-screen');
+              if(loginScreen) loginScreen.style.display = 'none';
+              
+              const badge = document.getElementById('profile-badge'); 
+              if(badge) { badge.textContent = savedUser.charAt(0).toUpperCase(); badge.title = savedUser; }
+              
+              listenTayfa(); listenChat(); init();
+              loadHistory(); loadWatchlist(); showToast(`Tekrar hoş geldin pampik: ${savedUser} 🍿`);
+           }
+        });
+      }
+    }
+
+    autoLoginCheck();
   </script>
 </body>
 
