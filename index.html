@@ -83,7 +83,6 @@
     body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 999; opacity: .35; }
     .orb { position: fixed; border-radius: 50%; filter: blur(120px); pointer-events: none; z-index: 0; }
     
-    /* ── Mobil (Telefon) İnce Ayarları ── */
     @media(max-width: 640px) {
       #hero-content { padding: 0 4vw 12vh; }
       .hero-title { font-size: 2.6rem !important; }
@@ -91,6 +90,7 @@
       #modal-title { font-size: 2.5rem !important; }
       #modal-box { padding-top: 1rem; }
       input[type="text"], input[type="password"] { font-size: 16px !important; }
+      #navbar .neon-text { font-size: 1.4rem !important; }
     }
   </style>
 </head>
@@ -111,7 +111,7 @@
     </div>
   </div>
 
-<div id="profile-modal" class="fixed inset-0 z-[3000] bg-black hidden opacity-0 transition-opacity">
+  <div id="profile-modal" class="fixed inset-0 z-[3000] bg-black hidden opacity-0 transition-opacity">
     <img id="profile-bg" src="" class="absolute inset-0 w-full h-full object-cover opacity-40 hidden" />
     <div class="absolute inset-0 bg-gradient-to-t from-[#0a0010] via-[#0a0010]/80 to-transparent"></div>
     
@@ -129,7 +129,7 @@
         <div class="border-b border-purple-800/50 pb-6 mb-2">
           <p class="text-sm text-purple-300 mb-2 font-bold">🕵️ Lejyoner Stalkla (Kullanıcı Ara)</p>
           <div class="flex gap-2">
-            <input type="text" id="stalk-input" placeholder="Nick yaz pampik..." class="flex-1 bg-black/60 border border-purple-800/50 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500">
+            <input type="text" id="stalk-input" placeholder="Nick yaz pampik..." class="flex-1 bg-black/60 border border-purple-800/50 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500" onkeypress="if(event.key === 'Enter') stalkUser()">
             <button onclick="stalkUser()" class="bg-purple-600 hover:bg-purple-500 px-4 py-2 rounded-xl text-white font-bold text-sm transition-colors">Ara</button>
           </div>
         </div>
@@ -162,16 +162,14 @@
     </div>
   </div>
 
-        <div id="admin-btn-container" class="w-full mt-2 hidden">
-           <button onclick="openAdminPanelFromProfile()" class="w-full bg-red-900/20 border border-red-500/50 text-red-400 hover:bg-red-600 hover:text-white py-3 rounded-xl font-bold uppercase tracking-wider text-sm transition-colors shadow-[0_0_15px_rgba(248,113,113,0.2)]">👑 Lejyon İstihbarat</button>
-          <div id="public-profile-modal" class="fixed inset-0 z-[3000] bg-black/80 backdrop-blur-sm flex items-center justify-center hidden opacity-0 transition-opacity" onclick="closePublicProfile(event)">
-    <div onclick="event.stopPropagation()" class="bg-dark-panel border border-purple-500/30 w-full max-w-2xl p-8 rounded-3xl relative shadow-[0_0_40px_#7c3aed44] max-h-[90vh] overflow-y-auto flex flex-col md:flex-row gap-8">
-      <button onclick="closePublicProfile()" class="absolute top-4 right-5 text-purple-400 hover:text-white text-3xl leading-none">&times;</button>
+  <div id="public-profile-modal" class="fixed inset-0 z-[3000] bg-black/90 backdrop-blur-md flex items-center justify-center hidden opacity-0 transition-opacity" onclick="closePublicProfile(event)">
+    <div onclick="event.stopPropagation()" class="bg-dark-panel border border-purple-500/30 w-full max-w-4xl p-8 md:p-12 rounded-3xl relative shadow-[0_0_60px_#7c3aed44] max-h-[90vh] overflow-y-auto flex flex-col md:flex-row gap-8">
+      <button onclick="closePublicProfile()" class="absolute top-4 right-5 text-purple-400 hover:text-white text-4xl leading-none">&times;</button>
       
       <div class="flex flex-col items-center justify-center gap-4 md:w-1/3 border-b md:border-b-0 md:border-r border-purple-800/50 pb-6 md:pb-0 md:pr-6">
-        <img id="public-pp" src="https://i.imgur.com/6jNq1B8.png" class="w-32 h-32 rounded-full border-4 border-purple-600 object-cover shadow-[0_0_20px_#7c3aed88]" />
-        <h2 id="public-name" class="text-3xl font-display text-white tracking-widest uppercase text-center"></h2>
-        <span id="public-status" class="text-xs font-bold px-3 py-1 rounded-full bg-purple-900/50 text-purple-300 border border-purple-500/30"></span>
+        <img id="public-pp" src="" class="w-32 h-32 rounded-full border-4 border-purple-600 object-cover shadow-[0_0_20px_#7c3aed88]" />
+        <h2 id="public-name" class="text-4xl font-display text-white tracking-widest uppercase text-center"></h2>
+        <span id="public-status" class="text-xs font-bold px-3 py-1 rounded-full bg-purple-900/50 text-purple-300 border border-purple-500/30 uppercase tracking-widest"></span>
         <span id="public-karma" class="text-xs font-bold text-yellow-400 drop-shadow-[0_0_5px_rgba(250,204,21,0.8)] mt-1"></span>
       </div>
       
@@ -183,10 +181,6 @@
         <div>
           <h3 class="text-purple-300 font-display text-xl mb-3 border-b border-purple-800/50 pb-1">İzleme Listesi</h3>
           <div id="public-watchlist" class="flex gap-3 overflow-x-auto pb-2 scrollbar-thin"></div>
-        </div>
-      </div>
-    </div>
-  </div>
         </div>
       </div>
     </div>
@@ -283,33 +277,11 @@
       </div>
     </div>
   </div>
-<div id="public-profile-modal" class="fixed inset-0 z-[3000] bg-black/90 backdrop-blur-md flex items-center justify-center hidden opacity-0 transition-opacity" onclick="closePublicProfile(event)">
-    <div onclick="event.stopPropagation()" class="bg-dark-panel border border-purple-500/30 w-full max-w-4xl p-8 md:p-12 rounded-3xl relative shadow-[0_0_60px_#7c3aed44] max-h-[90vh] overflow-y-auto flex flex-col md:flex-row gap-8">
-      <button onclick="closePublicProfile()" class="absolute top-4 right-5 text-purple-400 hover:text-white text-4xl leading-none">&times;</button>
-      
-      <div class="flex flex-col items-center justify-center gap-4 md:w-1/3 border-b md:border-b-0 md:border-r border-purple-800/50 pb-6 md:pb-0 md:pr-6">
-        <img id="public-pp" src="" class="w-32 h-32 rounded-full border-4 border-purple-600 object-cover shadow-[0_0_20px_#7c3aed88]" />
-        <h2 id="public-name" class="text-4xl font-display text-white tracking-widest uppercase text-center"></h2>
-        <span id="public-status" class="text-xs font-bold px-3 py-1 rounded-full bg-purple-900/50 text-purple-300 border border-purple-500/30">V.I.P. ÜYE</span>
-      </div>
-      
-      <div class="md:w-2/3 flex flex-col gap-6 w-full">
-        <div>
-          <h3 class="text-purple-300 font-display text-xl mb-3 border-b border-purple-800/50 pb-1">Son İzledikleri</h3>
-          <div id="public-history" class="flex gap-3 overflow-x-auto pb-2 scrollbar-thin"></div>
-        </div>
-        <div>
-          <h3 class="text-purple-300 font-display text-xl mb-3 border-b border-purple-800/50 pb-1">İzleme Listesi</h3>
-          <div id="public-watchlist" class="flex gap-3 overflow-x-auto pb-2 scrollbar-thin"></div>
-        </div>
-      </div>
-    </div>
-  </div>
+
   <div id="player-overlay"><div class="flex items-center justify-between bg-black px-5 py-3 border-b border-purple-900/60"><span id="player-title" class="text-purple-200 text-sm font-semibold truncate"></span><button onclick="closePlayer()" class="flex items-center gap-2 text-purple-400 hover:text-white text-sm transition-colors">Kapat</button></div><iframe id="player-frame" src="" allowfullscreen allow="autoplay; fullscreen"></iframe></div>
   <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[300] transition-all duration-300 opacity-0 translate-y-4 pointer-events-none"><div class="bg-purple-900/90 backdrop-blur border border-purple-600/50 text-purple-100 text-sm px-5 py-3 rounded-full shadow-xl flex items-center gap-2"><span id="toast-icon">ℹ️</span><span id="toast-msg"></span></div></div>
 
   <script>
-    // ════════════════════ TEMEL AYARLAR VE ADMİN ════════════════════
     const API_KEY = '98148cd009e2989e8e10c7d0abdfbaad';
     const BASE_URL = 'https://api.themoviedb.org/3';
     const IMG_BASE = 'https://image.tmdb.org/t/p/';
@@ -328,7 +300,17 @@
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
-    // ════════════════════ ADMİN & PROFİL MOTORLARI ════════════════════
+    function getAvatar(name) { return `https://ui-avatars.com/api/?name=${name}&background=7c3aed&color=fff&size=256`; }
+    function getRank(karma) {
+      if(!karma) return 'Çaylak';
+      if(karma < 50) return 'Çaylak';
+      if(karma < 200) return 'Müdavim';
+      if(karma < 500) return 'Sinefil';
+      if(karma < 1000) return 'Kült İzleyici';
+      return 'Yeraltı Baronu';
+    }
+
+    // ADMİN PANELİ 
     function openAdminPanel() {
       database.ref('kullanicilar').once('value').then(snap => {
         let html = '<div class="space-y-3 w-full max-h-[50vh] overflow-y-auto pr-2">';
@@ -352,110 +334,100 @@
       });
     }
 
+    // KENDİ PROFİL PANELİ (ZQWQZ TARZI)
     function openProfilePanel(username) {
       const safeNick = username.toLowerCase().replace(/[.#$\[\]]/g, '_');
       document.getElementById('profile-name').textContent = username;
-      database.ref('kullanicilar/' + safeNick + '/pp').once('value').then(snap => {
-        if(snap.exists()) document.getElementById('profile-pp').src = snap.val();
-        else document.getElementById('profile-pp').src = 'https://i.imgur.com/6jNq1B8.png'; 
+      database.ref('kullanicilar/' + safeNick).once('value').then(snap => {
+        const data = snap.val() || {};
+        const karma = data.karma || 0;
+        document.getElementById('profile-pp').src = data.pp || getAvatar(username);
+        document.getElementById('profile-rank').textContent = getRank(karma);
+        document.getElementById('profile-karma').textContent = `⚡ ${karma} Karma`;
+        const bgImg = document.getElementById('profile-bg');
+        if(data.bg) { bgImg.src = data.bg; bgImg.classList.remove('hidden'); } else { bgImg.classList.add('hidden'); bgImg.src = ''; }
       });
       if(adminler.includes(username.toLowerCase())) { document.getElementById('admin-btn-container').classList.remove('hidden'); } else { document.getElementById('admin-btn-container').classList.add('hidden'); }
       const mod = document.getElementById('profile-modal'); mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50);
     }
-    // ════════════════════ BAŞKASININ PROFİLİ (STALK) MOTORU ════════════════════
-    function openPublicProfile(username) {
-      const safeNick = username.toLowerCase().replace(/[.#$\[\]]/g, '_');
-      document.getElementById('public-name').textContent = username;
-      
-      // PP Çek
-      database.ref('kullanicilar/' + safeNick + '/pp').once('value').then(snap => {
-        document.getElementById('public-pp').src = snap.exists() ? snap.val() : 'https://i.imgur.com/6jNq1B8.png';
-      });
-      
-      // Admin Rütbesi Şovu
-      const statusEl = document.getElementById('public-status');
-      if (adminler.includes(username.toLowerCase())) {
-        statusEl.textContent = '👑 LEJYON BARONU';
-        statusEl.className = 'text-xs font-bold px-3 py-1 rounded-full bg-red-900/50 text-red-400 border border-red-500/50 drop-shadow-[0_0_5px_rgba(248,113,113,0.8)]';
-      } else {
-        statusEl.textContent = 'V.I.P. ÜYE';
-        statusEl.className = 'text-xs font-bold px-3 py-1 rounded-full bg-purple-900/50 text-purple-300 border border-purple-500/30';
-      }
-
-      // Geçmişi Çek
-      database.ref('kullanicilar/' + safeNick + '/history').once('value').then(snap => {
-        const histDiv = document.getElementById('public-history'); histDiv.innerHTML = '';
-        if(!snap.exists()) { histDiv.innerHTML = '<p class="text-xs text-gray-500">Tertemiz, henüz icraat yok.</p>'; }
-        else {
-          let hist = []; snap.forEach(c => hist.push(c.val())); hist.sort((a,b) => b.watchedAt - a.watchedAt);
-          hist.slice(0, 10).forEach(item => {
-            // Tıklayınca filmi açması için onClick eklendi
-            histDiv.innerHTML += `<img src="${IMG_BASE}w185${item.poster_path}" class="w-16 h-24 object-cover rounded border border-purple-800/30 cursor-pointer hover:scale-105 transition-transform" onclick="closePublicProfile(); searchSelect(${item.id}, '${item.media_type}')" title="${item.title||item.name}">`;
-          });
-        }
-      });
-
-      // Listeyi Çek
-      database.ref('kullanicilar/' + safeNick + '/watchlist').once('value').then(snap => {
-        const watchDiv = document.getElementById('public-watchlist'); watchDiv.innerHTML = '';
-        if(!snap.exists()) { watchDiv.innerHTML = '<p class="text-xs text-gray-500">Liste bomboş kanki.</p>'; }
-        else {
-          let list = []; snap.forEach(c => list.push(c.val())); list.sort((a,b) => b.addedAt - a.addedAt);
-          list.slice(0, 10).forEach(item => {
-            watchDiv.innerHTML += `<img src="${IMG_BASE}w185${item.poster_path}" class="w-16 h-24 object-cover rounded border border-purple-800/30 cursor-pointer hover:scale-105 transition-transform" onclick="closePublicProfile(); searchSelect(${item.id}, '${item.media_type}')" title="${item.title||item.name}">`;
-          });
-        }
-      });
-
-      const mod = document.getElementById('public-profile-modal');
-      mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50);
-    }
-
-    function closePublicProfile() {
-      const mod = document.getElementById('public-profile-modal');
-      mod.classList.add('opacity-0'); setTimeout(()=> mod.classList.add('hidden'), 300);
-    }
+    
     function closeProfile() { const mod = document.getElementById('profile-modal'); mod.classList.add('opacity-0'); setTimeout(()=> mod.classList.add('hidden'), 300); }
     function openAdminPanelFromProfile() { closeProfile(); openAdminPanel(); }
     
-    function updatePP() {
-      const link = document.getElementById('pp-input').value.trim(); if(!link) return;
+    function updateProfileSettings() {
+      const ppLink = document.getElementById('pp-input').value.trim(); const bgLink = document.getElementById('bg-input').value.trim();
       const user = localStorage.getItem('kadavra_vip_user'); const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
-      database.ref('kullanicilar/' + safeNick + '/pp').set(link);
-      document.getElementById('profile-pp').src = link; document.getElementById('pp-input').value = ''; showToast('PP Güncellendi!');
+      
+      // Resim kırık kontrolü (hata verirse default resmi basar)
+      if(ppLink) { 
+        const testImg = new Image();
+        testImg.onload = function() { database.ref('kullanicilar/' + safeNick + '/pp').set(ppLink); document.getElementById('profile-pp').src = ppLink; showToast('PP Güncellendi!'); };
+        testImg.onerror = function() { showToast('Kırık resim linki kanki, harf kalsın.'); database.ref('kullanicilar/' + safeNick + '/pp').remove(); document.getElementById('profile-pp').src = getAvatar(user); };
+        testImg.src = ppLink;
+      }
+      if(bgLink) { database.ref('kullanicilar/' + safeNick + '/bg').set(bgLink); const bgImg = document.getElementById('profile-bg'); bgImg.src = bgLink; bgImg.classList.remove('hidden'); showToast('Arkaplan Güncellendi!'); }
+      document.getElementById('pp-input').value = ''; document.getElementById('bg-input').value = '';
     }
 
     function changePassword() {
       const newPass = document.getElementById('new-pass-input').value.trim();
-      if(!newPass) return;
-      if(newPass.length < 3) { showToast('Şifre çok kısa kanki!'); return; }
-      const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
-      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
-      database.ref('kullanicilar/' + safeNick).update({ sifre: newPass }).then(() => {
-         localStorage.setItem('kadavra_vip_pass', newPass);
-         document.getElementById('new-pass-input').value = '';
-         showToast('Şifren jilet gibi güncellendi!');
-      }).catch(e => showToast('Bir hata oldu pampik.'));
+      if(!newPass) return; if(newPass.length < 3) { showToast('Şifre çok kısa kanki!'); return; }
+      const user = localStorage.getItem('kadavra_vip_user'); if(!user) return; const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      database.ref('kullanicilar/' + safeNick).update({ sifre: newPass }).then(() => { localStorage.setItem('kadavra_vip_pass', newPass); document.getElementById('new-pass-input').value = ''; showToast('Şifren jilet gibi güncellendi!'); }).catch(e => showToast('Bir hata oldu pampik.'));
+    }
+
+    // BAŞKASININ PROFİLİ (STALK) 
+    function stalkUser() {
+      const target = document.getElementById('stalk-input').value.trim();
+      if(!target) return; closeProfile(); openPublicProfile(target); document.getElementById('stalk-input').value = '';
+    }
+
+    function openPublicProfile(username) {
+      const safeNick = username.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      database.ref('kullanicilar/' + safeNick).once('value').then(userSnap => {
+        if(!userSnap.exists()) { showToast('Böyle bir pampik yeraltında yok!'); return; }
+        const data = userSnap.val(); const karma = data.karma || 0;
+        
+        document.getElementById('public-name').textContent = username;
+        document.getElementById('public-pp').src = data.pp ? data.pp : getAvatar(username);
+        
+        const statusEl = document.getElementById('public-status');
+        if (adminler.includes(username.toLowerCase())) { statusEl.textContent = '👑 LEJYON BARONU'; statusEl.className = 'text-xs font-bold px-3 py-1 rounded-full bg-red-900/50 text-red-400 border border-red-500/50 drop-shadow-[0_0_5px_rgba(248,113,113,0.8)]'; } 
+        else { statusEl.textContent = getRank(karma); statusEl.className = 'text-xs font-bold px-3 py-1 rounded-full bg-purple-900/50 text-purple-300 border border-purple-500/30 uppercase tracking-widest'; }
+
+        document.getElementById('public-karma').textContent = `⚡ ${karma} Karma`;
+
+        const histDiv = document.getElementById('public-history'); histDiv.innerHTML = '';
+        if(!data.history) { histDiv.innerHTML = '<p class="text-xs text-gray-500">Tertemiz, henüz icraat yok.</p>'; }
+        else { let hist = Object.values(data.history); hist.sort((a,b) => b.watchedAt - a.watchedAt); hist.slice(0, 10).forEach(item => { histDiv.innerHTML += `<img src="${IMG_BASE}w185${item.poster_path}" class="w-16 h-24 md:w-20 md:h-32 object-cover rounded border border-purple-800/30 cursor-pointer hover:scale-105 transition-transform" onclick="closePublicProfile(); searchSelect(${item.id}, '${item.media_type}')" title="${item.title||item.name}">`; }); }
+
+        const watchDiv = document.getElementById('public-watchlist'); watchDiv.innerHTML = '';
+        if(!data.watchlist) { watchDiv.innerHTML = '<p class="text-xs text-gray-500">Liste bomboş kanki.</p>'; }
+        else { let list = Object.values(data.watchlist); list.sort((a,b) => b.addedAt - a.addedAt); list.slice(0, 10).forEach(item => { watchDiv.innerHTML += `<img src="${IMG_BASE}w185${item.poster_path}" class="w-16 h-24 md:w-20 md:h-32 object-cover rounded border border-purple-800/30 cursor-pointer hover:scale-105 transition-transform" onclick="closePublicProfile(); searchSelect(${item.id}, '${item.media_type}')" title="${item.title||item.name}">`; }); }
+
+        const mod = document.getElementById('public-profile-modal'); mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50);
+      });
+    }
+
+    function closePublicProfile(e) {
+      if(e && e.target.id !== 'public-profile-modal' && e.type === 'click') return; 
+      const mod = document.getElementById('public-profile-modal'); mod.classList.add('opacity-0'); setTimeout(()=> mod.classList.add('hidden'), 300);
     }
 
     // ════════════════════ BULUT GEÇMİŞ VE İZLEME LİSTESİ ════════════════════
     function saveToHistory(item, type) {
-      const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
-      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      const user = localStorage.getItem('kadavra_vip_user'); if(!user) return; const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
       database.ref(`kullanicilar/${safeNick}/history/${item.id}`).set({ ...item, media_type: type, watchedAt: Date.now() });
+      database.ref(`kullanicilar/${safeNick}/karma`).transaction(k => (k || 0) + 10);
     }
-    // İzlediği an adamın karmasını 10 puan artır (Sadece bir kere kaydederken)
-  database.ref(`kullanicilar/${safeNick}/karma`).transaction(k => (k || 0) + 10);
     
     function removeFromHistory(itemId) {
-      const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
-      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      const user = localStorage.getItem('kadavra_vip_user'); if(!user) return; const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
       database.ref(`kullanicilar/${safeNick}/history/${itemId}`).remove(); showToast('Geçmişten silindi!');
     }
     
     function loadHistory() {
-      const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
-      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      const user = localStorage.getItem('kadavra_vip_user'); if(!user) return; const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
       database.ref(`kullanicilar/${safeNick}/history`).on('value', snap => {
         const section = document.getElementById('continue-watching'); const row = document.getElementById('continue-row');
         if(!snap.exists()) { section.classList.add('hidden'); return; }
@@ -470,14 +442,12 @@
     }
 
     function toggleWatchlist() {
-      if (!currentItem) return; const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
-      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_'); const ref = database.ref(`kullanicilar/${safeNick}/watchlist/${currentItem.id}`);
+      if (!currentItem) return; const user = localStorage.getItem('kadavra_vip_user'); if(!user) return; const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_'); const ref = database.ref(`kullanicilar/${safeNick}/watchlist/${currentItem.id}`);
       ref.once('value').then(snap => { if(snap.exists()) { ref.remove(); showToast('❌ Listenden çıkarıldı.'); } else { ref.set({ ...currentItem, addedAt: Date.now() }); showToast('✅ Listene eklendi.'); } checkWatchlistStatus(currentItem.id); });
     }
 
     function checkWatchlistStatus(id) {
-      const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
-      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      const user = localStorage.getItem('kadavra_vip_user'); if(!user) return; const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
       database.ref(`kullanicilar/${safeNick}/watchlist/${id}`).once('value').then(snap => {
          const btnText = document.getElementById('watchlist-text'); const btnIcon = document.getElementById('watchlist-icon');
          if (snap.exists()) { btnText.textContent = 'Listeden Çıkar'; btnIcon.textContent = '✓'; } else { btnText.textContent = 'Listeme Ekle'; btnIcon.textContent = '+'; }
@@ -485,12 +455,10 @@
     }
 
     function loadWatchlist() {
-      const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
-      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      const user = localStorage.getItem('kadavra_vip_user'); if(!user) return; const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
       database.ref(`kullanicilar/${safeNick}/watchlist`).on('value', snap => {
          const section = document.getElementById('watchlist-section'); const row = document.getElementById('watchlist-row');
-         if(!snap.exists()) { section.classList.add('hidden'); return; }
-         section.classList.remove('hidden'); row.innerHTML = '';
+         if(!snap.exists()) { section.classList.add('hidden'); return; } section.classList.remove('hidden'); row.innerHTML = '';
          let list = []; snap.forEach(c => list.push(c.val())); list.sort((a,b) => b.addedAt - a.addedAt);
          list.forEach(item => {
             const title = item.title || item.name || ''; const div = document.createElement('div'); div.className = 'card-wrap';
@@ -500,13 +468,10 @@
       });
     }
 
-    // ════════════════════ TMDB VE SAYFA İŞLEMLERİ (HATASIZ) ════════════════════
+    // ════════════════════ TMDB VE SAYFA İŞLEMLERİ ════════════════════
     let heroData = null; let currentItem = null; let currentSeasons = []; let searchTimer = null;
     window.addEventListener('scroll', () => { document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60); });
-    
-    // BURADAKİ TYPO DÜZELTİLDİ (newSearchParams -> new URLSearchParams)
     async function tmdb(path, params = {}) { const q = new URLSearchParams({ api_key: API_KEY, language: LANG, ...params }); const r = await fetch(`${BASE_URL}${path}?${q}`); if (!r.ok) throw new Error(`TMDB ${r.status}`); return r.json(); }
-    
     async function init() { if (!API_KEY || API_KEY === 'BURAYA_API_KEY_GELECEK') { showToast('⚠️ Lütfen API anahtarınızı girin!'); return; } try { loadHistory(); loadWatchlist(); await Promise.all([loadHero(), loadTrending(), loadMovies(), loadSeries()]); } catch(e) { console.log(e); } }
     async function loadHero(type = 'all') { let data; let mediaType = 'movie'; if (type === 'movie') { data = await tmdb('/movie/popular'); } else if (type === 'tv') { data = await tmdb('/tv/popular'); mediaType = 'tv'; } else { data = await tmdb('/trending/all/day'); } const items = data.results.filter(m => m.backdrop_path); heroData = items[Math.floor(Math.random() * Math.min(5, items.length))]; renderHero(heroData, heroData.media_type || mediaType); }
     function renderHero(item, type) { const el = id => document.getElementById(id); const bg = el('hero-bg'); const img = `${IMG_BASE}original${item.backdrop_path}`; bg.style.backgroundImage = `url(${img})`; bg.style.opacity = '0'; const t = new Image(); t.src = img; t.onload = () => { bg.style.opacity = '1'; }; el('hero-title').textContent = item.title || item.name; el('hero-desc').textContent = item.overview || 'Açıklama bulunamadı.'; const year = (item.release_date || item.first_air_date || '').slice(0,4); const rating = item.vote_average ? item.vote_average.toFixed(1) : '–'; el('hero-meta').innerHTML = `<span class="rating-badge">⭐ ${rating}</span><span class="text-purple-400 text-sm">${year}</span><span class="text-purple-600 text-sm uppercase text-xs">${type === 'tv' ? '● Dizi' : '● Film'}</span>`; ['hero-badge','hero-title','hero-desc','hero-meta','hero-btns'].forEach(id => { const el2 = el(id); el2.style.opacity = '1'; el2.style.transform = 'translateY(0)'; }); el('hero-play').onclick = () => { currentItem = { ...item, media_type: type }; playModal(); }; el('hero-btns').querySelector('button:last-child').onclick = () => openModal(item, type); }
@@ -546,113 +511,6 @@
     function showToast(msg, long = false) { const t = document.getElementById('toast'); document.getElementById('toast-msg').textContent = msg; t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)'; t.style.pointerEvents = 'all'; setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(16px)'; t.style.pointerEvents = 'none'; }, long ? 4000 : 2500); }
     async function playRandom() { showToast('🎲 Rastgele efsane seçiliyor...', false); try { const randomPage = Math.floor(Math.random() * 20) + 1; const data = await tmdb('/movie/popular', { page: randomPage }); const items = data.results.filter(m => m.backdrop_path && m.poster_path); if (items.length > 0) { openModal(items[Math.floor(Math.random() * items.length)], 'movie'); } else { showToast('Tekrar dene.'); } } catch(e) { showToast('Hata.'); } }
 
-    // Otomatik Harf Profil Fotoğrafı Oluşturucu
-    function getAvatar(name) { return `https://ui-avatars.com/api/?name=${name}&background=7c3aed&color=fff&size=256`; }
-
-    // Kendi Profilini Aç
-    function openProfilePanel(username) {
-      const safeNick = username.toLowerCase().replace(/[.#$\[\]]/g, '_');
-      document.getElementById('profile-name').textContent = username;
-      
-      database.ref('kullanicilar/' + safeNick).once('value').then(snap => {
-        const data = snap.val() || {};
-        document.getElementById('profile-pp').src = data.pp || getAvatar(username);
-        
-        const bgImg = document.getElementById('profile-bg');
-        if(data.bg) { bgImg.src = data.bg; bgImg.classList.remove('hidden'); } 
-        else { bgImg.classList.add('hidden'); bgImg.src = ''; }
-      });
-      
-      if(adminler.includes(username.toLowerCase())) { document.getElementById('admin-btn-container').classList.remove('hidden'); } 
-      else { document.getElementById('admin-btn-container').classList.add('hidden'); }
-      
-      const mod = document.getElementById('profile-modal'); mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50);
-    }
-    
-    function closeProfile() { const mod = document.getElementById('profile-modal'); mod.classList.add('opacity-0'); setTimeout(()=> mod.classList.add('hidden'), 300); }
-    function openAdminPanelFromProfile() { closeProfile(); openAdminPanel(); }
-    
-    // Hem PP Hem Arkaplan Güncelle
-    function updateProfileSettings() {
-      const ppLink = document.getElementById('pp-input').value.trim();
-      const bgLink = document.getElementById('bg-input').value.trim();
-      const user = localStorage.getItem('kadavra_vip_user'); 
-      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
-      
-      if(ppLink) { database.ref('kullanicilar/' + safeNick + '/pp').set(ppLink); document.getElementById('profile-pp').src = ppLink; }
-      if(bgLink) { 
-        database.ref('kullanicilar/' + safeNick + '/bg').set(bgLink); 
-        const bgImg = document.getElementById('profile-bg');
-        bgImg.src = bgLink; bgImg.classList.remove('hidden'); 
-      }
-      
-      document.getElementById('pp-input').value = ''; document.getElementById('bg-input').value = '';
-      showToast('Profil ayarların jilet gibi güncellendi!');
-    }
-
-    function changePassword() {
-      const newPass = document.getElementById('new-pass-input').value.trim();
-      if(!newPass) return;
-      if(newPass.length < 3) { showToast('Şifre çok kısa kanki!'); return; }
-      const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
-      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
-      database.ref('kullanicilar/' + safeNick).update({ sifre: newPass }).then(() => {
-         localStorage.setItem('kadavra_vip_pass', newPass);
-         document.getElementById('new-pass-input').value = '';
-         showToast('Şifren güncellendi!');
-      }).catch(e => showToast('Bir hata oldu pampik.'));
-    }
-
-    // ════════════════════ BAŞKASININ PROFİLİ (STALK) MOTORU ════════════════════
-    function openPublicProfile(username) {
-      const safeNick = username.toLowerCase().replace(/[.#$\[\]]/g, '_');
-      document.getElementById('public-name').textContent = username;
-      
-      database.ref('kullanicilar/' + safeNick + '/pp').once('value').then(snap => {
-        document.getElementById('public-pp').src = snap.exists() ? snap.val() : getAvatar(username);
-      });
-      
-      const statusEl = document.getElementById('public-status');
-      if (adminler.includes(username.toLowerCase())) {
-        statusEl.textContent = '👑 LEJYON BARONU';
-        statusEl.className = 'text-xs font-bold px-3 py-1 rounded-full bg-red-900/50 text-red-400 border border-red-500/50 drop-shadow-[0_0_5px_rgba(248,113,113,0.8)]';
-      } else {
-        statusEl.textContent = 'V.I.P. ÜYE';
-        statusEl.className = 'text-xs font-bold px-3 py-1 rounded-full bg-purple-900/50 text-purple-300 border border-purple-500/30';
-      }
-
-      database.ref('kullanicilar/' + safeNick + '/history').once('value').then(snap => {
-        const histDiv = document.getElementById('public-history'); histDiv.innerHTML = '';
-        if(!snap.exists()) { histDiv.innerHTML = '<p class="text-xs text-gray-500">Tertemiz, henüz icraat yok.</p>'; }
-        else {
-          let hist = []; snap.forEach(c => hist.push(c.val())); hist.sort((a,b) => b.watchedAt - a.watchedAt);
-          hist.slice(0, 10).forEach(item => {
-            histDiv.innerHTML += `<img src="${IMG_BASE}w185${item.poster_path}" class="w-20 h-32 object-cover rounded border border-purple-800/30 cursor-pointer hover:scale-105 transition-transform" onclick="closePublicProfile(); searchSelect(${item.id}, '${item.media_type}')" title="${item.title||item.name}">`;
-          });
-        }
-      });
-
-      database.ref('kullanicilar/' + safeNick + '/watchlist').once('value').then(snap => {
-        const watchDiv = document.getElementById('public-watchlist'); watchDiv.innerHTML = '';
-        if(!snap.exists()) { watchDiv.innerHTML = '<p class="text-xs text-gray-500">Liste bomboş kanki.</p>'; }
-        else {
-          let list = []; snap.forEach(c => list.push(c.val())); list.sort((a,b) => b.addedAt - a.addedAt);
-          list.slice(0, 10).forEach(item => {
-            watchDiv.innerHTML += `<img src="${IMG_BASE}w185${item.poster_path}" class="w-20 h-32 object-cover rounded border border-purple-800/30 cursor-pointer hover:scale-105 transition-transform" onclick="closePublicProfile(); searchSelect(${item.id}, '${item.media_type}')" title="${item.title||item.name}">`;
-          });
-        }
-      });
-
-      const mod = document.getElementById('public-profile-modal');
-      mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50);
-    }
-
-    function closePublicProfile(e) {
-      if(e && e.target.id !== 'public-profile-modal' && e.type === 'click') return; 
-      const mod = document.getElementById('public-profile-modal');
-      mod.classList.add('opacity-0'); setTimeout(()=> mod.classList.add('hidden'), 300);
-    }
-    
     // ════════════════════ TAYFA, YORUM VE ŞUKU MOTORLARI ════════════════════
     function broadcastToTayfa(item, episode) {
       const user = localStorage.getItem('kadavra_vip_user') || 'Kayıtsız'; const title = (item.title || item.name || ''); const epText = episode ? ` (S${episode.season_number} B${episode.episode_number})` : ''; const safeUser = user.toLowerCase().replace(/[.#$\[\]]/g, '_'); 
@@ -741,16 +599,16 @@
 
           const div = document.createElement('div'); div.className = 'bg-purple-950/30 border border-purple-800/30 p-3 rounded-xl mb-3 relative group flex gap-3';
           
-          let ppHTML = `<div class="w-8 h-8 rounded-full bg-purple-800 flex items-center justify-center font-bold text-white shrink-0" id="pp-${comment._key}">${comment.user.charAt(0).toUpperCase()}</div>`;
+          let ppHTML = `<div class="w-8 h-8 rounded-full bg-purple-800 flex items-center justify-center font-bold text-white shrink-0 overflow-hidden" id="pp-${comment._key}">${comment.user.charAt(0).toUpperCase()}</div>`;
           database.ref('kullanicilar/' + cSafe + '/pp').once('value').then(snap => {
-             if(snap.exists()) document.getElementById(`pp-${comment._key}`).innerHTML = `<img src="${snap.val()}" class="w-full h-full object-cover rounded-full">`;
+             if(snap.exists()) document.getElementById(`pp-${comment._key}`).innerHTML = `<img src="${snap.val()}" class="w-full h-full object-cover">`;
           });
 
           div.innerHTML = `
             ${ppHTML}
             <div class="flex-1">
               <div class="flex items-center justify-between mb-1">
-                <span class="text-sm font-bold tracking-wider ${userIsAdmin ? 'text-red-400 drop-shadow-[0_0_5px_rgba(248,113,113,0.8)]' : 'text-purple-300'}">${comment.user} ${userIsAdmin ? '👑' : ''}</span>
+                <span onclick="openPublicProfile('${comment.user}')" class="cursor-pointer hover:underline text-sm font-bold tracking-wider ${userIsAdmin ? 'text-red-400 drop-shadow-[0_0_5px_rgba(248,113,113,0.8)]' : 'text-purple-300'}">${comment.user} ${userIsAdmin ? '👑' : ''}</span>
                 <div><span class="text-purple-600 text-[10px]">${date}</span>${deleteBtn}</div>
               </div>
               <p class="text-purple-100 text-sm break-words">${comment.text}</p>
@@ -763,145 +621,6 @@
           list.appendChild(div);
         });
       });
-    }
-
-    // ════════════════════ KARMA, RANK VE PROFİL MOTORLARI ════════════════════
-    // Default Harf Profil Fotoğrafı (Kırık Resim Fixi)
-    function getAvatar(name) { return `https://ui-avatars.com/api/?name=${name}&background=7c3aed&color=fff&size=256`; }
-
-    // Rank Hesaplayıcı
-    function getRank(karma) {
-      if(!karma) return 'Çaylak';
-      if(karma < 50) return 'Çaylak';
-      if(karma < 200) return 'Müdavim';
-      if(karma < 500) return 'Sinefil';
-      if(karma < 1000) return 'Kült İzleyici';
-      return 'Yeraltı Baronu';
-    }
-
-    // Kendi Profilini ZQWQZ Tarzı Tam Ekran Aç
-    function openProfilePanel(username) {
-      const safeNick = username.toLowerCase().replace(/[.#$\[\]]/g, '_');
-      document.getElementById('profile-name').textContent = username;
-      
-      database.ref('kullanicilar/' + safeNick).once('value').then(snap => {
-        const data = snap.val() || {};
-        const karma = data.karma || 0;
-        
-        document.getElementById('profile-pp').src = data.pp || getAvatar(username);
-        document.getElementById('profile-rank').textContent = getRank(karma);
-        document.getElementById('profile-karma').textContent = `⚡ ${karma} Karma`;
-        
-        const bgImg = document.getElementById('profile-bg');
-        if(data.bg) { bgImg.src = data.bg; bgImg.classList.remove('hidden'); } 
-        else { bgImg.classList.add('hidden'); bgImg.src = ''; }
-      });
-      
-      if(adminler.includes(username.toLowerCase())) { document.getElementById('admin-btn-container').classList.remove('hidden'); } 
-      else { document.getElementById('admin-btn-container').classList.add('hidden'); }
-      
-      const mod = document.getElementById('profile-modal'); mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50);
-    }
-    
-    function closeProfile() { const mod = document.getElementById('profile-modal'); mod.classList.add('opacity-0'); setTimeout(()=> mod.classList.add('hidden'), 300); }
-    function openAdminPanelFromProfile() { closeProfile(); openAdminPanel(); }
-    
-    // Hem PP Hem Arkaplan Güncelle
-    function updateProfileSettings() {
-      const ppLink = document.getElementById('pp-input').value.trim();
-      const bgLink = document.getElementById('bg-input').value.trim();
-      const user = localStorage.getItem('kadavra_vip_user'); 
-      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
-      
-      if(ppLink) { database.ref('kullanicilar/' + safeNick + '/pp').set(ppLink); document.getElementById('profile-pp').src = ppLink; }
-      if(bgLink) { 
-        database.ref('kullanicilar/' + safeNick + '/bg').set(bgLink); 
-        const bgImg = document.getElementById('profile-bg');
-        bgImg.src = bgLink; bgImg.classList.remove('hidden'); 
-      }
-      
-      document.getElementById('pp-input').value = ''; document.getElementById('bg-input').value = '';
-      showToast('Profil ayarların jilet gibi güncellendi!');
-    }
-
-    function changePassword() {
-      const newPass = document.getElementById('new-pass-input').value.trim();
-      if(!newPass) return;
-      if(newPass.length < 3) { showToast('Şifre çok kısa kanki!'); return; }
-      const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
-      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
-      database.ref('kullanicilar/' + safeNick).update({ sifre: newPass }).then(() => {
-         localStorage.setItem('kadavra_vip_pass', newPass);
-         document.getElementById('new-pass-input').value = '';
-         showToast('Şifren güncellendi!');
-      }).catch(e => showToast('Bir hata oldu pampik.'));
-    }
-
-    // Profil İçinden Başkasını Stalkla
-    function stalkUser() {
-      const target = document.getElementById('stalk-input').value.trim();
-      if(!target) return;
-      closeProfile();
-      openPublicProfile(target);
-      document.getElementById('stalk-input').value = '';
-    }
-
-    // BAŞKASININ PROFİLİNİ AÇMA EKRANI
-    function openPublicProfile(username) {
-      const safeNick = username.toLowerCase().replace(/[.#$\[\]]/g, '_');
-      
-      // Önce adam cidden var mı kontrol edelim
-      database.ref('kullanicilar/' + safeNick).once('value').then(userSnap => {
-        if(!userSnap.exists()) {
-          showToast('Böyle bir pampik yeraltında yok!'); return;
-        }
-
-        const data = userSnap.val();
-        const karma = data.karma || 0;
-        
-        document.getElementById('public-name').textContent = username;
-        document.getElementById('public-pp').src = data.pp ? data.pp : getAvatar(username);
-        
-        const statusEl = document.getElementById('public-status');
-        if (adminler.includes(username.toLowerCase())) {
-          statusEl.textContent = '👑 LEJYON BARONU';
-          statusEl.className = 'text-xs font-bold px-3 py-1 rounded-full bg-red-900/50 text-red-400 border border-red-500/50 drop-shadow-[0_0_5px_rgba(248,113,113,0.8)]';
-        } else {
-          statusEl.textContent = getRank(karma);
-          statusEl.className = 'text-xs font-bold px-3 py-1 rounded-full bg-purple-900/50 text-purple-300 border border-purple-500/30 uppercase tracking-widest';
-        }
-
-        document.getElementById('public-karma').textContent = `⚡ ${karma} Karma`;
-
-        // Geçmişi Çek
-        const histDiv = document.getElementById('public-history'); histDiv.innerHTML = '';
-        if(!data.history) { histDiv.innerHTML = '<p class="text-xs text-gray-500">Tertemiz, henüz icraat yok.</p>'; }
-        else {
-          let hist = Object.values(data.history); hist.sort((a,b) => b.watchedAt - a.watchedAt);
-          hist.slice(0, 10).forEach(item => {
-            histDiv.innerHTML += `<img src="${IMG_BASE}w185${item.poster_path}" class="w-16 h-24 md:w-20 md:h-32 object-cover rounded border border-purple-800/30 cursor-pointer hover:scale-105 transition-transform" onclick="closePublicProfile(); searchSelect(${item.id}, '${item.media_type}')" title="${item.title||item.name}">`;
-          });
-        }
-
-        // Listeyi Çek
-        const watchDiv = document.getElementById('public-watchlist'); watchDiv.innerHTML = '';
-        if(!data.watchlist) { watchDiv.innerHTML = '<p class="text-xs text-gray-500">Liste bomboş kanki.</p>'; }
-        else {
-          let list = Object.values(data.watchlist); list.sort((a,b) => b.addedAt - a.addedAt);
-          list.slice(0, 10).forEach(item => {
-            watchDiv.innerHTML += `<img src="${IMG_BASE}w185${item.poster_path}" class="w-16 h-24 md:w-20 md:h-32 object-cover rounded border border-purple-800/30 cursor-pointer hover:scale-105 transition-transform" onclick="closePublicProfile(); searchSelect(${item.id}, '${item.media_type}')" title="${item.title||item.name}">`;
-          });
-        }
-
-        const mod = document.getElementById('public-profile-modal');
-        mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50);
-      });
-    }
-
-    function closePublicProfile(e) {
-      if(e && e.target.id !== 'public-profile-modal' && e.type === 'click') return; 
-      const mod = document.getElementById('public-profile-modal');
-      mod.classList.add('opacity-0'); setTimeout(()=> mod.classList.add('hidden'), 300);
     }
 
     // ════════════════════ SOHBET (CHAT) MOTORU ════════════════════
@@ -1013,3 +732,4 @@
     autoLoginCheck();
   </script>
 </body>
+</html>
