@@ -111,17 +111,29 @@
     </div>
   </div>
 
-  <div id="profile-modal" class="fixed inset-0 z-[3000] bg-black hidden opacity-0 transition-opacity">
-    <img id="profile-bg" src="" class="absolute inset-0 w-full h-full object-cover opacity-30 hidden" />
-    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent"></div>
+<div id="profile-modal" class="fixed inset-0 z-[3000] bg-black hidden opacity-0 transition-opacity">
+    <img id="profile-bg" src="" class="absolute inset-0 w-full h-full object-cover opacity-40 hidden" />
+    <div class="absolute inset-0 bg-gradient-to-t from-[#0a0010] via-[#0a0010]/80 to-transparent"></div>
     
     <div class="relative z-10 w-full h-full overflow-y-auto p-6 md:p-12 flex flex-col items-center justify-start pt-20">
       <button onclick="closeProfile()" class="absolute top-6 right-8 text-purple-400 hover:text-white text-5xl leading-none drop-shadow-md">&times;</button>
       
-      <img id="profile-pp" src="" class="w-36 h-36 rounded-full border-4 border-purple-500 object-cover shadow-[0_0_40px_#7c3aed] mb-6" />
-      <h2 id="profile-name" class="text-5xl font-display text-white tracking-widest uppercase mb-10 drop-shadow-[0_0_10px_#a855f7]"></h2>
+      <img id="profile-pp" src="" class="w-36 h-36 rounded-full border-4 border-purple-500 object-cover shadow-[0_0_40px_#7c3aed] mb-4" />
+      <h2 id="profile-name" class="text-5xl font-display text-white tracking-widest uppercase drop-shadow-[0_0_10px_#a855f7]"></h2>
+      <div class="flex items-center gap-3 mt-2 mb-10">
+        <span id="profile-rank" class="text-xs font-bold px-4 py-1.5 rounded-full bg-purple-900/80 text-purple-200 border border-purple-500/50 uppercase tracking-widest"></span>
+        <span id="profile-karma" class="text-xs font-bold text-yellow-400 drop-shadow-[0_0_5px_rgba(250,204,21,0.8)]"></span>
+      </div>
       
       <div class="w-full max-w-xl bg-dark-panel/80 backdrop-blur-md border border-purple-500/30 p-8 rounded-2xl shadow-2xl flex flex-col gap-6">
+        <div class="border-b border-purple-800/50 pb-6 mb-2">
+          <p class="text-sm text-purple-300 mb-2 font-bold">🕵️ Lejyoner Stalkla (Kullanıcı Ara)</p>
+          <div class="flex gap-2">
+            <input type="text" id="stalk-input" placeholder="Nick yaz pampik..." class="flex-1 bg-black/60 border border-purple-800/50 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500">
+            <button onclick="stalkUser()" class="bg-purple-600 hover:bg-purple-500 px-4 py-2 rounded-xl text-white font-bold text-sm transition-colors">Ara</button>
+          </div>
+        </div>
+
         <div>
           <p class="text-sm text-purple-300 mb-2 font-bold">Profil Fotoğrafı (GIF/JPG Linki)</p>
           <div class="flex gap-2">
@@ -143,7 +155,7 @@
             <button onclick="changePassword()" class="neon-btn px-4 py-2 rounded-xl text-white font-bold text-sm">Değiştir</button>
           </div>
         </div>
-        <div id="admin-btn-container" class="w-full mt-4 hidden">
+        <div id="admin-btn-container" class="w-full mt-2 hidden">
            <button onclick="openAdminPanelFromProfile()" class="w-full bg-red-900/40 border border-red-500/50 text-red-100 hover:bg-red-600 hover:text-white py-3 rounded-xl font-bold uppercase tracking-wider text-sm transition-colors shadow-[0_0_20px_rgba(248,113,113,0.3)]">👑 Lejyon İstihbarat Paneli</button>
         </div>
       </div>
@@ -159,7 +171,8 @@
       <div class="flex flex-col items-center justify-center gap-4 md:w-1/3 border-b md:border-b-0 md:border-r border-purple-800/50 pb-6 md:pb-0 md:pr-6">
         <img id="public-pp" src="https://i.imgur.com/6jNq1B8.png" class="w-32 h-32 rounded-full border-4 border-purple-600 object-cover shadow-[0_0_20px_#7c3aed88]" />
         <h2 id="public-name" class="text-3xl font-display text-white tracking-widest uppercase text-center"></h2>
-        <span id="public-status" class="text-xs font-bold px-3 py-1 rounded-full bg-purple-900/50 text-purple-300 border border-purple-500/30">V.I.P. ÜYE</span>
+        <span id="public-status" class="text-xs font-bold px-3 py-1 rounded-full bg-purple-900/50 text-purple-300 border border-purple-500/30"></span>
+        <span id="public-karma" class="text-xs font-bold text-yellow-400 drop-shadow-[0_0_5px_rgba(250,204,21,0.8)] mt-1"></span>
       </div>
       
       <div class="md:w-2/3 flex flex-col gap-6 w-full">
@@ -431,6 +444,8 @@
       const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
       database.ref(`kullanicilar/${safeNick}/history/${item.id}`).set({ ...item, media_type: type, watchedAt: Date.now() });
     }
+    // İzlediği an adamın karmasını 10 puan artır (Sadece bir kere kaydederken)
+  database.ref(`kullanicilar/${safeNick}/karma`).transaction(k => (k || 0) + 10);
     
     function removeFromHistory(itemId) {
       const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
@@ -750,6 +765,145 @@
       });
     }
 
+    // ════════════════════ KARMA, RANK VE PROFİL MOTORLARI ════════════════════
+    // Default Harf Profil Fotoğrafı (Kırık Resim Fixi)
+    function getAvatar(name) { return `https://ui-avatars.com/api/?name=${name}&background=7c3aed&color=fff&size=256`; }
+
+    // Rank Hesaplayıcı
+    function getRank(karma) {
+      if(!karma) return 'Çaylak';
+      if(karma < 50) return 'Çaylak';
+      if(karma < 200) return 'Müdavim';
+      if(karma < 500) return 'Sinefil';
+      if(karma < 1000) return 'Kült İzleyici';
+      return 'Yeraltı Baronu';
+    }
+
+    // Kendi Profilini ZQWQZ Tarzı Tam Ekran Aç
+    function openProfilePanel(username) {
+      const safeNick = username.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      document.getElementById('profile-name').textContent = username;
+      
+      database.ref('kullanicilar/' + safeNick).once('value').then(snap => {
+        const data = snap.val() || {};
+        const karma = data.karma || 0;
+        
+        document.getElementById('profile-pp').src = data.pp || getAvatar(username);
+        document.getElementById('profile-rank').textContent = getRank(karma);
+        document.getElementById('profile-karma').textContent = `⚡ ${karma} Karma`;
+        
+        const bgImg = document.getElementById('profile-bg');
+        if(data.bg) { bgImg.src = data.bg; bgImg.classList.remove('hidden'); } 
+        else { bgImg.classList.add('hidden'); bgImg.src = ''; }
+      });
+      
+      if(adminler.includes(username.toLowerCase())) { document.getElementById('admin-btn-container').classList.remove('hidden'); } 
+      else { document.getElementById('admin-btn-container').classList.add('hidden'); }
+      
+      const mod = document.getElementById('profile-modal'); mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50);
+    }
+    
+    function closeProfile() { const mod = document.getElementById('profile-modal'); mod.classList.add('opacity-0'); setTimeout(()=> mod.classList.add('hidden'), 300); }
+    function openAdminPanelFromProfile() { closeProfile(); openAdminPanel(); }
+    
+    // Hem PP Hem Arkaplan Güncelle
+    function updateProfileSettings() {
+      const ppLink = document.getElementById('pp-input').value.trim();
+      const bgLink = document.getElementById('bg-input').value.trim();
+      const user = localStorage.getItem('kadavra_vip_user'); 
+      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      
+      if(ppLink) { database.ref('kullanicilar/' + safeNick + '/pp').set(ppLink); document.getElementById('profile-pp').src = ppLink; }
+      if(bgLink) { 
+        database.ref('kullanicilar/' + safeNick + '/bg').set(bgLink); 
+        const bgImg = document.getElementById('profile-bg');
+        bgImg.src = bgLink; bgImg.classList.remove('hidden'); 
+      }
+      
+      document.getElementById('pp-input').value = ''; document.getElementById('bg-input').value = '';
+      showToast('Profil ayarların jilet gibi güncellendi!');
+    }
+
+    function changePassword() {
+      const newPass = document.getElementById('new-pass-input').value.trim();
+      if(!newPass) return;
+      if(newPass.length < 3) { showToast('Şifre çok kısa kanki!'); return; }
+      const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
+      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      database.ref('kullanicilar/' + safeNick).update({ sifre: newPass }).then(() => {
+         localStorage.setItem('kadavra_vip_pass', newPass);
+         document.getElementById('new-pass-input').value = '';
+         showToast('Şifren güncellendi!');
+      }).catch(e => showToast('Bir hata oldu pampik.'));
+    }
+
+    // Profil İçinden Başkasını Stalkla
+    function stalkUser() {
+      const target = document.getElementById('stalk-input').value.trim();
+      if(!target) return;
+      closeProfile();
+      openPublicProfile(target);
+      document.getElementById('stalk-input').value = '';
+    }
+
+    // BAŞKASININ PROFİLİNİ AÇMA EKRANI
+    function openPublicProfile(username) {
+      const safeNick = username.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      
+      // Önce adam cidden var mı kontrol edelim
+      database.ref('kullanicilar/' + safeNick).once('value').then(userSnap => {
+        if(!userSnap.exists()) {
+          showToast('Böyle bir pampik yeraltında yok!'); return;
+        }
+
+        const data = userSnap.val();
+        const karma = data.karma || 0;
+        
+        document.getElementById('public-name').textContent = username;
+        document.getElementById('public-pp').src = data.pp ? data.pp : getAvatar(username);
+        
+        const statusEl = document.getElementById('public-status');
+        if (adminler.includes(username.toLowerCase())) {
+          statusEl.textContent = '👑 LEJYON BARONU';
+          statusEl.className = 'text-xs font-bold px-3 py-1 rounded-full bg-red-900/50 text-red-400 border border-red-500/50 drop-shadow-[0_0_5px_rgba(248,113,113,0.8)]';
+        } else {
+          statusEl.textContent = getRank(karma);
+          statusEl.className = 'text-xs font-bold px-3 py-1 rounded-full bg-purple-900/50 text-purple-300 border border-purple-500/30 uppercase tracking-widest';
+        }
+
+        document.getElementById('public-karma').textContent = `⚡ ${karma} Karma`;
+
+        // Geçmişi Çek
+        const histDiv = document.getElementById('public-history'); histDiv.innerHTML = '';
+        if(!data.history) { histDiv.innerHTML = '<p class="text-xs text-gray-500">Tertemiz, henüz icraat yok.</p>'; }
+        else {
+          let hist = Object.values(data.history); hist.sort((a,b) => b.watchedAt - a.watchedAt);
+          hist.slice(0, 10).forEach(item => {
+            histDiv.innerHTML += `<img src="${IMG_BASE}w185${item.poster_path}" class="w-16 h-24 md:w-20 md:h-32 object-cover rounded border border-purple-800/30 cursor-pointer hover:scale-105 transition-transform" onclick="closePublicProfile(); searchSelect(${item.id}, '${item.media_type}')" title="${item.title||item.name}">`;
+          });
+        }
+
+        // Listeyi Çek
+        const watchDiv = document.getElementById('public-watchlist'); watchDiv.innerHTML = '';
+        if(!data.watchlist) { watchDiv.innerHTML = '<p class="text-xs text-gray-500">Liste bomboş kanki.</p>'; }
+        else {
+          let list = Object.values(data.watchlist); list.sort((a,b) => b.addedAt - a.addedAt);
+          list.slice(0, 10).forEach(item => {
+            watchDiv.innerHTML += `<img src="${IMG_BASE}w185${item.poster_path}" class="w-16 h-24 md:w-20 md:h-32 object-cover rounded border border-purple-800/30 cursor-pointer hover:scale-105 transition-transform" onclick="closePublicProfile(); searchSelect(${item.id}, '${item.media_type}')" title="${item.title||item.name}">`;
+          });
+        }
+
+        const mod = document.getElementById('public-profile-modal');
+        mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50);
+      });
+    }
+
+    function closePublicProfile(e) {
+      if(e && e.target.id !== 'public-profile-modal' && e.type === 'click') return; 
+      const mod = document.getElementById('public-profile-modal');
+      mod.classList.add('opacity-0'); setTimeout(()=> mod.classList.add('hidden'), 300);
+    }
+
     // ════════════════════ SOHBET (CHAT) MOTORU ════════════════════
     let chatOpen = false; let chatFirstLoad = true;
     function toggleChat() {
@@ -787,7 +941,7 @@
           div.className = `max-w-[85%] rounded-xl p-2.5 flex flex-col group relative ${isMe ? 'bg-purple-600/80 self-end rounded-br-sm' : 'bg-gray-800/80 self-start rounded-bl-sm border border-purple-900/50'}`;
           div.innerHTML = `
             <div class="flex justify-between items-baseline gap-3 mb-1">
-              <<span onclick="openPublicProfile('${msg.user}')" class="cursor-pointer hover:underline text-[10px] ${msgIsAdmin ? 'text-red-400 font-extrabold drop-shadow-[0_0_5px_rgba(248,113,113,0.8)]' : (isMe ? 'text-purple-200' : 'text-purple-400')} uppercase tracking-wider">${msg.user} ${msgIsAdmin ? '👑' : ''}</span>
+              <span onclick="openPublicProfile('${msg.user}')" class="cursor-pointer hover:underline text-[10px] ${msgIsAdmin ? 'text-red-400 font-extrabold drop-shadow-[0_0_5px_rgba(248,113,113,0.8)]' : (isMe ? 'text-purple-200' : 'text-purple-400')} uppercase tracking-wider">${msg.user} ${msgIsAdmin ? '👑' : ''}</span>
               <div><span class="text-[9px] opacity-60">${date}</span>${deleteBtn}</div>
             </div>
             <div class="text-sm text-purple-50 break-words leading-snug">${msg.text}</div>
