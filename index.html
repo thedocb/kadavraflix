@@ -44,7 +44,7 @@
     body { background: #050505; font-family: 'Outfit', sans-serif; color: #fecaca; overflow-x: hidden; cursor: default; }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #050505; }
-    ::-webkit-scrollbar-thumb { background: #b91c1c; border-radius: 99px; }
+    ::-webkit-scrollbar-thumb { background: #b91c1c; border-radius: 4px; }
     .neon-text  { color: #fca5a5; text-shadow: 0 0 20px #ef4444, 0 0 40px #b91c1c; }
     .neon-border{ border-color: #ef4444; box-shadow: 0 0 12px rgba(229, 9, 20, 0.4); }
     .neon-btn { background: linear-gradient(135deg, #b91c1c, #e50914); box-shadow: 0 0 18px rgba(229, 9, 20, 0.4); transition: all .25s ease; }
@@ -63,7 +63,7 @@
     @media(min-width:640px){ .card-wrap{ width: 190px; } }
     @media(min-width:1024px){ .card-wrap{ width: 210px; } }
     .card-wrap:hover { transform: scale(1.06) translateY(-4px); z-index: 10; }
-    .card-img { width: 100%; aspect-ratio: 2/3; object-fit: cover; border-radius: 10px; border: 1px solid transparent; transition: border-color .3s ease, box-shadow .3s ease; }
+    .card-img { width: 100%; aspect-ratio: 2/3; object-fit: cover; border-radius: 4px; border: 1px solid transparent; transition: border-color .3s ease, box-shadow .3s ease; }
     .card-wrap:hover .card-img { border-color: #ef4444; box-shadow: 0 0 22px rgba(229,9,20,0.5); }
     .card-title { font-size: .78rem; margin-top: 6px; color: #fca5a5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     #modal-overlay { position: fixed; inset: 0; background: rgba(5,5,5,.9); backdrop-filter: blur(10px); z-index: 100; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .3s ease; }
@@ -74,16 +74,17 @@
     #player-overlay.open { display: flex; }
     #player-frame { width: 100%; flex: 1; border: none; }
     @keyframes shimmer { 0% { background-position: -600px 0; } 100% { background-position: 600px 0; } }
-    .skeleton { background: linear-gradient(90deg, #181818 25%, #222 50%, #181818 75%); background-size: 1200px 100%; animation: shimmer 1.5s infinite; border-radius: 10px; }
-    .rating-badge { display: inline-flex; align-items: center; gap: 6px; background: #eab308; color: #000; font-weight: 800; border-radius: 4px; padding: 2px 8px; font-size: 0.75rem; text-transform: uppercase; box-shadow: 0 0 15px rgba(234, 179, 8, 0.3); }
-    .season-tab { padding: 6px 18px; border-radius: 99px; border: 1px solid rgba(229,9,20,0.4); font-size: .82rem; cursor: pointer; transition: all .2s; }
+    .skeleton { background: linear-gradient(90deg, #181818 25%, #222 50%, #181818 75%); background-size: 1200px 100%; animation: shimmer 1.5s infinite; border-radius: 4px; }
+    .rating-badge { display: inline-flex; align-items: center; gap: 6px; background: #eab308; color: #000; font-weight: 800; border-radius: 2px; padding: 2px 8px; font-size: 0.75rem; text-transform: uppercase; box-shadow: 0 0 15px rgba(234, 179, 8, 0.3); }
+    .season-tab { padding: 6px 18px; border-radius: 4px; border: 1px solid rgba(229,9,20,0.4); font-size: .82rem; cursor: pointer; transition: all .2s; }
     .season-tab.active, .season-tab:hover { background: #e50914; border-color: #f87171; color: #fff; box-shadow: 0 0 14px rgba(229,9,20,0.5); }
     .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: .08em; color: #fee2e2; }
     .section-title span { color: #f87171; text-shadow: 0 0 16px rgba(239,68,68,0.6); }
     body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"); pointer-events: none; z-index: 999; opacity: .35; }
     .orb { position: fixed; border-radius: 50%; filter: blur(120px); pointer-events: none; z-index: 0; }
+    .scrollbar-thin::-webkit-scrollbar { width: 4px; }
     
-    /* Mobil (Telefon) İnce Ayarları */
+    /* Mobil İnce Ayarları */
     @media(max-width: 640px) {
       #hero-content { padding: 0 4vw 12vh; }
       .hero-title { font-size: 2.6rem !important; }
@@ -98,104 +99,122 @@
 <body>
 
   <div id="login-screen" class="fixed inset-0 z-[1000] bg-dark-base flex items-center justify-center p-6 transition-opacity duration-500">
-    <div class="max-w-md w-full bg-dark-panel border border-red-900/50 p-8 rounded-2xl shadow-[0_0_50px_rgba(229,9,20,0.2)] text-center relative overflow-hidden">
+    <div class="max-w-md w-full bg-dark-panel border border-red-900/50 p-8 rounded-sm shadow-[0_0_50px_rgba(229,9,20,0.2)] text-center relative overflow-hidden">
       <div class="flex mb-6 border-b border-red-800/50 pb-4">
         <button id="tab-login" onclick="toggleAuth('login')" class="flex-1 text-red-100 font-bold tracking-widest pb-2 border-b-2 border-red-600 transition-colors">GİRİŞ YAP</button>
         <button id="tab-register" onclick="toggleAuth('register')" class="flex-1 text-red-500 font-bold tracking-widest pb-2 border-b-2 border-transparent transition-colors">KAYIT OL</button>
       </div>
       <h1 class="neon-text font-display text-4xl mb-6">KADAVRAFLIX</h1>
-      <input type="text" id="auth-nick" placeholder="Kullanıcı Adın (Örn: Fraude)..." class="w-full bg-red-950/20 border border-red-900/50 rounded-xl px-4 py-3 text-center text-white focus:outline-none focus:border-red-500 mb-3">
-      <input type="password" id="auth-pass" placeholder="Şifren (Örn: 123fenerbahce)..." class="w-full bg-red-950/20 border border-red-900/50 rounded-xl px-4 py-3 text-center text-white focus:outline-none focus:border-red-500 mb-3">
-      <input type="text" id="auth-ref" placeholder="Referans Kodun (Sadece Kayıt İçin)..." class="w-full bg-red-950/20 border border-red-900/50 rounded-xl px-4 py-3 text-center text-white focus:outline-none focus:border-red-500 mb-5 hidden">
-      <button onclick="handleAuth()" id="auth-btn" class="neon-btn w-full py-3 rounded-xl text-white font-bold uppercase tracking-widest text-sm">İçeri Gir</button>
+      <input type="text" id="auth-nick" placeholder="Kullanıcı Adın (Örn: Fraude)..." class="w-full bg-red-950/20 border border-red-900/50 rounded-sm px-4 py-3 text-center text-white focus:outline-none focus:border-red-500 mb-3">
+      <input type="password" id="auth-pass" placeholder="Şifren (Örn: 123fenerbahce)..." class="w-full bg-red-950/20 border border-red-900/50 rounded-sm px-4 py-3 text-center text-white focus:outline-none focus:border-red-500 mb-3">
+      <input type="text" id="auth-ref" placeholder="Referans Kodun (Sadece Kayıt İçin)..." class="w-full bg-red-950/20 border border-red-900/50 rounded-sm px-4 py-3 text-center text-white focus:outline-none focus:border-red-500 mb-5 hidden">
+      <button onclick="handleAuth()" id="auth-btn" class="neon-btn w-full py-3 rounded-sm text-white font-bold uppercase tracking-widest text-sm">İçeri Gir</button>
       <p id="auth-error" class="text-red-500 text-xs mt-4 hidden"></p>
     </div>
   </div>
 
   <div id="settings-modal" class="fixed inset-0 z-[3500] bg-black/90 backdrop-blur-md hidden opacity-0 transition-opacity flex items-center justify-center">
-    <div class="bg-dark-panel border border-red-900/50 w-full max-w-md p-8 rounded-3xl relative shadow-[0_0_40px_rgba(229,9,20,0.2)] text-center">
-      <button onclick="closeSettings()" class="absolute top-4 right-5 text-red-500 hover:text-white text-3xl leading-none">&times;</button>
-      <h2 class="text-2xl font-display text-white tracking-widest mb-6 border-b border-red-800/50 pb-2">⚙️ LEJYON AYARLARI</h2>
+    <div class="bg-[#0a0a0a] border border-red-900/50 w-full max-w-md p-6 rounded-sm relative shadow-2xl text-center max-h-[90vh] overflow-y-auto">
+      <button onclick="closeSettings()" class="absolute top-4 right-5 text-gray-500 hover:text-white text-2xl leading-none">&times;</button>
+      <h2 class="text-xl font-bold text-red-500 tracking-widest mb-6 border-b border-red-900/50 pb-2 uppercase">⚙️ Lejyon Ayarları</h2>
       <div class="space-y-4 text-left">
         <div>
-          <p class="text-xs text-red-300 mb-1 font-bold">Profil Fotoğrafı (URL)</p>
-          <div class="flex gap-2"><input type="text" id="pp-input" class="flex-1 bg-black border border-red-900/50 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-red-500"><button onclick="updateProfileSettings()" class="neon-btn px-4 rounded-xl text-white font-bold text-sm">Kaydet</button></div>
+          <p class="text-[10px] text-gray-400 mb-1 uppercase tracking-wider font-bold">Profil Fotoğrafı (URL)</p>
+          <input type="text" id="pp-input" class="w-full bg-black border border-red-900/50 rounded-sm px-3 py-2 text-white text-xs focus:outline-none focus:border-red-500">
         </div>
         <div>
-          <p class="text-xs text-red-300 mb-1 font-bold">Arkaplan Görseli (URL)</p>
-          <div class="flex gap-2"><input type="text" id="bg-input" class="flex-1 bg-black border border-red-900/50 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-red-500"><button onclick="updateProfileSettings()" class="neon-btn px-4 rounded-xl text-white font-bold text-sm">Kaydet</button></div>
+          <p class="text-[10px] text-gray-400 mb-1 uppercase tracking-wider font-bold">Arkaplan Görseli (URL)</p>
+          <input type="text" id="bg-input" class="w-full bg-black border border-red-900/50 rounded-sm px-3 py-2 text-white text-xs focus:outline-none focus:border-red-500">
         </div>
-        <div class="border-t border-red-900/50 pt-4 mt-2">
-          <p class="text-xs text-red-300 mb-1 font-bold">Şifre Değiştir</p>
-          <div class="flex gap-2"><input type="password" id="new-pass-input" class="flex-1 bg-black border border-red-900/50 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-red-500"><button onclick="changePassword()" class="neon-btn px-4 rounded-xl text-white font-bold text-sm">Değiştir</button></div>
+        <div>
+          <p class="text-[10px] text-gray-400 mb-1 uppercase tracking-wider font-bold">Biyografi</p>
+          <textarea id="bio-input" class="w-full h-16 bg-black border border-red-900/50 rounded-sm px-3 py-2 text-white text-xs focus:outline-none focus:border-red-500 resize-none"></textarea>
+        </div>
+        <div>
+          <p class="text-[10px] text-gray-400 mb-1 uppercase tracking-wider font-bold">Yaşadığı Yer</p>
+          <input type="text" id="loc-input" class="w-full bg-black border border-red-900/50 rounded-sm px-3 py-2 text-white text-xs focus:outline-none focus:border-red-500">
+        </div>
+        <button onclick="updateProfileSettings()" class="w-full bg-red-900/50 hover:bg-red-600 border border-red-700 py-2 rounded-sm text-white font-bold text-xs uppercase tracking-wider transition-colors mt-2">Profili Kaydet</button>
+        
+        <div class="border-t border-red-900/50 pt-4 mt-4">
+          <p class="text-[10px] text-gray-400 mb-1 uppercase tracking-wider font-bold">Şifre Değiştir</p>
+          <div class="flex gap-2"><input type="password" id="new-pass-input" class="flex-1 bg-black border border-red-900/50 rounded-sm px-3 py-2 text-white text-xs focus:outline-none focus:border-red-500"><button onclick="changePassword()" class="bg-red-900/50 hover:bg-red-600 border border-red-700 px-4 rounded-sm text-white font-bold text-xs transition-colors">Değiştir</button></div>
         </div>
         <div id="admin-btn-container" class="w-full mt-4 hidden">
-           <button onclick="closeSettings(); openAdminPanel();" class="w-full bg-red-900/40 border border-red-500/50 text-red-100 hover:bg-red-600 hover:text-white py-3 rounded-xl font-bold uppercase tracking-wider text-sm transition-colors shadow-[0_0_20px_rgba(248,113,113,0.3)]">👑 Lejyon İstihbarat Paneli</button>
+           <button onclick="closeSettings(); openAdminPanel();" class="w-full bg-red-900/20 border border-red-500/50 text-red-400 hover:bg-red-600 hover:text-white py-2 rounded-sm font-bold uppercase tracking-wider text-xs transition-colors">👑 İstihbarat Paneli</button>
         </div>
       </div>
     </div>
   </div>
 
-  <div id="user-profile-modal" class="fixed inset-0 z-[3000] bg-[#050505] hidden opacity-0 transition-opacity overflow-y-auto">
-    <div class="relative w-full h-[40vh] md:h-[50vh] border-b border-red-900/50 bg-black">
-      <img id="up-bg" src="" class="w-full h-full object-cover opacity-60 hidden" />
-      <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent"></div>
-      <button onclick="closeUserProfile()" class="absolute top-4 right-6 text-white bg-black/50 hover:bg-red-600 rounded-full w-12 h-12 flex items-center justify-center text-3xl transition-colors z-50 shadow-[0_0_15px_rgba(229,9,20,0.4)]">&times;</button>
+  <div id="user-profile-modal" class="fixed inset-0 z-[3000] bg-[#050505] hidden opacity-0 transition-opacity overflow-y-auto pb-20 font-sans">
+    <div class="relative w-full h-[45vh] md:h-[50vh] border-b-2 border-red-900 bg-black">
+      <img id="up-bg" src="" class="w-full h-full object-cover hidden" />
+      <button onclick="closeUserProfile()" class="absolute top-4 right-6 text-gray-400 hover:text-white bg-black/80 border border-red-900 px-3 py-1 text-xl transition-colors z-50 rounded-sm">X KAPAT</button>
     </div>
     
-    <div class="max-w-7xl mx-auto px-4 sm:px-8 relative -mt-24 md:-mt-32 flex flex-col md:flex-row gap-8 items-start border-b border-red-900/50 pb-6">
-      <img id="up-pp" src="" class="w-40 h-40 md:w-56 md:h-56 rounded-full border-4 border-[#050505] object-cover shadow-[0_0_40px_rgba(229,9,20,0.5)] z-10 bg-dark-panel" />
-      <div class="flex-1 text-left mt-2 md:mt-16 z-10 w-full flex flex-col md:flex-row md:items-end justify-between gap-4">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 relative -mt-16 md:-mt-24 flex flex-col md:flex-row gap-6 items-end border-b border-red-900/50 pb-4">
+      <img id="up-pp" src="" class="w-32 h-32 md:w-48 md:h-48 rounded-sm border-2 border-red-800 object-cover shadow-[0_0_15px_rgba(229,9,20,0.3)] z-10 bg-[#111]" />
+      <div class="flex-1 text-left z-10 w-full flex flex-col md:flex-row md:items-end justify-between gap-4 mb-2">
         <div>
-          <h2 id="up-name" class="text-5xl md:text-7xl font-display text-white tracking-widest uppercase drop-shadow-[0_0_15px_rgba(229,9,20,0.8)]"></h2>
-          <p id="up-rank" class="text-lg md:text-xl text-red-500 font-bold tracking-widest uppercase mt-2 drop-shadow-md"></p>
+          <h2 id="up-name" class="text-4xl md:text-5xl font-display text-white tracking-widest uppercase"></h2>
+          <div class="flex items-center gap-3 mt-1 text-xs text-gray-400 uppercase tracking-widest font-bold">
+             <span id="up-rank" class="text-red-500"></span>
+             <span>|</span>
+             <span>📍 <span id="up-location">Yeraltı</span></span>
+          </div>
         </div>
-        <div id="up-actions" class="flex gap-3 z-10"></div>
+        <div id="up-actions" class="flex gap-2 z-10"></div>
       </div>
     </div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-8 py-6 flex flex-wrap gap-10 justify-start text-left border-b border-red-900/30 bg-red-950/10">
-      <div><p class="text-3xl md:text-4xl font-display text-yellow-500 drop-shadow-[0_0_8px_rgba(234,179,8,0.8)]" id="up-stat-karma">0</p><p class="text-xs text-gray-400 uppercase font-bold tracking-wider mt-1">Karma Üstadı</p></div>
-      <div><p class="text-3xl md:text-4xl font-display text-white" id="up-stat-history">0</p><p class="text-xs text-gray-400 uppercase font-bold tracking-wider mt-1">Tüketilen Yapım</p></div>
-      <div><p class="text-3xl md:text-4xl font-display text-white" id="up-stat-comments">0</p><p class="text-xs text-gray-400 uppercase font-bold tracking-wider mt-1">Kesilen Racon</p></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 py-4 flex flex-wrap gap-8 justify-start text-left border-b border-red-900/30 bg-[#0a0a0a]">
+      <div><p class="text-2xl font-display text-yellow-500" id="up-stat-karma">0</p><p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mt-1">Karma</p></div>
+      <div><p class="text-2xl font-display text-white" id="up-stat-followers">0</p><p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mt-1">Takipçi</p></div>
+      <div><p class="text-2xl font-display text-white" id="up-stat-following">0</p><p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mt-1">Takip Edilen</p></div>
+      <div><p class="text-2xl font-display text-white" id="up-stat-history">0</p><p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mt-1">İzlenen</p></div>
     </div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-8 mt-10 grid grid-cols-1 lg:grid-cols-3 gap-10 pb-20">
-      <div class="lg:col-span-2 space-y-10">
-        <div>
-          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end border-b border-red-800/50 pb-3 mb-6 gap-3">
-            <h3 class="text-2xl font-display text-red-100 flex items-center gap-2">💬 Sosyal Duvar</h3>
-            <div class="flex gap-2 w-full sm:w-64">
-              <input type="text" id="stalk-input" placeholder="Lejyoner ara..." class="flex-1 bg-black border border-red-900/50 rounded-lg px-4 py-2 text-white text-sm focus:outline-none focus:border-red-500" onkeypress="if(event.key === 'Enter') stalkUser()">
-              <button onclick="stalkUser()" class="bg-red-600 hover:bg-red-500 px-4 py-2 rounded-lg text-white font-bold text-sm transition-colors">Stalkla</button>
-            </div>
-          </div>
-          <div id="up-comments-feed" class="space-y-4 max-h-[600px] overflow-y-auto pr-4 scrollbar-thin"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="lg:col-span-4 space-y-6">
+        <div class="bg-[#0a0a0a] border border-red-900/30 p-5 rounded-sm">
+          <h3 class="text-sm font-bold text-red-500 mb-3 border-b border-red-900/50 pb-2 uppercase tracking-wider">📜 Biyografi</h3>
+          <p id="up-bio" class="text-xs text-gray-300 leading-relaxed font-mono">Biyografi bulunamadı.</p>
         </div>
         
-        <div>
-          <h3 class="text-2xl font-display text-red-100 mb-6 border-b border-red-800/50 pb-3">🚀 Özel Listeler & Projeler</h3>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="bg-dark-panel border border-red-900/50 p-6 rounded-2xl hover:border-red-500 transition-colors cursor-pointer group">
-              <h4 class="text-red-500 font-bold mb-2 group-hover:text-red-400 text-lg">🔥 Favori Başyapıtlar</h4>
-              <p class="text-sm text-gray-400">Özelleştirilmiş 1. Playlist (Yakında eklenecek)</p>
+        <div class="bg-[#0a0a0a] border border-red-900/30 p-5 rounded-sm">
+          <h3 class="text-sm font-bold text-red-500 mb-3 border-b border-red-900/50 pb-2 uppercase tracking-wider">📁 Özel Koleksiyonlar</h3>
+          <div id="up-custom-playlists" class="space-y-2">
+            <div class="border border-red-900/30 p-3 rounded-sm bg-black hover:border-red-500 cursor-pointer transition-colors">
+              <p class="text-xs font-bold text-white">🔥 Kadavra'nın Başyapıtları</p>
+              <p class="text-[10px] text-gray-500 mt-1">12 Film</p>
             </div>
-            <div class="bg-dark-panel border border-red-900/50 p-6 rounded-2xl hover:border-red-500 transition-colors cursor-pointer group">
-              <h4 class="text-red-500 font-bold mb-2 group-hover:text-red-400 text-lg">⚔️ Ortak Lejyon Listesi</h4>
-              <p class="text-sm text-gray-400">Yeni projeler ve ortak listeler için ayrılmış alan.</p>
-            </div>
+            <button class="w-full border border-dashed border-red-900/50 text-red-500 text-xs py-2 hover:bg-red-900/20 transition-colors">+ Yeni Liste Oluştur</button>
           </div>
         </div>
       </div>
       
-      <div class="space-y-10">
-        <div>
-          <h3 class="text-xl font-display text-red-100 mb-4 border-b border-red-800/50 pb-2">🎬 Son İzledikleri</h3>
-          <div id="up-history-feed" class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-3 gap-3"></div>
+      <div class="lg:col-span-5 space-y-6">
+        <div class="bg-[#0a0a0a] border border-red-900/30 p-5 rounded-sm">
+          <div class="flex justify-between items-end border-b border-red-900/50 pb-2 mb-4">
+            <h3 class="text-sm font-bold text-red-500 uppercase tracking-wider">💬 Sosyal Duvar</h3>
+          </div>
+          <div class="flex gap-2 mb-4">
+            <textarea id="wall-input" placeholder="Bu duvara racon kes..." class="flex-1 bg-black border border-red-900/50 rounded-sm px-3 py-2 text-gray-200 text-xs focus:outline-none focus:border-red-500 resize-none h-12"></textarea>
+            <button onclick="postToWall()" class="bg-red-900/50 hover:bg-red-600 border border-red-700 px-4 text-white font-bold text-xs transition-colors rounded-sm">Yaz</button>
+          </div>
+          <div id="up-wall-feed" class="space-y-3 max-h-[500px] overflow-y-auto pr-2 scrollbar-thin"></div>
         </div>
-        <div>
-          <h3 class="text-xl font-display text-red-100 mb-4 border-b border-red-800/50 pb-2">📌 İzleme Listesi</h3>
-          <div id="up-watchlist-feed" class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-3 gap-3"></div>
+      </div>
+
+      <div class="lg:col-span-3 space-y-6">
+        <div class="bg-[#0a0a0a] border border-red-900/30 p-4 rounded-sm">
+          <h3 class="text-sm font-bold text-red-500 mb-3 border-b border-red-900/50 pb-2 uppercase tracking-wider">🎬 Son İzledikleri</h3>
+          <div id="up-history-feed" class="grid grid-cols-3 gap-2"></div>
+        </div>
+        <div class="bg-[#0a0a0a] border border-red-900/30 p-4 rounded-sm">
+          <h3 class="text-sm font-bold text-red-500 mb-3 border-b border-red-900/50 pb-2 uppercase tracking-wider">📌 İzleme Listesi</h3>
+          <div id="up-watchlist-feed" class="grid grid-cols-3 gap-2"></div>
         </div>
       </div>
     </div>
@@ -209,8 +228,8 @@
     <div id="chat-messages" class="flex-1 overflow-y-auto p-4 flex flex-col gap-3"></div>
     <div class="p-3 border-t border-red-900/50 bg-[#050505]">
       <div class="flex gap-2">
-        <input type="text" id="chat-input" placeholder="Mekana seslen..." class="flex-1 bg-black border border-red-900/50 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500" onkeypress="if(event.key === 'Enter') sendChatMessage()">
-        <button onclick="sendChatMessage()" class="neon-btn px-4 py-2 rounded-xl text-white font-bold text-sm">At</button>
+        <input type="text" id="chat-input" placeholder="Mekana seslen..." class="flex-1 bg-black border border-red-900/50 rounded-sm px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500" onkeypress="if(event.key === 'Enter') sendChatMessage()">
+        <button onclick="sendChatMessage()" class="neon-btn px-4 py-2 rounded-sm text-white font-bold text-sm">At</button>
       </div>
     </div>
   </div>
@@ -230,23 +249,23 @@
     </div>
     
     <div class="flex items-center gap-2 sm:gap-4">
-      <button onclick="playRandom()" class="hidden sm:flex items-center gap-2 text-red-200 hover:text-white transition-colors bg-red-900/40 px-4 py-1.5 rounded-full border border-red-900/50 hover:border-red-500 hover:shadow-[0_0_15px_rgba(229,9,20,0.4)] text-sm font-medium">🎲 Ne İzlesem?</button>
+      <button onclick="playRandom()" class="hidden sm:flex items-center gap-2 text-red-200 hover:text-white transition-colors bg-red-900/40 px-4 py-1.5 rounded-sm border border-red-900/50 hover:border-red-500 hover:shadow-[0_0_15px_rgba(229,9,20,0.4)] text-sm font-medium">🎲 Ne İzlesem?</button>
       
       <div class="relative block">
-        <input id="search-input" type="text" placeholder="Ara…" class="bg-black border border-red-900/50 rounded-full px-3 sm:px-4 py-1.5 text-sm text-red-100 placeholder-red-800 focus:outline-none focus:border-red-600 transition-all w-24 focus:w-40 sm:w-36 sm:focus:w-52" oninput="handleSearch(this.value)" />
+        <input id="search-input" type="text" placeholder="Lejyoner veya Film Ara…" class="bg-black border border-red-900/50 rounded-sm px-3 sm:px-4 py-1.5 text-sm text-red-100 placeholder-red-800 focus:outline-none focus:border-red-600 transition-all w-32 focus:w-48 sm:w-48 sm:focus:w-64" oninput="handleSearch(this.value)" />
         <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-red-600 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-        <div id="search-results" class="absolute top-full mt-2 right-0 sm:left-0 w-64 sm:w-72 bg-[#111] border border-red-900/50 rounded-xl overflow-hidden shadow-2xl hidden z-50"></div>
+        <div id="search-results" class="absolute top-full mt-2 right-0 sm:left-0 w-64 sm:w-72 bg-[#111] border border-red-900/50 rounded-sm overflow-hidden shadow-2xl hidden z-50"></div>
       </div>
       
-      <button id="chat-btn" onclick="toggleChat()" class="relative w-8 h-8 rounded-full bg-red-900/40 border border-red-900/50 flex items-center justify-center text-sm hover:bg-red-800 transition-colors hidden">
+      <button id="chat-btn" onclick="toggleChat()" class="relative w-8 h-8 rounded-sm bg-red-900/40 border border-red-900/50 flex items-center justify-center text-sm hover:bg-red-800 transition-colors hidden">
         💬
         <span id="chat-notif" class="absolute -top-1 -right-1 flex h-3 w-3 hidden"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span><span class="relative inline-flex rounded-full h-3 w-3 bg-yellow-500"></span></span>
       </button>
-      <div id="profile-badge" class="w-8 h-8 rounded-full bg-gradient-to-br from-red-600 to-red-900 border border-red-500/50 flex items-center justify-center text-xs font-bold cursor-pointer hover:shadow-[0_0_16px_rgba(229,9,20,0.5)] transition-all select-none">K</div>
+      <div id="profile-badge" class="w-8 h-8 rounded-sm bg-gradient-to-br from-red-600 to-red-900 border border-red-500/50 flex items-center justify-center text-xs font-bold cursor-pointer hover:shadow-[0_0_16px_rgba(229,9,20,0.5)] transition-all select-none">K</div>
     </div>
   </nav>
 
-  <section id="hero"><div id="hero-bg"></div><div id="hero-content"><div id="hero-badge" class="inline-flex items-center gap-2 text-xs text-red-300 mb-4 opacity-0"><span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>ÖNE ÇIKAN</div><h1 id="hero-title" class="hero-title" style="font-family:'Bebas Neue',sans-serif;font-size:3.8rem;line-height:1;color:#fee2e2;text-shadow:0 4px 40px rgba(229,9,20,0.5);margin-bottom:.6rem;opacity:0;transform:translateY(20px);"></h1><p id="hero-desc" class="text-sm md:text-base text-red-200/80 leading-relaxed mb-6 line-clamp-3 max-w-lg opacity-0"></p><div id="hero-meta" class="flex items-center gap-3 mb-6 opacity-0"></div><div class="flex items-center gap-3 opacity-0" id="hero-btns"><button id="hero-play" onclick="playHero()" class="neon-btn flex items-center gap-2 px-6 py-3 rounded-full text-white font-semibold text-sm"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Oynat</button><button onclick="infoHero()" class="ghost-btn flex items-center gap-2 px-6 py-3 rounded-full text-red-200 font-semibold text-sm">Daha Fazla</button></div></div></section>
+  <section id="hero"><div id="hero-bg"></div><div id="hero-content"><div id="hero-badge" class="inline-flex items-center gap-2 text-xs text-red-300 mb-4 opacity-0"><span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>ÖNE ÇIKAN</div><h1 id="hero-title" class="hero-title" style="font-family:'Bebas Neue',sans-serif;font-size:3.8rem;line-height:1;color:#fee2e2;text-shadow:0 4px 40px rgba(229,9,20,0.5);margin-bottom:.6rem;opacity:0;transform:translateY(20px);"></h1><p id="hero-desc" class="text-sm md:text-base text-red-200/80 leading-relaxed mb-6 line-clamp-3 max-w-lg opacity-0"></p><div id="hero-meta" class="flex items-center gap-3 mb-6 opacity-0"></div><div class="flex items-center gap-3 opacity-0" id="hero-btns"><button id="hero-play" onclick="playHero()" class="neon-btn flex items-center gap-2 px-6 py-3 rounded-sm text-white font-semibold text-sm"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Oynat</button><button onclick="infoHero()" class="ghost-btn flex items-center gap-2 px-6 py-3 rounded-sm text-red-200 font-semibold text-sm">Daha Fazla</button></div></div></section>
   
   <main class="relative z-10 px-5 lg:px-12 pb-20 space-y-14 -mt-16" id="main-content">
     <div id="view-home" class="space-y-14">
@@ -268,22 +287,22 @@
       <div class="fixed inset-0 z-0 pointer-events-none"><img id="modal-bg-img" src="" class="w-full h-full object-cover opacity-20 blur-x1 scale-110" /><div class="absolute inset-0 bg-[#050505]/80"></div><div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-[#050505]/90"></div></div>
       <button onclick="closeModal()" class="absolute top-6 left-6 md:top-10 md:left-10 z-50 text-red-500 hover:text-white flex items-center gap-2 transition-all hover:-translate-x-1"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg></button>
       <div class="relative z-10 w-full max-w-7xl mx-auto px-6 py-20 md:py-24 flex flex-col md:flex-row gap-10 md:gap-16 items-start">
-        <div class="w-2/3 max-w-[320px] mx-auto md:w-1/3 shrink-0"><img id="modal-poster" src="" class="w-full rounded-xl shadow-[0_0_60px_rgba(229,9,20,0.3)] border border-red-500/30" /></div>
+        <div class="w-2/3 max-w-[320px] mx-auto md:w-1/3 shrink-0"><img id="modal-poster" src="" class="w-full rounded-sm shadow-[0_0_60px_rgba(229,9,20,0.3)] border border-red-500/30" /></div>
         <div class="w-full md:w-2/3 flex flex-col justify-center items-center md:items-start text-center md:text-left mt-4 md:mt-0">
           <h1 id="modal-title" class="font-display text-5xl md:text-7xl text-white mb-3 tracking-wide uppercase" style="text-shadow: 0 0 30px rgba(229,9,20,0.6);"></h1>
           <div id="modal-meta" class="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-6 text-sm text-red-200 font-medium"></div>
           <p id="modal-desc" class="text-red-100/80 text-sm md:text-base leading-relaxed mb-8 max-w-3xl"></p>
-          <div class="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-8"><button onclick="playModal()" class="bg-white text-black hover:bg-red-100 transition-colors flex items-center gap-2 px-10 py-3 rounded-md text-sm font-bold uppercase tracking-wider"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Oynat</button><button id="modal-trailer-btn" class="bg-red-900/40 border border-red-500/50 hover:bg-red-800/80 transition-colors flex items-center gap-2 px-8 py-3 rounded-md text-white text-sm font-bold uppercase tracking-wider hidden">Fragman</button><button id="modal-watchlist-btn" onclick="toggleWatchlist()" class="bg-transparent border border-red-500/50 hover:bg-red-900/40 transition-colors flex items-center gap-2 px-6 py-3 rounded-md text-white text-sm font-bold uppercase tracking-wider"><span id="watchlist-icon" class="text-xl leading-none">+</span><span id="watchlist-text">Listeme Ekle</span></button></div>
+          <div class="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-8"><button onclick="playModal()" class="bg-white text-black hover:bg-red-100 transition-colors flex items-center gap-2 px-10 py-3 rounded-sm text-sm font-bold uppercase tracking-wider"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Oynat</button><button id="modal-trailer-btn" class="bg-red-900/40 border border-red-500/50 hover:bg-red-800/80 transition-colors flex items-center gap-2 px-8 py-3 rounded-sm text-white text-sm font-bold uppercase tracking-wider hidden">Fragman</button><button id="modal-watchlist-btn" onclick="toggleWatchlist()" class="bg-transparent border border-red-500/50 hover:bg-red-900/40 transition-colors flex items-center gap-2 px-6 py-3 rounded-sm text-white text-sm font-bold uppercase tracking-wider"><span id="watchlist-icon" class="text-xl leading-none">+</span><span id="watchlist-text">Listeme Ekle</span></button></div>
           <div class="mb-10 text-sm md:text-base"><span class="text-red-400 font-semibold">Oyuncular:</span> <span id="modal-cast" class="text-red-100"></span></div>
           <div id="modal-seasons-wrap" class="hidden w-full max-w-4xl"><div class="border-b border-red-800/50 mb-6 pb-2"><h3 class="text-white font-display text-2xl tracking-wide">Sezonlar ve Bölümler</h3></div><div id="season-tabs" class="flex flex-wrap gap-2 mb-6"></div><div id="episode-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[400px] overflow-y-auto pr-2"></div></div>
           
           <div class="w-full max-w-4xl mt-12 border-t border-red-800/50 pt-8">
             <h3 class="text-white font-display text-2xl tracking-wide mb-6">TAYFANIN YORUMLARI</h3>
             <div class="flex gap-3 mb-6">
-              <div id="comment-avatar" class="w-10 h-10 rounded-full bg-gradient-to-br from-red-600 to-red-900 flex items-center justify-center font-bold text-white shrink-0 overflow-hidden"><img id="comment-pp-img" src="" class="w-full h-full object-cover hidden"></div>
+              <div id="comment-avatar" class="w-10 h-10 rounded-sm bg-gradient-to-br from-red-600 to-red-900 flex items-center justify-center font-bold text-white shrink-0 overflow-hidden"><img id="comment-pp-img" src="" class="w-full h-full object-cover hidden"></div>
               <div class="flex-1 flex gap-2">
-                <input type="text" id="comment-input" placeholder="Bu yapım hakkında ne düşünüyorsun pampik?" class="w-full bg-black border border-red-900/50 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-red-600" onkeypress="if(event.key === 'Enter') postComment()">
-                <button onclick="postComment()" class="neon-btn px-6 py-2 rounded-xl text-white font-bold tracking-widest text-sm shrink-0">Yolla</button>
+                <input type="text" id="comment-input" placeholder="Bu yapım hakkında ne düşünüyorsun pampik?" class="w-full bg-black border border-red-900/50 rounded-sm px-4 py-2 text-sm text-white focus:outline-none focus:border-red-600" onkeypress="if(event.key === 'Enter') postComment()">
+                <button onclick="postComment()" class="neon-btn px-6 py-2 rounded-sm text-white font-bold tracking-widest text-sm shrink-0">Yolla</button>
               </div>
             </div>
             <div id="comments-list" class="space-y-3 max-h-[300px] overflow-y-auto pr-2"></div>
@@ -294,7 +313,7 @@
   </div>
 
   <div id="player-overlay"><div class="flex items-center justify-between bg-black px-5 py-3 border-b border-red-900/60"><span id="player-title" class="text-red-200 text-sm font-semibold truncate"></span><button onclick="closePlayer()" class="flex items-center gap-2 text-red-500 hover:text-white text-sm transition-colors">Kapat</button></div><iframe id="player-frame" src="" allowfullscreen allow="autoplay; fullscreen"></iframe></div>
-  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[300] transition-all duration-300 opacity-0 translate-y-4 pointer-events-none"><div class="bg-red-900/90 backdrop-blur border border-red-600/50 text-red-100 text-sm px-5 py-3 rounded-full shadow-xl flex items-center gap-2"><span id="toast-icon">ℹ️</span><span id="toast-msg"></span></div></div>
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[300] transition-all duration-300 opacity-0 translate-y-4 pointer-events-none"><div class="bg-red-900/90 backdrop-blur border border-red-600/50 text-red-100 text-sm px-5 py-3 rounded-sm shadow-xl flex items-center gap-2"><span id="toast-icon">ℹ️</span><span id="toast-msg"></span></div></div>
 
   <script>
     const API_KEY = '98148cd009e2989e8e10c7d0abdfbaad';
@@ -332,7 +351,7 @@
         snap.forEach(child => {
           const u = child.val();
           const date = u.sonGiris ? new Date(u.sonGiris).toLocaleString('tr-TR') : 'Bilinmiyor';
-          html += `<div class="bg-black/50 p-4 rounded-xl border border-red-500/30 text-left relative overflow-hidden"><div class="absolute -right-4 -top-4 text-6xl opacity-10">🕵️</div><p class="text-red-500 font-display text-2xl tracking-widest mb-2">${child.key.toUpperCase()}</p><p class="text-red-300 text-sm">🔑 Şifre: <span class="text-white">${u.sifre}</span></p><p class="text-red-300 text-sm">🎫 Ref: <span class="text-white">${u.refKodu}</span></p><p class="text-red-300 text-sm">🕒 Son Görülme: <span class="text-white">${date}</span></p><p class="text-red-300 text-sm">🌐 IP Adresi: <span class="text-green-500 font-bold">${u.ip || 'Gizlenmiş'}</span></p><p class="text-gray-500 text-[10px] mt-2 border-t border-red-900/50 pt-2 leading-tight">📱 ${u.cihaz || 'Kayıt yok'}</p></div>`;
+          html += `<div class="bg-black/50 p-4 rounded-sm border border-red-500/30 text-left relative overflow-hidden"><div class="absolute -right-4 -top-4 text-6xl opacity-10">🕵️</div><p class="text-red-500 font-display text-2xl tracking-widest mb-2">${child.key.toUpperCase()}</p><p class="text-red-300 text-sm">🔑 Şifre: <span class="text-white">${u.sifre}</span></p><p class="text-red-300 text-sm">🎫 Ref: <span class="text-white">${u.refKodu}</span></p><p class="text-red-300 text-sm">🕒 Son Görülme: <span class="text-white">${date}</span></p><p class="text-red-300 text-sm">🌐 IP Adresi: <span class="text-green-500 font-bold">${u.ip || 'Gizlenmiş'}</span></p><p class="text-gray-500 text-[10px] mt-2 border-t border-red-900/50 pt-2 leading-tight">📱 ${u.cihaz || 'Kayıt yok'}</p></div>`;
         });
         html += '</div>';
 
@@ -349,11 +368,15 @@
       });
     }
 
-    // ZQWQZ TARZI PROFİL
+    // ZQWQZ TARZI PROFİL VE STALK MOTORU
+    let currentProfileNick = ''; 
+
     function openUserProfile(targetNick) {
+      currentProfileNick = targetNick; 
       const myUser = localStorage.getItem('kadavra_vip_user') || '';
       const isMe = myUser.toLowerCase() === targetNick.toLowerCase();
       const safeNick = targetNick.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      const mySafeNick = myUser.toLowerCase().replace(/[.#$\[\]]/g, '_');
       
       database.ref('kullanicilar/' + safeNick).once('value').then(snap => {
         if(!snap.exists() && !isMe) { showToast('Böyle bir pampik yok!'); return; }
@@ -365,14 +388,27 @@
         document.getElementById('up-stat-karma').textContent = karma;
         document.getElementById('up-pp').src = data.pp || getAvatar(targetNick);
         
+        document.getElementById('up-bio').textContent = data.bio || 'Biyografi bulunamadı.';
+        document.getElementById('up-location').textContent = data.loc || 'Yeraltı';
+
+        const followersCount = data.followers ? Object.keys(data.followers).length : 0;
+        const followingCount = data.following ? Object.keys(data.following).length : 0;
+        document.getElementById('up-stat-followers').textContent = followersCount;
+        document.getElementById('up-stat-following').textContent = followingCount;
+
         const bgImg = document.getElementById('up-bg');
         if(data.bg) { bgImg.src = data.bg; bgImg.classList.remove('hidden'); } else { bgImg.classList.add('hidden'); bgImg.src = ''; }
 
         const actionsDiv = document.getElementById('up-actions');
         if(isMe) {
-          actionsDiv.innerHTML = `<button onclick="openSettings()" class="ghost-btn px-6 py-2 rounded-xl text-white font-bold text-sm bg-red-900/40 backdrop-blur-md hover:bg-red-600 transition-colors">⚙️ Ayarlar</button>`;
+          actionsDiv.innerHTML = `<button onclick="openSettings()" class="border border-red-900/50 bg-[#111] hover:bg-red-900/50 px-4 py-1.5 rounded-sm text-white font-bold text-xs uppercase tracking-wider transition-colors">⚙️ Ayarlar</button>`;
         } else {
-          actionsDiv.innerHTML = `<button onclick="giveSuku('${safeNick}', '${targetNick}')" class="neon-btn px-6 py-2 rounded-xl text-white font-bold text-sm shadow-[0_0_15px_rgba(229,9,20,0.5)]">👍 Şukunu Ver</button>`;
+          const isFollowing = data.followers && data.followers[mySafeNick];
+          const followText = isFollowing ? 'Takipten Çık' : 'Takip Et';
+          actionsDiv.innerHTML = `
+            <button onclick="toggleFollow('${targetNick}')" id="follow-btn-ui" class="border ${isFollowing ? 'border-gray-600 bg-transparent text-gray-400' : 'border-red-700 bg-red-900/50 text-white hover:bg-red-600'} px-4 py-1.5 rounded-sm font-bold text-xs uppercase tracking-wider transition-colors">${followText}</button>
+            <button onclick="giveSuku('${safeNick}', '${targetNick}')" class="bg-red-600 hover:bg-red-500 px-4 py-1.5 rounded-sm text-white font-bold text-xs uppercase tracking-wider shadow-[0_0_10px_rgba(229,9,20,0.3)]">👍 Şukula</button>
+          `;
         }
 
         const histDiv = document.getElementById('up-history-feed'); histDiv.innerHTML = '';
@@ -380,8 +416,8 @@
         if(data.history) {
           let hist = Object.values(data.history); hist.sort((a,b) => b.watchedAt - a.watchedAt);
           histCount = hist.length;
-          hist.slice(0, 9).forEach(item => {
-            histDiv.innerHTML += `<img src="${IMG_BASE}w185${item.poster_path}" class="w-full aspect-[2/3] object-cover rounded border border-red-800/30 cursor-pointer hover:border-red-500 transition-colors" onclick="closeUserProfile(); searchSelect(${item.id}, '${item.media_type}')" title="${item.title||item.name}">`;
+          hist.slice(0, 6).forEach(item => {
+            histDiv.innerHTML += `<img src="${IMG_BASE}w185${item.poster_path}" class="w-full aspect-[2/3] object-cover rounded-sm border border-red-900/30 cursor-pointer hover:border-red-500 transition-colors" onclick="closeUserProfile(); searchSelect(${item.id}, '${item.media_type}')" title="${item.title||item.name}">`;
           });
         }
         document.getElementById('up-stat-history').textContent = histCount;
@@ -389,62 +425,114 @@
         const watchDiv = document.getElementById('up-watchlist-feed'); watchDiv.innerHTML = '';
         if(data.watchlist) {
           let list = Object.values(data.watchlist); list.sort((a,b) => b.addedAt - a.addedAt);
-          list.slice(0, 9).forEach(item => {
-            watchDiv.innerHTML += `<img src="${IMG_BASE}w185${item.poster_path}" class="w-full aspect-[2/3] object-cover rounded border border-red-800/30 cursor-pointer hover:border-red-500 transition-colors" onclick="closeUserProfile(); searchSelect(${item.id}, '${item.media_type}')" title="${item.title||item.name}">`;
+          list.slice(0, 6).forEach(item => {
+            watchDiv.innerHTML += `<img src="${IMG_BASE}w185${item.poster_path}" class="w-full aspect-[2/3] object-cover rounded-sm border border-red-900/30 cursor-pointer hover:border-red-500 transition-colors" onclick="closeUserProfile(); searchSelect(${item.id}, '${item.media_type}')" title="${item.title||item.name}">`;
           });
         }
 
-        const commDiv = document.getElementById('up-comments-feed');
-        commDiv.innerHTML = '<p class="text-sm text-red-400">Duvar taranıyor...</p>';
-        database.ref('comments').once('value').then(cSnap => {
-          let userComments = [];
-          cSnap.forEach(movieChild => {
-            movieChild.forEach(commentChild => {
-              const cData = commentChild.val();
-              if(cData.user.toLowerCase() === targetNick.toLowerCase()) { userComments.push({ movieId: movieChild.key, ...cData }); }
-            });
-          });
-          
-          document.getElementById('up-stat-comments').textContent = userComments.length;
-          commDiv.innerHTML = '';
-          if(userComments.length === 0) { commDiv.innerHTML = '<p class="text-sm text-gray-500">Duvar temiz, hiç yorum yok.</p>'; return; }
-          
-          userComments.sort((a,b) => b.timestamp - a.timestamp);
-          userComments.forEach(c => {
-            const date = new Date(c.timestamp).toLocaleDateString('tr-TR', { day:'numeric', month:'short', year:'numeric' });
-            commDiv.innerHTML += `
-              <div class="bg-black/60 border border-red-900/50 p-4 rounded-xl hover:bg-red-900/20 transition-colors cursor-pointer" onclick="closeUserProfile(); searchSelect(${c.movieId}, 'movie')">
-                <div class="flex justify-between items-center mb-2"><span class="text-xs text-red-500 font-bold tracking-widest uppercase">🎬 Yapıma Git</span><span class="text-[10px] text-gray-500">${date}</span></div>
-                <p class="text-sm text-red-100">${c.text}</p>
-              </div>`;
-          });
-        });
+        loadWall(safeNick, isMe);
 
         const mod = document.getElementById('user-profile-modal'); mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50);
       });
     }
-    
+
+    function toggleFollow(targetNick) {
+      const myUser = localStorage.getItem('kadavra_vip_user'); if(!myUser) return;
+      const mySafeNick = myUser.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      const targetSafeNick = targetNick.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      
+      const targetRef = database.ref(`kullanicilar/${targetSafeNick}/followers/${mySafeNick}`);
+      const myRef = database.ref(`kullanicilar/${mySafeNick}/following/${targetSafeNick}`);
+      
+      targetRef.once('value').then(snap => {
+        const btn = document.getElementById('follow-btn-ui');
+        if(snap.exists()) {
+          targetRef.remove(); myRef.remove(); showToast('Takipten çıkıldı.');
+          if(btn) { btn.textContent = 'Takip Et'; btn.className = 'border border-red-700 bg-red-900/50 text-white hover:bg-red-600 px-4 py-1.5 rounded-sm font-bold text-xs uppercase tracking-wider transition-colors'; }
+          document.getElementById('up-stat-followers').textContent = parseInt(document.getElementById('up-stat-followers').textContent) - 1;
+        } else {
+          targetRef.set(true); myRef.set(true); showToast('Takip edildi!');
+          if(btn) { btn.textContent = 'Takipten Çık'; btn.className = 'border border-gray-600 bg-transparent text-gray-400 px-4 py-1.5 rounded-sm font-bold text-xs uppercase tracking-wider transition-colors'; }
+          document.getElementById('up-stat-followers').textContent = parseInt(document.getElementById('up-stat-followers').textContent) + 1;
+        }
+      });
+    }
+
+    function postToWall() {
+      const input = document.getElementById('wall-input'); const text = input.value.trim();
+      if(!text || !currentProfileNick) return;
+      const loggedUser = localStorage.getItem('kadavra_vip_user') || 'Anonim';
+      const targetSafeNick = currentProfileNick.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      database.ref('kullanicilar/' + targetSafeNick + '/duvar').push({ yazar: loggedUser, mesaj: text, tarih: Date.now() });
+      input.value = ''; showToast('Duvara racon kesildi!');
+    }
+
+    function loadWall(targetSafeNick, isMe) {
+      const wallDiv = document.getElementById('up-wall-feed');
+      const currentUser = localStorage.getItem('kadavra_vip_user') || '';
+      const isAdmin = adminler.includes(currentUser.toLowerCase());
+
+      database.ref('kullanicilar/' + targetSafeNick + '/duvar').on('value', snap => {
+        wallDiv.innerHTML = '';
+        if(!snap.exists()) { wallDiv.innerHTML = '<p class="text-xs text-gray-600 font-mono">Duvar tertemiz. İlk yazan sen ol!</p>'; return; }
+        let msgs = []; snap.forEach(child => { msgs.push({ key: child.key, ...child.val() }); }); msgs.sort((a,b) => b.tarih - a.tarih); 
+        
+        msgs.forEach(msg => {
+          const dateStr = new Date(msg.tarih).toLocaleDateString('tr-TR', { month:'short', day:'numeric' });
+          const canDelete = isMe || msg.yazar.toLowerCase() === currentUser.toLowerCase() || isAdmin; 
+          const delBtn = canDelete ? `<button onclick="deleteWallPost('${targetSafeNick}', '${msg.key}')" class="text-gray-600 hover:text-red-500 text-[10px]" title="Sil">🗑️</button>` : '';
+
+          wallDiv.innerHTML += `
+            <div class="border-b border-red-900/20 pb-3 mb-3">
+              <div class="flex justify-between items-center mb-1">
+                <span onclick="openUserProfile('${msg.yazar}')" class="text-xs font-bold text-red-500 hover:text-white cursor-pointer uppercase tracking-wider">${msg.yazar}</span>
+                <div class="flex items-center gap-2"><span class="text-[9px] text-gray-500">${dateStr}</span>${delBtn}</div>
+              </div>
+              <p class="text-xs text-gray-300 break-words">${msg.mesaj}</p>
+            </div>
+          `;
+        });
+      });
+    }
+
+    function deleteWallPost(targetSafeNick, postKey) {
+      if(confirm('Kazıyıp atıyoruz, emin misin?')) { database.ref('kullanicilar/' + targetSafeNick + '/duvar/' + postKey).remove(); showToast('Yazı silindi.'); }
+    }
+
     function closeUserProfile() { const mod = document.getElementById('user-profile-modal'); mod.classList.add('opacity-0'); setTimeout(()=> mod.classList.add('hidden'), 300); }
+    
     function openSettings() { 
-      closeUserProfile();
-      const user = localStorage.getItem('kadavra_vip_user');
+      closeUserProfile(); const user = localStorage.getItem('kadavra_vip_user');
+      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      database.ref('kullanicilar/' + safeNick).once('value').then(snap => {
+        const data = snap.val() || {};
+        document.getElementById('pp-input').value = data.pp || '';
+        document.getElementById('bg-input').value = data.bg || '';
+        document.getElementById('bio-input').value = data.bio || '';
+        document.getElementById('loc-input').value = data.loc || '';
+      });
       if(adminler.includes(user.toLowerCase())) document.getElementById('admin-btn-container').classList.remove('hidden');
       const mod = document.getElementById('settings-modal'); mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50); 
     }
+    
     function closeSettings() { const mod = document.getElementById('settings-modal'); mod.classList.add('opacity-0'); setTimeout(()=> mod.classList.add('hidden'), 300); }
     function openAdminPanelFromProfile() { closeSettings(); openAdminPanel(); }
-    function stalkUser() {
-      const target = document.getElementById('stalk-input').value.trim();
-      if(!target) return; closeUserProfile(); openUserProfile(target); document.getElementById('stalk-input').value = '';
-    }
     
     function updateProfileSettings() {
       const ppLink = document.getElementById('pp-input').value.trim(); const bgLink = document.getElementById('bg-input').value.trim();
+      const bio = document.getElementById('bio-input').value.trim(); const loc = document.getElementById('loc-input').value.trim();
       const user = localStorage.getItem('kadavra_vip_user'); const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
-      if(ppLink) { database.ref('kullanicilar/' + safeNick + '/pp').set(ppLink); showToast('PP Güncellendi!'); }
-      if(bgLink) { database.ref('kullanicilar/' + safeNick + '/bg').set(bgLink); showToast('Arkaplan Güncellendi!'); }
-      document.getElementById('pp-input').value = ''; document.getElementById('bg-input').value = '';
-      setTimeout(() => { closeSettings(); openUserProfile(user); }, 500); 
+      
+      let updates = {};
+      if(ppLink) updates.pp = ppLink;
+      if(bgLink) updates.bg = bgLink;
+      if(bio) updates.bio = bio;
+      if(loc) updates.loc = loc;
+      
+      database.ref('kullanicilar/' + safeNick).update(updates).then(() => {
+        showToast('Profil ayarları jilet gibi oldu!');
+        setTimeout(() => { closeSettings(); openUserProfile(user); }, 500); 
+      });
     }
 
     function changePassword() {
@@ -458,7 +546,7 @@
     function saveToHistory(item, type) {
       const user = localStorage.getItem('kadavra_vip_user'); if(!user) return; const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
       database.ref(`kullanicilar/${safeNick}/history/${item.id}`).set({ ...item, media_type: type, watchedAt: Date.now() });
-      database.ref(`kullanicilar/${safeNick}/karma`).transaction(k => (k || 0) + 10); // Karma Ekleme Sistemi
+      database.ref(`kullanicilar/${safeNick}/karma`).transaction(k => (k || 0) + 10); 
     }
     
     function removeFromHistory(itemId) {
@@ -475,7 +563,7 @@
         section.classList.remove('hidden'); row.innerHTML = '';
         hist.slice(0, 15).forEach(item => {
           const title = item.title || item.name || ''; const div = document.createElement('div'); div.className = 'card-wrap relative group';
-          div.innerHTML = `<img class="card-img opacity-80 group-hover:opacity-100 transition-opacity" src="${IMG_BASE}w342${item.poster_path}" loading="lazy" /><button onclick="event.stopPropagation(); removeFromHistory(${item.id})" class="absolute top-2 right-2 bg-black/80 border border-red-500/50 hover:bg-red-600 text-white w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-30 font-bold text-xs" title="Geçmişten Sil">&times;</button><div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"><div class="w-12 h-12 bg-red-600/80 rounded-full flex items-center justify-center backdrop-blur"><svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><p class="card-title">${title}</p>`;
+          div.innerHTML = `<img class="card-img opacity-80 group-hover:opacity-100 transition-opacity" src="${IMG_BASE}w342${item.poster_path}" loading="lazy" /><button onclick="event.stopPropagation(); removeFromHistory(${item.id})" class="absolute top-2 right-2 bg-black/80 border border-red-500/50 hover:bg-red-600 text-white w-6 h-6 rounded-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-30 font-bold text-xs" title="Geçmişten Sil">&times;</button><div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"><div class="w-12 h-12 bg-red-600/80 rounded-sm flex items-center justify-center backdrop-blur"><svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><p class="card-title">${title}</p>`;
           div.addEventListener('click', () => openModal(item, item.media_type)); row.appendChild(div);
         });
       });
@@ -525,7 +613,7 @@
       document.getElementById('modal-title').textContent = item.title || item.name; document.getElementById('modal-desc').textContent = item.overview || 'Konu detayı bulunamadı...';
       document.getElementById('modal-bg-img').src = item.backdrop_path ? `${IMG_BASE}original${item.backdrop_path}` : ''; document.getElementById('modal-poster').src = item.poster_path ? `${IMG_BASE}w500${item.poster_path}` : '';
       const year = (item.release_date || item.first_air_date || '').slice(0,4); const rating = item.vote_average ? item.vote_average.toFixed(1) : '–';
-      document.getElementById('modal-meta').innerHTML = `<span class="rating-badge">IMDB ${rating}</span><span class="text-red-300 font-bold">${year}</span><span class="text-xs text-red-400 border border-red-500/30 px-2 py-0.5 rounded font-bold tracking-widest">${type === 'tv' ? 'DİZİ' : 'FİLM'}</span>`;
+      document.getElementById('modal-meta').innerHTML = `<span class="rating-badge">IMDB ${rating}</span><span class="text-red-300 font-bold">${year}</span><span class="text-xs text-red-400 border border-red-500/30 px-2 py-0.5 rounded-sm font-bold tracking-widest">${type === 'tv' ? 'DİZİ' : 'FİLM'}</span>`;
       overlay.classList.add('open'); checkWatchlistStatus(item.id); document.body.style.overflow = 'hidden'; 
       loadComments(item.id);
       document.getElementById('modal-seasons-wrap').classList.add('hidden'); document.getElementById('modal-cast').textContent = 'Yükleniyor...'; const trailerBtn = document.getElementById('modal-trailer-btn'); trailerBtn.classList.add('hidden');
@@ -540,12 +628,66 @@
     function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); document.body.style.overflow = ''; document.getElementById('player-frame').src = ''; document.getElementById('modal-poster').parentElement.classList.remove('hidden'); const btnArea = document.getElementById('modal-desc').nextElementSibling; if(btnArea) btnArea.classList.remove('hidden'); const cList = document.getElementById('comments-list'); if(cList) cList.parentElement.classList.remove('hidden'); if (window.history.state && window.history.state.modalOpen) { window.history.back(); } }
     window.onpopstate = function(event) { const overlay = document.getElementById('modal-overlay'); if (overlay && overlay.classList.contains('open')) { closeModal(); } };
     function renderSeasonTabs(showId) { const tabs = document.getElementById('season-tabs'); tabs.innerHTML = ''; currentSeasons.forEach((s, i) => { const btn = document.createElement('button'); btn.className = 'season-tab' + (i === 0 ? ' active' : ''); btn.textContent = `Sezon ${s.season_number}`; btn.onclick = () => { document.querySelectorAll('.season-tab').forEach(b => b.classList.remove('active')); btn.classList.add('active'); loadEpisodes(showId, s.season_number); }; tabs.appendChild(btn); }); if (currentSeasons.length > 0) loadEpisodes(showId, currentSeasons[0].season_number); }
-    async function loadEpisodes(showId, seasonNum) { const list = document.getElementById('episode-list'); list.innerHTML = '<div class="text-red-400">Yükleniyor...</div>'; try { const data = await tmdb(`/tv/${showId}/season/${seasonNum}`); list.innerHTML = ''; (data.episodes || []).forEach(ep => { const div = document.createElement('div'); div.className = 'bg-red-950/40 border border-red-800/30 p-4 rounded-lg hover:bg-red-900/50 cursor-pointer transition flex flex-col gap-1 group'; div.innerHTML = `<div class="text-xs text-red-400 mb-1">Bölüm ${ep.episode_number}</div><div class="text-sm font-bold text-red-100 uppercase truncate group-hover:text-white">${ep.name}</div><div class="text-xs text-red-500 flex justify-between mt-2"><span>${ep.runtime ? ep.runtime+' dk' : ''}</span><svg class="w-4 h-4 text-red-600 group-hover:text-red-300 transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>`; div.onclick = () => playEpisode(ep); list.appendChild(div); }); } catch(e) { list.innerHTML = '<p class="text-red-600 text-sm">Bölümler yüklenemedi.</p>'; } }
+    async function loadEpisodes(showId, seasonNum) { const list = document.getElementById('episode-list'); list.innerHTML = '<div class="text-red-400">Yükleniyor...</div>'; try { const data = await tmdb(`/tv/${showId}/season/${seasonNum}`); list.innerHTML = ''; (data.episodes || []).forEach(ep => { const div = document.createElement('div'); div.className = 'bg-red-950/40 border border-red-800/30 p-4 rounded-sm hover:bg-red-900/50 cursor-pointer transition flex flex-col gap-1 group'; div.innerHTML = `<div class="text-xs text-red-400 mb-1">Bölüm ${ep.episode_number}</div><div class="text-sm font-bold text-red-100 uppercase truncate group-hover:text-white">${ep.name}</div><div class="text-xs text-red-500 flex justify-between mt-2"><span>${ep.runtime ? ep.runtime+' dk' : ''}</span><svg class="w-4 h-4 text-red-600 group-hover:text-red-300 transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>`; div.onclick = () => playEpisode(ep); list.appendChild(div); }); } catch(e) { list.innerHTML = '<p class="text-red-600 text-sm">Bölümler yüklenemedi.</p>'; } }
     function playEpisode(ep) { openPlayer(currentItem, ep); } function playModal() { if (!currentItem) return; openPlayer(currentItem, null); }
-    function openPlayer(item, episode) { const imdb = item.imdb_id; if (!imdb) { showToast('🎬 IMDB ID bulunamadı.'); return; } saveToHistory(item, item.media_type); broadcastToTayfa(item, episode); let url = `https://playimdb.com/title/${imdb}`; if (episode) { url = `https://vidsrc.xyz/embed/tv?imdb=${imdb}&season=${episode.season_number}&episode=${episode.episode_number}`; } const title = (item.title || item.name || '') + (episode ? ` – Sezon ${episode.season_number} Bölüm ${episode.episode_number}` : ''); document.getElementById('player-title').textContent = title; document.getElementById('player-frame').src = url; document.getElementById('player-overlay').classList.add('open'); document.body.style.overflow = 'hidden'; }
+    function openPlayer(item, episode) {
+      const imdb = item.imdb_id;
+      if (!imdb) { showToast('🎬 IMDB ID bulunamadı.'); return; }
+      
+      saveToHistory(item, item.media_type);
+      broadcastToTayfa(item, episode);
+      
+      // Eski sunucu patlamış, yeraltının en sağlam motoru Vidsrc'ye geçiş yapıldı
+      let url = `https://vidsrc.net/embed/movie?imdb=${imdb}`;
+      if (episode) { 
+        url = `https://vidsrc.net/embed/tv?imdb=${imdb}&season=${episode.season_number}&episode=${episode.episode_number}`; 
+      }
+      
+      const title = (item.title || item.name || '') + (episode ? ` – Sezon ${episode.season_number} Bölüm ${episode.episode_number}` : '');
+      document.getElementById('player-title').textContent = title;
+      document.getElementById('player-frame').src = url;
+      document.getElementById('player-overlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
     function closePlayer() { document.getElementById('player-overlay').classList.remove('open'); document.getElementById('player-frame').src = ''; document.body.style.overflow = ''; } function closeAll() { closeModal(); closePlayer(); }
+    
     function handleSearch(val) { clearTimeout(searchTimer); const box = document.getElementById('search-results'); if (!val.trim()) { box.classList.add('hidden'); return; } searchTimer = setTimeout(() => doSearch(val), 400); }
-    async function doSearch(q) { const box = document.getElementById('search-results'); if (API_KEY === 'BURAYA_API_KEY_GELECEK') { box.classList.add('hidden'); return; } try { const data = await tmdb('/search/multi', { query: q }); const items = data.results.filter(i => i.poster_path && (i.media_type === 'movie' || i.media_type === 'tv')).slice(0, 6); if (!items.length) { box.classList.add('hidden'); return; } box.innerHTML = items.map(i => `<div class="flex items-center gap-3 p-3 hover:bg-red-900/30 cursor-pointer transition-colors border-b border-red-900/30 last:border-0" onclick="searchSelect(${i.id}, '${i.media_type}')"><img src="${IMG_BASE}w92${i.poster_path}" class="w-8 h-12 object-cover rounded" /><div><p class="text-sm text-red-100">${i.title || i.name}</p><p class="text-xs text-red-500">${i.media_type === 'tv' ? 'Dizi' : 'Film'} · ${(i.release_date || i.first_air_date || '').slice(0,4)}</p></div></div>`).join(''); box.classList.remove('hidden'); } catch(e) { box.classList.add('hidden'); } }
+    
+    async function doSearch(q) { 
+      const box = document.getElementById('search-results'); 
+      if (!q.trim()) { box.classList.add('hidden'); return; } 
+      let resultsHTML = ''; const safeQ = q.toLowerCase();
+
+      try {
+        const snap = await database.ref('kullanicilar').once('value');
+        if(snap.exists()) {
+          snap.forEach(child => {
+            const uNick = child.key.replace(/_/g, '.'); 
+            if(uNick.toLowerCase().includes(safeQ)) {
+              const pp = child.val().pp || getAvatar(uNick);
+              resultsHTML += `
+                <div class="flex items-center gap-3 p-3 hover:bg-red-900/40 cursor-pointer transition-colors border-b border-red-900/50" onclick="document.getElementById('search-input').value=''; document.getElementById('search-results').classList.add('hidden'); openUserProfile('${uNick}');">
+                  <img src="${pp}" class="w-10 h-10 object-cover rounded-sm border border-red-500 shadow-[0_0_10px_rgba(229,9,20,0.5)]" />
+                  <div><p class="text-sm font-bold text-red-400 drop-shadow-md">🕵️ ${uNick}</p><p class="text-[10px] text-gray-500">Lejyoner Profili</p></div>
+                </div>`;
+            }
+          });
+        }
+      } catch(e) { console.log("Kullanıcı arama hatası"); }
+
+      if (API_KEY !== 'BURAYA_API_KEY_GELECEK') { 
+        try { 
+          const data = await tmdb('/search/multi', { query: q }); 
+          const items = data.results.filter(i => i.poster_path && (i.media_type === 'movie' || i.media_type === 'tv')).slice(0, 5); 
+          items.forEach(i => {
+            resultsHTML += `<div class="flex items-center gap-3 p-3 hover:bg-black/60 cursor-pointer transition-colors border-b border-red-900/30 last:border-0" onclick="searchSelect(${i.id}, '${i.media_type}')"><img src="${IMG_BASE}w92${i.poster_path}" class="w-8 h-12 object-cover rounded-sm" /><div><p class="text-sm text-red-100">${i.title || i.name}</p><p class="text-xs text-red-500">${i.media_type === 'tv' ? 'Dizi' : 'Film'} · ${(i.release_date || i.first_air_date || '').slice(0,4)}</p></div></div>`;
+          });
+        } catch(e) {} 
+      }
+
+      if(resultsHTML === '') { box.classList.add('hidden'); } else { box.innerHTML = resultsHTML; box.classList.remove('hidden'); }
+    }
+
     async function searchSelect(id, type) { document.getElementById('search-results').classList.add('hidden'); document.getElementById('search-input').value = ''; try { const item = await tmdb(`/${type}/${id}`); openModal(item, type); } catch(e) { showToast('İçerik bulunamadı.'); } }
     document.addEventListener('click', e => { if (!e.target.closest('#search-input') && !e.target.closest('#search-results')) document.getElementById('search-results').classList.add('hidden'); });
     function showToast(msg, long = false) { const t = document.getElementById('toast'); document.getElementById('toast-msg').textContent = msg; t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)'; t.style.pointerEvents = 'all'; setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(16px)'; t.style.pointerEvents = 'none'; }, long ? 4000 : 2500); }
@@ -575,9 +717,9 @@
           const likersArray = watch.likes ? Object.keys(watch.likes) : []; const likeCount = likersArray.length; const likersText = likeCount > 0 ? likersArray.join(', ') : '';
           const div = document.createElement('div'); div.className = 'card-wrap relative group';
           div.innerHTML = `
-            <div class="absolute top-2 left-2 z-20 bg-red-900/90 text-red-100 text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded shadow-lg flex items-center gap-1.5 border border-red-500/50"><span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span> <span onclick="event.stopPropagation(); openUserProfile('${watch.user}')" class="cursor-pointer hover:text-white hover:underline">${watch.user}</span></div>
-            <button onclick="event.stopPropagation(); giveSuku('${watch._safeUser}', '${watch.user}')" class="absolute top-2 right-2 z-30 bg-black/80 hover:bg-red-600 border border-red-500/50 text-white text-[10px] font-bold px-2 py-1 rounded transition-colors opacity-0 group-hover:opacity-100 flex items-center gap-1 backdrop-blur-sm">👍 ${likeCount > 0 ? likeCount : 'Şukula'}</button>
-            ${likeCount > 0 ? `<div class="absolute bottom-2 left-2 right-2 text-center text-[9px] text-red-200 bg-black/80 rounded px-1 py-0.5 line-clamp-1 backdrop-blur-sm z-30 opacity-0 group-hover:opacity-100 transition-opacity">Kimler: ${likersText}</div>` : ''}
+            <div class="absolute top-2 left-2 z-20 bg-red-900/90 text-red-100 text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded-sm shadow-lg flex items-center gap-1.5 border border-red-500/50"><span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span> <span onclick="event.stopPropagation(); openUserProfile('${watch.user}')" class="cursor-pointer hover:text-white hover:underline">${watch.user}</span></div>
+            <button onclick="event.stopPropagation(); giveSuku('${watch._safeUser}', '${watch.user}')" class="absolute top-2 right-2 z-30 bg-black/80 hover:bg-red-600 border border-red-500/50 text-white text-[10px] font-bold px-2 py-1 rounded-sm transition-colors opacity-0 group-hover:opacity-100 flex items-center gap-1 backdrop-blur-sm">👍 ${likeCount > 0 ? likeCount : 'Şukula'}</button>
+            ${likeCount > 0 ? `<div class="absolute bottom-2 left-2 right-2 text-center text-[9px] text-red-200 bg-black/80 rounded-sm px-1 py-0.5 line-clamp-1 backdrop-blur-sm z-30 opacity-0 group-hover:opacity-100 transition-opacity">Kimler: ${likersText}</div>` : ''}
             <img class="card-img" src="${IMG_BASE}w342${watch.poster}" loading="lazy" />
             <p class="card-title">${watch.title}</p>
           `;
@@ -624,7 +766,7 @@
       list.innerHTML = '<p class="text-red-400 text-sm">Yorumlar çekiliyor...</p>';
 
       database.ref('comments/' + itemId).on('value', (snapshot) => {
-        if(!snapshot.exists()) { list.innerHTML = '<p class="text-red-400 text-sm">Henüz kimse yorum yapmamış. İlk raconu sen kes!</p>'; return; }
+        if(!snapshot.exists()) { list.innerHTML = '<p class="text-red-400 text-sm font-mono">Henüz kimse yorum yapmamış. İlk raconu sen kes!</p>'; return; }
         list.innerHTML = ''; let comments = [];
         snapshot.forEach(child => { let val = child.val(); val._key = child.key; comments.push(val); }); 
         comments.sort((a,b) => b.timestamp - a.timestamp); 
@@ -637,9 +779,9 @@
           const userIsAdmin = adminler.includes(comment.user.toLowerCase());
           const cSafe = comment.user.toLowerCase().replace(/[.#$\[\]]/g, '_');
 
-          const div = document.createElement('div'); div.className = 'bg-black/60 border border-red-900/30 p-3 rounded-xl mb-3 relative group flex gap-3 hover:border-red-900/60 transition-colors';
+          const div = document.createElement('div'); div.className = 'bg-black/60 border border-red-900/30 p-3 rounded-sm mb-3 relative group flex gap-3 hover:border-red-900/60 transition-colors';
           
-          let ppHTML = `<div class="w-8 h-8 rounded-full bg-red-800 flex items-center justify-center font-bold text-white shrink-0 overflow-hidden" id="pp-${comment._key}">${comment.user.charAt(0).toUpperCase()}</div>`;
+          let ppHTML = `<div class="w-8 h-8 rounded-sm bg-red-800 flex items-center justify-center font-bold text-white shrink-0 overflow-hidden" id="pp-${comment._key}">${comment.user.charAt(0).toUpperCase()}</div>`;
           database.ref('kullanicilar/' + cSafe + '/pp').once('value').then(snap => {
              if(snap.exists()) document.getElementById(`pp-${comment._key}`).innerHTML = `<img src="${snap.val()}" class="w-full h-full object-cover">`;
           });
@@ -653,7 +795,7 @@
               </div>
               <p class="text-gray-200 text-sm break-words">${comment.text}</p>
               <div class="mt-2 flex items-center gap-2">
-                <button onclick="likeComment('${itemId}', '${comment._key}')" class="text-[10px] text-red-400 hover:text-white bg-red-900/40 px-2 py-1 rounded transition-colors">👍 ${likeCount > 0 ? likeCount : 'Şukula'}</button>
+                <button onclick="likeComment('${itemId}', '${comment._key}')" class="text-[10px] text-red-400 hover:text-white bg-red-900/40 px-2 py-1 rounded-sm transition-colors">👍 ${likeCount > 0 ? likeCount : 'Şukula'}</button>
                 ${likeCount > 0 ? `<span class="text-[9px] text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">Kimler: ${likersText}</span>` : ''}
               </div>
             </div>
@@ -697,7 +839,7 @@
           const deleteBtn = canDelete ? `<button onclick="deleteChatMessage('${msg._key}')" class="text-gray-500 hover:text-red-500 ml-2" title="Mesajı Uçur">🗑️</button>` : '';
 
           const div = document.createElement('div');
-          div.className = `max-w-[85%] rounded-xl p-2.5 flex flex-col group relative ${isMe ? 'bg-red-800/80 self-end rounded-br-sm' : 'bg-[#111] self-start rounded-bl-sm border border-red-900/30'}`;
+          div.className = `max-w-[85%] rounded-sm p-2.5 flex flex-col group relative ${isMe ? 'bg-red-800/80 self-end border border-red-700/50' : 'bg-[#111] self-start border border-red-900/30'}`;
           div.innerHTML = `
             <div class="flex justify-between items-baseline gap-3 mb-1">
               <span onclick="openUserProfile('${msg.user}')" class="cursor-pointer hover:underline text-[10px] ${msgIsAdmin ? 'text-red-400 font-extrabold drop-shadow-[0_0_5px_rgba(229,9,20,0.8)]' : (isMe ? 'text-red-200' : 'text-red-400')} uppercase tracking-wider">${msg.user} ${msgIsAdmin ? '👑' : ''}</span>
@@ -706,7 +848,7 @@
             <div class="text-sm text-gray-200 break-words leading-snug">${msg.text}</div>
             <div class="mt-1 flex items-center justify-end gap-1">
               ${likeCount > 0 ? `<span class="text-[8px] text-red-300 opacity-0 group-hover:opacity-100 transition-opacity mr-1">${likersText}</span>` : ''}
-              <button onclick="likeChatMessage('${msg._key}')" class="text-[10px] bg-black/40 px-1.5 py-0.5 rounded hover:bg-black/60 transition-colors ${likeCount > 0 ? 'text-red-400' : 'text-gray-500 opacity-0 group-hover:opacity-100'}">👍 ${likeCount > 0 ? likeCount : ''}</button>
+              <button onclick="likeChatMessage('${msg._key}')" class="text-[10px] bg-black/40 px-1.5 py-0.5 rounded-sm hover:bg-black/60 transition-colors ${likeCount > 0 ? 'text-red-400' : 'text-gray-500 opacity-0 group-hover:opacity-100'}">👍 ${likeCount > 0 ? likeCount : ''}</button>
             </div>
           `;
           box.appendChild(div);
