@@ -615,15 +615,12 @@
         <button id="tab-login" onclick="toggleAuth('login')" class="flex-1 text-purple-100 font-bold tracking-widest pb-2 border-b-2 border-purple-500 transition-colors">GİRİŞ YAP</button>
         <button id="tab-register" onclick="toggleAuth('register')" class="flex-1 text-purple-400 font-bold tracking-widest pb-2 border-b-2 border-transparent transition-colors">KAYIT OL</button>
       </div>
-
       <h1 class="neon-text font-display text-4xl mb-6">KADAVRAFLIX</h1>
-      
       <input type="text" id="auth-nick" placeholder="Kullanıcı Adın (Örn: Fraude)..." class="w-full bg-purple-950/40 border border-purple-800/40 rounded-xl px-4 py-3 text-center text-white focus:outline-none focus:border-purple-500 mb-3">
       <input type="password" id="auth-pass" placeholder="Şifren (Örn: 123fenerbahce)..." class="w-full bg-purple-950/40 border border-purple-800/40 rounded-xl px-4 py-3 text-center text-white focus:outline-none focus:border-purple-500 mb-3">
-      <input type="text" id="auth-ref" placeholder="Referans Kodun (Örn: 501.lejyon)..." class="w-full bg-purple-950/40 border border-purple-800/40 rounded-xl px-4 py-3 text-center text-white focus:outline-none focus:border-purple-500 mb-5 hidden">
-        
+      <input type="text" id="auth-ref" placeholder="Referans Kodun (Sadece Kayıt İçin)..." class="w-full bg-purple-950/40 border border-purple-800/40 rounded-xl px-4 py-3 text-center text-white focus:outline-none focus:border-purple-500 mb-5 hidden">
       <button onclick="handleAuth()" id="auth-btn" class="neon-btn w-full py-3 rounded-xl text-white font-bold uppercase tracking-widest text-sm">İçeri Gir</button>
-      <p id="auth-error" class="text-red-500 text-xs mt-4 hidden">Hata mesajı burada çıkacak.</p>
+      <p id="auth-error" class="text-red-500 text-xs mt-4 hidden"></p>
     </div>
   </div>
 
@@ -685,6 +682,26 @@
 
   <footer class="border-t border-purple-900/50 px-8 py-8 text-center text-purple-700 text-xs"><p class="neon-text font-display text-xl mb-2">KADAVRAFLIX</p><p>© 2025 Kadavraflix. Tüm içerikler TMDB üzerinden çekilmektedir.</p></footer>
 
+  <div id="profile-modal" class="fixed inset-0 z-[3000] bg-black/80 backdrop-blur-sm flex items-center justify-center hidden opacity-0 transition-opacity">
+    <div class="bg-dark-panel border border-purple-500/30 w-full max-w-sm p-8 rounded-3xl relative shadow-[0_0_40px_#7c3aed44] text-center">
+      <button onclick="closeProfile()" class="absolute top-4 right-5 text-purple-400 hover:text-white text-3xl leading-none">&times;</button>
+      <div class="flex flex-col items-center gap-5">
+        <img id="profile-pp" src="https://i.imgur.com/6jNq1B8.png" class="w-28 h-28 rounded-full border-4 border-purple-600 object-cover shadow-[0_0_20px_#7c3aed88]" />
+        <h2 id="profile-name" class="text-3xl font-display text-white tracking-widest uppercase"></h2>
+        <div class="w-full mt-2 border-t border-purple-800/50 pt-5">
+          <p class="text-xs text-purple-300 mb-2">Profil Fotoğrafı (URL)</p>
+          <div class="flex gap-2">
+            <input type="text" id="pp-input" placeholder="https://..." class="flex-1 bg-purple-950/40 border border-purple-800/40 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500">
+            <button onclick="updatePP()" class="neon-btn px-4 py-2 rounded-xl text-white font-bold text-sm">Kaydet</button>
+          </div>
+        </div>
+        <div id="admin-btn-container" class="w-full mt-2 hidden">
+           <button onclick="openAdminPanelFromProfile()" class="w-full bg-red-900/20 border border-red-500/50 text-red-400 hover:bg-red-600 hover:text-white py-3 rounded-xl font-bold uppercase tracking-wider text-sm transition-colors shadow-[0_0_15px_rgba(248,113,113,0.2)]">👑 Lejyon İstihbarat</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="modal-overlay" onclick="handleOverlayClick(event)">
     <div id="modal-box" onclick="event.stopPropagation()" class="relative w-full h-full bg-transparent border-none rounded-none max-w-none max-h-none overflow-x-hidden">
       <div class="fixed inset-0 z-0 pointer-events-none"><img id="modal-bg-img" src="" class="w-full h-full object-cover opacity-20 blur-x1 scale-110" /><div class="absolute inset-0 bg-[#0a0010]/60"></div><div class="absolute inset-0 bg-gradient-to-t from-[#0a0010] via-transparent to-[#0a0010]/80"></div></div>
@@ -702,7 +719,7 @@
           <div class="w-full max-w-4xl mt-12 border-t border-purple-800/50 pt-8">
             <h3 class="text-white font-display text-2xl tracking-wide mb-6">TAYFANIN YORUMLARI</h3>
             <div class="flex gap-3 mb-6">
-              <div id="comment-avatar" class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 to-purple-900 flex items-center justify-center font-bold text-white shrink-0">?</div>
+              <div id="comment-avatar" class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 to-purple-900 flex items-center justify-center font-bold text-white shrink-0 overflow-hidden"><img id="comment-pp-img" src="" class="w-full h-full object-cover hidden"></div>
               <div class="flex-1 flex gap-2">
                 <input type="text" id="comment-input" placeholder="Bu yapım hakkında ne düşünüyorsun pampik?" class="w-full bg-purple-950/40 border border-purple-800/40 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-purple-500" onkeypress="if(event.key === 'Enter') postComment()">
                 <button onclick="postComment()" class="neon-btn px-6 py-2 rounded-xl text-white font-bold tracking-widest text-sm shrink-0">Yolla</button>
@@ -710,7 +727,7 @@
             </div>
             <div id="comments-list" class="space-y-3 max-h-[300px] overflow-y-auto pr-2"></div>
           </div>
-          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -719,671 +736,369 @@
   <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[300] transition-all duration-300 opacity-0 translate-y-4 pointer-events-none"><div class="bg-purple-900/90 backdrop-blur border border-purple-600/50 text-purple-100 text-sm px-5 py-3 rounded-full shadow-xl flex items-center gap-2"><span id="toast-icon">ℹ️</span><span id="toast-msg"></span></div></div>
 
   <script>
-   // ════════════════════ 1. TEMEL AYARLAR VE ADMİN LİSTESİ ════════════════════
-  const API_KEY = '98148cd009e2989e8e10c7d0abdfbaad';
-  const BASE_URL = 'https://api.themoviedb.org/3';
-  const IMG_BASE = 'https://image.tmdb.org/t/p/';
-  const LANG = 'tr-TR';
-  
-  // İŞTE BARONLAR LİSTESİ (Buraya admin olacak nickleri KÜÇÜK HARFLE yaz kanki)
-  const adminler = ['kadavra',]; 
-
-  // ════════════════════ 2. ADMİN & SİLME MOTORLARI ════════════════════
-  function deleteComment(itemId, commentKey) {
-    if(confirm('Bu yorumu ebediyete uğurlamak istediğine emin misin pampik?')) {
-      database.ref(`comments/${itemId}/${commentKey}`).remove();
-      showToast('Yorum çöp tenekesini boyladı.');
-    }
-  }
-
-  function deleteChatMessage(msgKey) {
-    if(confirm('Bu mesajı siliyoruz, emin misin?')) {
-      database.ref(`yeralti_sohbet/${msgKey}`).remove();
-    }
-  }
-
-  // Profil İkonuna Tıklayınca Açılan Gizli Admin Paneli
-  function openAdminPanel() {
-    const myUser = localStorage.getItem('kadavra_vip_user') || '';
-    if(!adminler.includes(myUser.toLowerCase())) { 
-      showToast('Buraya sadece Lejyon Baronları girebilir koçum!'); 
-      return; 
-    }
+    const API_KEY = '98148cd009e2989e8e10c7d0abdfbaad';
+    const BASE_URL = 'https://api.themoviedb.org/3';
+    const IMG_BASE = 'https://image.tmdb.org/t/p/';
+    const LANG = 'tr-TR';
     
-    database.ref('kullanicilar').once('value').then(snap => {
-      let html = '<div class="space-y-3 w-full max-h-[50vh] overflow-y-auto pr-2">';
-      snap.forEach(child => {
-        const u = child.val();
-        const date = u.sonGiris ? new Date(u.sonGiris).toLocaleString('tr-TR') : 'Bilinmiyor';
-        html += `
-          <div class="bg-black/50 p-4 rounded-xl border border-red-500/30 text-left relative overflow-hidden">
-            <div class="absolute -right-4 -top-4 text-6xl opacity-10">🕵️</div>
-            <p class="text-red-400 font-display text-2xl tracking-widest mb-2">${child.key.toUpperCase()}</p>
-            <p class="text-purple-300 text-sm">🔑 Şifre: <span class="text-white">${u.sifre}</span></p>
-            <p class="text-purple-300 text-sm">🎫 Ref: <span class="text-white">${u.refKodu}</span></p>
-            <p class="text-purple-300 text-sm">🕒 Son Görülme: <span class="text-white">${date}</span></p>
-            <p class="text-purple-300 text-sm">🌐 IP Adresi: <span class="text-green-400 font-bold">${u.ip || 'Gizlenmiş'}</span></p>
-            <p class="text-gray-500 text-[10px] mt-2 border-t border-purple-900/50 pt-2 leading-tight">📱 ${u.cihaz || 'Kayıt yok'}</p>
-          </div>`;
+    const adminler = ['kadavra', 'fraude', 'arda']; 
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCYgxFhUw_xs1SOLYsZXLKGCB_mNckL-HU",
+      authDomain: "kadavraflix.firebaseapp.com",
+      databaseURL: "https://kadavraflix-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "kadavraflix",
+      storageBucket: "kadavraflix.firebasestorage.app",
+      messagingSenderId: "962184141597",
+      appId: "1:962184141597:web:271e4d2998d1dd98e25ff4"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    // ADMİN PANELİ 
+    function openAdminPanel() {
+      database.ref('kullanicilar').once('value').then(snap => {
+        let html = '<div class="space-y-3 w-full max-h-[50vh] overflow-y-auto pr-2">';
+        snap.forEach(child => {
+          const u = child.val();
+          const date = u.sonGiris ? new Date(u.sonGiris).toLocaleString('tr-TR') : 'Bilinmiyor';
+          html += `<div class="bg-black/50 p-4 rounded-xl border border-red-500/30 text-left relative overflow-hidden"><div class="absolute -right-4 -top-4 text-6xl opacity-10">🕵️</div><p class="text-red-400 font-display text-2xl tracking-widest mb-2">${child.key.toUpperCase()}</p><p class="text-purple-300 text-sm">🔑 Şifre: <span class="text-white">${u.sifre}</span></p><p class="text-purple-300 text-sm">🎫 Ref: <span class="text-white">${u.refKodu}</span></p><p class="text-purple-300 text-sm">🕒 Son Görülme: <span class="text-white">${date}</span></p><p class="text-purple-300 text-sm">🌐 IP Adresi: <span class="text-green-400 font-bold">${u.ip || 'Gizlenmiş'}</span></p><p class="text-gray-500 text-[10px] mt-2 border-t border-purple-900/50 pt-2 leading-tight">📱 ${u.cihaz || 'Kayıt yok'}</p></div>`;
+        });
+        html += '</div>';
+
+        const overlay = document.getElementById('modal-overlay');
+        document.getElementById('modal-title').textContent = '👑 LEJYON İSTİHBARAT';
+        document.getElementById('modal-desc').innerHTML = html;
+        document.getElementById('modal-bg-img').src = '';
+        document.getElementById('modal-poster').parentElement.classList.add('hidden');
+        document.getElementById('modal-meta').innerHTML = '';
+        document.getElementById('modal-seasons-wrap').classList.add('hidden');
+        const btnArea = document.getElementById('modal-desc').nextElementSibling; if(btnArea) btnArea.classList.add('hidden');
+        const cList = document.getElementById('comments-list'); if(cList) cList.parentElement.classList.add('hidden');
+        overlay.classList.add('open'); document.body.style.overflow = 'hidden'; 
       });
-      html += '</div>';
-
-      const overlay = document.getElementById('modal-overlay');
-      document.getElementById('modal-title').textContent = '👑 LEJYON İSTİHBARAT AĞI';
-      document.getElementById('modal-desc').innerHTML = html;
-      document.getElementById('modal-bg-img').src = '';
-      
-      const posterDiv = document.getElementById('modal-poster').parentElement;
-      posterDiv.classList.add('hidden'); // Afişi gizle
-      
-      document.getElementById('modal-meta').innerHTML = '';
-      document.getElementById('modal-seasons-wrap').classList.add('hidden');
-      
-      // Butonları gizle
-      const btnArea = document.getElementById('modal-desc').nextElementSibling;
-      if(btnArea) btnArea.classList.add('hidden');
-      
-      const commentsSection = document.getElementById('comments-list');
-      if(commentsSection) commentsSection.parentElement.classList.add('hidden');
-
-      overlay.classList.add('open');
-      document.body.style.overflow = 'hidden'; 
-    });
-  }
-
-  // Modalı kapatırken bozulan arayüzü geri getirme fixi
-  function closeModal() {
-    document.getElementById('modal-overlay').classList.remove('open'); 
-    document.body.style.overflow = ''; 
-    document.getElementById('player-frame').src = '';
-    
-    // Admin panelinden çıkınca gizlenen şeyleri geri aç
-    document.getElementById('modal-poster').parentElement.classList.remove('hidden');
-    const btnArea = document.getElementById('modal-desc').nextElementSibling;
-    if(btnArea) btnArea.classList.remove('hidden');
-    const commentsSection = document.getElementById('comments-list');
-    if(commentsSection) commentsSection.parentElement.classList.remove('hidden');
-
-    if (window.history.state && window.history.state.modalOpen) { window.history.back(); }
-  }
-
-  // ════════════════════ 3. YARDIMCI VE İZLEME MOTORLARI ════════════════════
-  function saveToHistory(item, type) {
-    let history = JSON.parse(localStorage.getItem('kadavra_history') || '[]');
-    history = history.filter(i => i.id !== item.id);
-    history.unshift({ ...item, media_type: type });
-    if(history.length > 15) history.pop();
-    localStorage.setItem('kadavra_history', JSON.stringify(history));
-    loadHistory(); loadWatchlist();
-  }
-  
-  function loadHistory() {
-    const history = JSON.parse(localStorage.getItem('kadavra_history') || '[]');
-    const section = document.getElementById('continue-watching');
-    const row = document.getElementById('continue-row');
-    if(history.length === 0) { section.classList.add('hidden'); return; }
-    section.classList.remove('hidden'); row.innerHTML = '';
-    history.forEach(item => {
-      const title = item.title || item.name || '';
-      const div = document.createElement('div');
-      div.className = 'card-wrap relative group';
-      div.innerHTML = `<img class="card-img opacity-80 group-hover:opacity-100 transition-opacity" src="${IMG_BASE}w342${item.poster_path}" loading="lazy" /><div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"><div class="w-12 h-12 bg-purple-600/80 rounded-full flex items-center justify-center backdrop-blur"><svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><p class="card-title">${title}</p>`;
-      div.addEventListener('click', () => openModal(item, item.media_type));
-      row.appendChild(div);
-    });
-  }
-
-  let heroData = null; let currentItem = null; let currentSeasons = []; let searchTimer = null;
-  window.addEventListener('scroll', () => { document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60); });
-
-  async function tmdb(path, params = {}) {
-    const q = new URLSearchParams({ api_key: API_KEY, language: LANG, ...params });
-    const r = await fetch(`${BASE_URL}${path}?${q}`);
-    if (!r.ok) throw new Error(`TMDB ${r.status}`);
-    return r.json();
-  }
-
-  async function init() {
-    if (!API_KEY || API_KEY === 'BURAYA_API_KEY_GELECEK') { showToast('⚠️ Lütfen API anahtarınızı girin!', true); loadDemoData(); return; }
-    try {
-      loadHistory(); loadWatchlist();
-      await Promise.all([loadHero(), loadTrending(), loadMovies(), loadSeries()]);
-    } catch(e) { console.error(e); showToast('API hatası: ' + e.message, true); loadDemoData(); }
-  }
-
-  async function loadHero(type = 'all') {
-    let data; let mediaType = 'movie';
-    if (type === 'movie') { data = await tmdb('/movie/popular'); } 
-    else if (type === 'tv') { data = await tmdb('/tv/popular'); mediaType = 'tv'; } 
-    else { data = await tmdb('/trending/all/day'); }
-    const items = data.results.filter(m => m.backdrop_path);
-    heroData = items[Math.floor(Math.random() * Math.min(5, items.length))];
-    renderHero(heroData, heroData.media_type || mediaType);
-  }
-  
-  function renderHero(item, type) {
-    const el = id => document.getElementById(id);
-    const bg = el('hero-bg'); const img = `${IMG_BASE}original${item.backdrop_path}`;
-    bg.style.backgroundImage = `url(${img})`; bg.style.opacity = '0';
-    const t = new Image(); t.src = img; t.onload = () => { bg.style.opacity = '1'; };
-    el('hero-title').textContent = item.title || item.name; el('hero-desc').textContent = item.overview || 'Açıklama bulunamadı.';
-    const year = (item.release_date || item.first_air_date || '').slice(0,4);
-    const rating = item.vote_average ? item.vote_average.toFixed(1) : '–';
-    el('hero-meta').innerHTML = `<span class="rating-badge">⭐ ${rating}</span><span class="text-purple-400 text-sm">${year}</span><span class="text-purple-600 text-sm uppercase text-xs">${type === 'tv' ? '● Dizi' : '● Film'}</span>`;
-    ['hero-badge','hero-title','hero-desc','hero-meta','hero-btns'].forEach(id => { const el2 = el(id); el2.style.opacity = '1'; el2.style.transform = 'translateY(0)'; });
-    el('hero-play').onclick = () => { currentItem = { ...item, media_type: type }; playModal(); };
-    el('hero-btns').querySelector('button:last-child').onclick = () => openModal(item, type);
-  }
-
-  function playHero() { if (!heroData) return; openModal(heroData, heroData.media_type || 'movie'); }
-  function infoHero() { if (!heroData) return; openModal(heroData, heroData.media_type || 'movie'); }
-
-  async function switchView(viewName) {
-    closeAll();
-    document.getElementById('view-home').classList.add('hidden');
-    document.getElementById('view-movies').classList.add('hidden');
-    document.getElementById('view-series').classList.add('hidden');
-    document.getElementById('view-' + viewName).classList.remove('hidden');
-    if (viewName === 'home') { loadHero('all'); } 
-    else if (viewName === 'movies') {
-      loadHero('movie');
-      const action = await tmdb('/discover/movie', { with_genres: 28 }); renderRow('action-row', action.results, () => 'movie');
-      const comedy = await tmdb('/discover/movie', { with_genres: 35 }); renderRow('comedy-row', comedy.results, () => 'movie');
-      const scifi = await tmdb('/discover/movie', { with_genres: 878 }); renderRow('scifi-row', scifi.results, () => 'movie');
-    } else if (viewName === 'series') {
-      loadHero('tv');
-      const action = await tmdb('/discover/tv', { with_genres: 10759 }); renderRow('action-series-row', action.results, () => 'tv');
-      const scifi = await tmdb('/discover/tv', { with_genres: 10765 }); renderRow('scifi-series-row', scifi.results, () => 'tv');
-      const anim = await tmdb('/discover/tv', { with_genres: 16 }); renderRow('anim-series-row', anim.results, () => 'tv');
     }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
 
-  async function loadTrending() { const data = await tmdb('/trending/all/week'); renderRow('trending-row', data.results, item => item.media_type || 'movie'); }
-  async function loadMovies() { const data = await tmdb('/movie/now_playing'); renderRow('movies-row', data.results, () => 'movie'); }
-  async function loadSeries() { const data = await tmdb('/tv/popular'); renderRow('series-row', data.results, () => 'tv'); }
-
-  function renderRow(rowId, items, typeGetter) {
-    const row = document.getElementById(rowId); row.innerHTML = '';
-    items.slice(0, 18).forEach(item => {
-      if (!item.poster_path) return;
-      const type = typeGetter(item); const title = item.title || item.name || '';
-      const div = document.createElement('div'); div.className = 'card-wrap';
-      div.innerHTML = `<img class="card-img" src="${IMG_BASE}w342${item.poster_path}" loading="lazy" /><p class="card-title">${title}</p>`;
-      div.addEventListener('click', () => openModal(item, type));
-      row.appendChild(div);
-    });
-  }
-
-  async function openModal(item, type) {
-    history.pushState({ modalOpen: true }, '');
-    currentItem = { ...item, media_type: type };
-    const overlay = document.getElementById('modal-overlay');
-    document.getElementById('modal-title').textContent = item.title || item.name;
-    document.getElementById('modal-desc').textContent = item.overview || 'Konu detayı bulunamadı...';
-    document.getElementById('modal-bg-img').src = item.backdrop_path ? `${IMG_BASE}original${item.backdrop_path}` : '';
-    document.getElementById('modal-poster').src = item.poster_path ? `${IMG_BASE}w500${item.poster_path}` : '';
-    const year = (item.release_date || item.first_air_date || '').slice(0,4);
-    const rating = item.vote_average ? item.vote_average.toFixed(1) : '–';
-    document.getElementById('modal-meta').innerHTML = `<span class="rating-badge">IMDB ${rating}</span><span class="text-purple-300 font-bold">${year}</span><span class="text-xs text-purple-400 border border-purple-500/30 px-2 py-0.5 rounded font-bold tracking-widest">${type === 'tv' ? 'DİZİ' : 'FİLM'}</span>`;
-    
-    overlay.classList.add('open');
-    checkWatchlistStatus(item.id);
-    document.body.style.overflow = 'hidden'; 
-    
-    loadComments(item.id);
-
-    document.getElementById('modal-seasons-wrap').classList.add('hidden');
-    document.getElementById('modal-cast').textContent = 'Yükleniyor...';
-    const trailerBtn = document.getElementById('modal-trailer-btn'); trailerBtn.classList.add('hidden');
-
-    try {
-      const details = await tmdb(`/${type}/${item.id}`, { append_to_response: 'external_ids,seasons,credits,videos' });
-      currentItem.imdb_id = details.imdb_id || (details.external_ids && details.external_ids.imdb_id);
-      if (details.credits && details.credits.cast) { document.getElementById('modal-cast').textContent = details.credits.cast.slice(0, 6).map(c => c.name).join(', ') || 'Bilinmiyor'; }
-      if (details.videos && details.videos.results) {
-        const trailer = details.videos.results.find(v => v.type === 'Trailer' && v.site === 'YouTube');
-        if (trailer) { trailerBtn.classList.remove('hidden'); trailerBtn.onclick = () => window.open(`https://www.youtube.com/watch?v=${trailer.key}`, '_blank'); }
-      }
-      if (type === 'tv' && details.seasons) {
-        currentSeasons = details.seasons.filter(s => s.season_number > 0);
-        document.getElementById('modal-seasons-wrap').classList.remove('hidden');
-        renderSeasonTabs(item.id);
-      }
-    } catch(e) { document.getElementById('modal-cast').textContent = 'Bilinmiyor'; }
-  }
-
-  window.onpopstate = function(event) {
-    const overlay = document.getElementById('modal-overlay');
-    if (overlay && overlay.classList.contains('open')) { overlay.classList.remove('open'); document.body.style.overflow = ''; document.getElementById('player-frame').src = ''; }
-  };
-
-  function renderSeasonTabs(showId) {
-    const tabs = document.getElementById('season-tabs'); tabs.innerHTML = '';
-    currentSeasons.forEach((s, i) => {
-      const btn = document.createElement('button');
-      btn.className = 'season-tab' + (i === 0 ? ' active' : '');
-      btn.textContent = `Sezon ${s.season_number}`;
-      btn.onclick = () => { document.querySelectorAll('.season-tab').forEach(b => b.classList.remove('active')); btn.classList.add('active'); loadEpisodes(showId, s.season_number); };
-      tabs.appendChild(btn);
-    });
-    if (currentSeasons.length > 0) loadEpisodes(showId, currentSeasons[0].season_number);
-  }
-
-  async function loadEpisodes(showId, seasonNum) {
-    const list = document.getElementById('episode-list'); list.innerHTML = '<div class="text-purple-400">Yükleniyor...</div>';
-    try {
-      const data = await tmdb(`/tv/${showId}/season/${seasonNum}`); list.innerHTML = '';
-      (data.episodes || []).forEach(ep => {
-        const div = document.createElement('div');
-        div.className = 'bg-purple-950/40 border border-purple-800/30 p-4 rounded-lg hover:bg-purple-800/50 cursor-pointer transition flex flex-col gap-1 group';
-        div.innerHTML = `<div class="text-xs text-purple-400 mb-1">Bölüm ${ep.episode_number}</div><div class="text-sm font-bold text-purple-100 uppercase truncate group-hover:text-white">${ep.name}</div><div class="text-xs text-purple-500 flex justify-between mt-2"><span>${ep.runtime ? ep.runtime+' dk' : ''}</span><svg class="w-4 h-4 text-purple-600 group-hover:text-purple-300 transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>`;
-        div.onclick = () => playEpisode(ep); list.appendChild(div);
+    // PROFİL İŞLEMLERİ
+    function openProfilePanel(username) {
+      const safeNick = username.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      document.getElementById('profile-name').textContent = username;
+      database.ref('kullanicilar/' + safeNick + '/pp').once('value').then(snap => {
+        if(snap.exists()) document.getElementById('profile-pp').src = snap.val();
+        else document.getElementById('profile-pp').src = 'https://i.imgur.com/6jNq1B8.png'; 
       });
-    } catch(e) { list.innerHTML = '<p class="text-purple-600 text-sm">Bölümler yüklenemedi.</p>'; }
-  }
+      if(adminler.includes(username.toLowerCase())) { document.getElementById('admin-btn-container').classList.remove('hidden'); } else { document.getElementById('admin-btn-container').classList.add('hidden'); }
+      const mod = document.getElementById('profile-modal'); mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50);
+    }
+    function closeProfile() { const mod = document.getElementById('profile-modal'); mod.classList.add('opacity-0'); setTimeout(()=> mod.classList.add('hidden'), 300); }
+    function openAdminPanelFromProfile() { closeProfile(); openAdminPanel(); }
+    function updatePP() {
+      const link = document.getElementById('pp-input').value.trim(); if(!link) return;
+      const user = localStorage.getItem('kadavra_vip_user'); const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      database.ref('kullanicilar/' + safeNick + '/pp').set(link);
+      document.getElementById('profile-pp').src = link; document.getElementById('pp-input').value = ''; showToast('PP Güncellendi!');
+    }
 
-  function playEpisode(ep) { openPlayer(currentItem, ep); }
-  function playModal() { if (!currentItem) return; openPlayer(currentItem, null); }
-
-  function openPlayer(item, episode) {
-    const imdb = item.imdb_id;
-    if (!imdb) { showToast('🎬 IMDB ID bulunamadı, lütfen tekrar deneyin.'); return; }
-    saveToHistory(item, item.media_type);
-    broadcastToTayfa(item, episode);
-    let url = `https://playimdb.com/title/${imdb}`;
-    if (episode) { url = `https://vidsrc.xyz/embed/tv?imdb=${imdb}&season=${episode.season_number}&episode=${episode.episode_number}`; }
-    const title = (item.title || item.name || '') + (episode ? ` – Sezon ${episode.season_number} Bölüm ${episode.episode_number}` : '');
-    document.getElementById('player-title').textContent = title;
-    document.getElementById('player-frame').src = url;
-    document.getElementById('player-overlay').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closePlayer() { document.getElementById('player-overlay').classList.remove('open'); document.getElementById('player-frame').src = ''; document.body.style.overflow = ''; }
-  function closeAll() { closeModal(); closePlayer(); }
-
-  function handleSearch(val) {
-    clearTimeout(searchTimer); const box = document.getElementById('search-results');
-    if (!val.trim()) { box.classList.add('hidden'); return; }
-    searchTimer = setTimeout(() => doSearch(val), 400);
-  }
-
-  async function doSearch(q) {
-    const box = document.getElementById('search-results');
-    if (API_KEY === 'BURAYA_API_KEY_GELECEK') { box.classList.add('hidden'); return; }
-    try {
-      const data = await tmdb('/search/multi', { query: q });
-      const items = data.results.filter(i => i.poster_path && (i.media_type === 'movie' || i.media_type === 'tv')).slice(0, 6);
-      if (!items.length) { box.classList.add('hidden'); return; }
-      box.innerHTML = items.map(i => `<div class="flex items-center gap-3 p-3 hover:bg-purple-900/30 cursor-pointer transition-colors border-b border-purple-900/30 last:border-0" onclick="searchSelect(${i.id}, '${i.media_type}')"><img src="${IMG_BASE}w92${i.poster_path}" class="w-8 h-12 object-cover rounded" /><div><p class="text-sm text-purple-100">${i.title || i.name}</p><p class="text-xs text-purple-600">${i.media_type === 'tv' ? 'Dizi' : 'Film'} · ${(i.release_date || i.first_air_date || '').slice(0,4)}</p></div></div>`).join('');
-      box.classList.remove('hidden');
-    } catch(e) { box.classList.add('hidden'); }
-  }
-
-  async function searchSelect(id, type) { document.getElementById('search-results').classList.add('hidden'); document.getElementById('search-input').value = ''; try { const item = await tmdb(`/${type}/${id}`); openModal(item, type); } catch(e) { showToast('İçerik bulunamadı.'); } }
-  document.addEventListener('click', e => { if (!e.target.closest('#search-input') && !e.target.closest('#search-results')) document.getElementById('search-results').classList.add('hidden'); });
-
-  function showToast(msg, long = false) {
-    const t = document.getElementById('toast'); document.getElementById('toast-msg').textContent = msg;
-    t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)'; t.style.pointerEvents = 'all';
-    setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(16px)'; t.style.pointerEvents = 'none'; }, long ? 4000 : 2500);
-  }
-
-  function loadDemoData() {
-    ['trending-row','movies-row','series-row'].forEach(id => { document.getElementById(id).innerHTML = `<div class="flex items-center justify-center w-full py-12 text-purple-600 text-sm text-center"><div><div class="text-4xl mb-3">🔑</div><p class="font-semibold text-purple-400 mb-1">API Anahtarı Eksik</p></div></div>`; });
-  }
-
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') { if (document.getElementById('player-overlay').classList.contains('open')) closePlayer(); else closeModal(); } });
-
-  async function playRandom() {
-    showToast('🎲 Arşivden rastgele bir efsane seçiliyor...', false);
-    try {
-      const randomPage = Math.floor(Math.random() * 20) + 1; const data = await tmdb('/movie/popular', { page: randomPage });
-      const items = data.results.filter(m => m.backdrop_path && m.poster_path); 
-      if (items.length > 0) { openModal(items[Math.floor(Math.random() * items.length)], 'movie'); } else { showToast('Tüh, zar boşa geldi tekrar dene.'); }
-    } catch(e) { showToast('Zar atarken hata oluştu.'); }
-  }
-
-  function toggleWatchlist() {
-    if (!currentItem) return;
-    let list = JSON.parse(localStorage.getItem('kadavra_watchlist') || '[]');
-    const index = list.findIndex(i => i.id === currentItem.id);
-    if (index > -1) { list.splice(index, 1); showToast('❌ Listenden çıkarıldı.'); } else { list.unshift(currentItem); showToast('✅ Listene eklendi.'); }
-    localStorage.setItem('kadavra_watchlist', JSON.stringify(list)); checkWatchlistStatus(currentItem.id); loadWatchlist();
-  }
-
-  function checkWatchlistStatus(id) {
-    let list = JSON.parse(localStorage.getItem('kadavra_watchlist') || '[]');
-    const btnText = document.getElementById('watchlist-text'); const btnIcon = document.getElementById('watchlist-icon');
-    if (list.some(i => i.id === id)) { btnText.textContent = 'Listeden Çıkar'; btnIcon.textContent = '✓'; } else { btnText.textContent = 'Listeme Ekle'; btnIcon.textContent = '+'; }
-  }
-
-  function loadWatchlist() {
-    const list = JSON.parse(localStorage.getItem('kadavra_watchlist') || '[]');
-    const section = document.getElementById('watchlist-section'); const row = document.getElementById('watchlist-row');
-    if(list.length === 0) { section.classList.add('hidden'); return; }
-    section.classList.remove('hidden'); row.innerHTML = '';
-    list.forEach(item => {
-      const title = item.title || item.name || ''; const div = document.createElement('div'); div.className = 'card-wrap';
-      div.innerHTML = `<img class="card-img" src="${IMG_BASE}w342${item.poster_path}" loading="lazy" /><p class="card-title">${title}</p>`;
-      div.addEventListener('click', () => openModal(item, item.media_type)); row.appendChild(div);
-    });
-  }
-
-  // ════════════════════ FIREBASE BAĞLANTISI VE ŞUKULU SİSTEMLER ════════════════════
-  const firebaseConfig = {
-    apiKey: "AIzaSyCYgxFhUw_xs1SOLYsZXLKGCB_mNckL-HU",
-    authDomain: "kadavraflix.firebaseapp.com",
-    databaseURL: "https://kadavraflix-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "kadavraflix",
-    storageBucket: "kadavraflix.firebasestorage.app",
-    messagingSenderId: "962184141597",
-    appId: "1:962184141597:web:271e4d2998d1dd98e25ff4"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const database = firebase.database();
-
-  function broadcastToTayfa(item, episode) {
-    const user = localStorage.getItem('kadavra_vip_user') || 'Kayıtsız Ruh';
-    const title = (item.title || item.name || '');
-    const epText = episode ? ` (S${episode.season_number} B${episode.episode_number})` : '';
-    const safeUser = user.replace(/[.#$\[\]]/g, '_'); 
-    
-    const ref = database.ref('tayfa_akis/' + safeUser);
-    ref.once('value').then(snap => {
-      const data = snap.val();
-      let currentLikes = null;
-      if (data && data.id === item.id) { currentLikes = data.likes || null; } // Film değişmediyse şukuyu koru
-      
-      ref.set({
-        user: user, title: title + epText, poster: item.poster_path, type: item.media_type || 'movie',
-        id: item.id, timestamp: Date.now(), likes: currentLikes
+    // BULUT GEÇMİŞ (X SİLME) VE LİSTE
+    function saveToHistory(item, type) {
+      const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
+      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      database.ref(`kullanicilar/${safeNick}/history/${item.id}`).set({ ...item, media_type: type, watchedAt: Date.now() });
+    }
+    function removeFromHistory(itemId) {
+      const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
+      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      database.ref(`kullanicilar/${safeNick}/history/${itemId}`).remove(); showToast('Geçmişten silindi!');
+    }
+    function loadHistory() {
+      const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
+      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      database.ref(`kullanicilar/${safeNick}/history`).on('value', snap => {
+        const section = document.getElementById('continue-watching'); const row = document.getElementById('continue-row');
+        if(!snap.exists()) { section.classList.add('hidden'); return; }
+        let hist = []; snap.forEach(c => hist.push(c.val())); hist.sort((a,b) => b.watchedAt - a.watchedAt); 
+        section.classList.remove('hidden'); row.innerHTML = '';
+        hist.slice(0, 15).forEach(item => {
+          const title = item.title || item.name || ''; const div = document.createElement('div'); div.className = 'card-wrap relative group';
+          div.innerHTML = `<img class="card-img opacity-80 group-hover:opacity-100 transition-opacity" src="${IMG_BASE}w342${item.poster_path}" loading="lazy" /><button onclick="event.stopPropagation(); removeFromHistory(${item.id})" class="absolute top-2 right-2 bg-black/80 border border-red-500/50 hover:bg-red-600 text-white w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-30 font-bold text-xs" title="Geçmişten Sil">&times;</button><div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"><div class="w-12 h-12 bg-purple-600/80 rounded-full flex items-center justify-center backdrop-blur"><svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><p class="card-title">${title}</p>`;
+          div.addEventListener('click', () => openModal(item, item.media_type)); row.appendChild(div);
+        });
       });
-    });
-  }
-
-  function listenTayfa() {
-    database.ref('tayfa_akis').on('value', (snapshot) => {
-      const row = document.getElementById('tayfa-row');
-      if (!row) return; row.innerHTML = '';
-      
-      let rawData = [];
-      snapshot.forEach(child => { let val = child.val(); val._safeUser = child.key; rawData.push(val); }); 
-      rawData.sort((a, b) => b.timestamp - a.timestamp); 
-      
-      let uniqueData = []; let seenUsers = new Set();
-      rawData.forEach(watch => { if (!seenUsers.has(watch.user)) { seenUsers.add(watch.user); uniqueData.push(watch); } });
-      
-      uniqueData.slice(0, 10).forEach(watch => {
-        if (!watch.poster) return;
-        const likersArray = watch.likes ? Object.keys(watch.likes) : [];
-        const likeCount = likersArray.length;
-        const likersText = likeCount > 0 ? likersArray.join(', ') : '';
-
-        const div = document.createElement('div');
-        div.className = 'card-wrap relative group';
-        div.innerHTML = `
-          <div class="absolute top-2 left-2 z-20 bg-purple-900/90 text-purple-100 text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded shadow-lg flex items-center gap-1.5 border border-purple-500/50">
-            <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span> ${watch.user}
-          </div>
-          <button onclick="event.stopPropagation(); giveSuku('${watch._safeUser}', '${watch.user}')" class="absolute top-2 right-2 z-30 bg-black/80 hover:bg-purple-600 border border-purple-500/50 text-white text-[10px] font-bold px-2 py-1 rounded transition-colors opacity-0 group-hover:opacity-100 flex items-center gap-1 backdrop-blur-sm">
-            👍 ${likeCount > 0 ? likeCount : 'Şukula'}
-          </button>
-          ${likeCount > 0 ? `<div class="absolute bottom-2 left-2 right-2 text-center text-[9px] text-purple-200 bg-black/80 rounded px-1 py-0.5 line-clamp-1 backdrop-blur-sm z-30 opacity-0 group-hover:opacity-100 transition-opacity">Kimler: ${likersText}</div>` : ''}
-          <img class="card-img" src="${IMG_BASE}w342${watch.poster}" loading="lazy" />
-          <p class="card-title">${watch.title}</p>
-        `;
-        div.addEventListener('click', () => searchSelect(watch.id, watch.type));
-        row.appendChild(div);
+    }
+    function toggleWatchlist() {
+      if (!currentItem) return; const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
+      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_'); const ref = database.ref(`kullanicilar/${safeNick}/watchlist/${currentItem.id}`);
+      ref.once('value').then(snap => { if(snap.exists()) { ref.remove(); showToast('❌ Listenden çıkarıldı.'); } else { ref.set({ ...currentItem, addedAt: Date.now() }); showToast('✅ Listene eklendi.'); } checkWatchlistStatus(currentItem.id); });
+    }
+    function checkWatchlistStatus(id) {
+      const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
+      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      database.ref(`kullanicilar/${safeNick}/watchlist/${id}`).once('value').then(snap => {
+         const btnText = document.getElementById('watchlist-text'); const btnIcon = document.getElementById('watchlist-icon');
+         if (snap.exists()) { btnText.textContent = 'Listeden Çıkar'; btnIcon.textContent = '✓'; } else { btnText.textContent = 'Listeme Ekle'; btnIcon.textContent = '+'; }
       });
-    });
-  }
+    }
+    function loadWatchlist() {
+      const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
+      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      database.ref(`kullanicilar/${safeNick}/watchlist`).on('value', snap => {
+         const section = document.getElementById('watchlist-section'); const row = document.getElementById('watchlist-row');
+         if(!snap.exists()) { section.classList.add('hidden'); return; }
+         section.classList.remove('hidden'); row.innerHTML = '';
+         let list = []; snap.forEach(c => list.push(c.val())); list.sort((a,b) => b.addedAt - a.addedAt);
+         list.forEach(item => {
+            const title = item.title || item.name || ''; const div = document.createElement('div'); div.className = 'card-wrap';
+            div.innerHTML = `<img class="card-img" src="${IMG_BASE}w342${item.poster_path}" loading="lazy" /><p class="card-title">${title}</p>`;
+            div.addEventListener('click', () => openModal(item, item.media_type)); row.appendChild(div);
+         });
+      });
+    }
 
-  function giveSuku(targetUserKey, targetUserName) {
-    const myUser = localStorage.getItem('kadavra_vip_user');
-    if(!myUser) return;
-    const safeMe = myUser.replace(/[.#$\[\]]/g, '_');
-    const ref = database.ref(`tayfa_akis/${targetUserKey}/likes/${safeMe}`);
-    ref.once('value').then(snap => {
-      if(snap.exists()) { ref.remove(); } else { ref.set(true); showToast(`${targetUserName} pampiğine şukunu verdin!`); }
-    });
-  }
+    // TMDB ARAMA VE SAYFA İŞLEMLERİ
+    let heroData = null; let currentItem = null; let currentSeasons = []; let searchTimer = null;
+    window.addEventListener('scroll', () => { document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60); });
+    async function tmdb(path, params = {}) { const q = newSearchParams({ api_key: API_KEY, language: LANG, ...params }); const r = await fetch(`${BASE_URL}${path}?${q}`); if (!r.ok) throw new Error(`TMDB ${r.status}`); return r.json(); }
+    async function init() { if (!API_KEY || API_KEY === 'BURAYA_API_KEY_GELECEK') { showToast('⚠️ Lütfen API anahtarınızı girin!'); return; } try { loadHistory(); loadWatchlist(); await Promise.all([loadHero(), loadTrending(), loadMovies(), loadSeries()]); } catch(e) { console.log(e); } }
+    async function loadHero(type = 'all') { let data; let mediaType = 'movie'; if (type === 'movie') { data = await tmdb('/movie/popular'); } else if (type === 'tv') { data = await tmdb('/tv/popular'); mediaType = 'tv'; } else { data = await tmdb('/trending/all/day'); } const items = data.results.filter(m => m.backdrop_path); heroData = items[Math.floor(Math.random() * Math.min(5, items.length))]; renderHero(heroData, heroData.media_type || mediaType); }
+    function renderHero(item, type) { const el = id => document.getElementById(id); const bg = el('hero-bg'); const img = `${IMG_BASE}original${item.backdrop_path}`; bg.style.backgroundImage = `url(${img})`; bg.style.opacity = '0'; const t = new Image(); t.src = img; t.onload = () => { bg.style.opacity = '1'; }; el('hero-title').textContent = item.title || item.name; el('hero-desc').textContent = item.overview || 'Açıklama bulunamadı.'; const year = (item.release_date || item.first_air_date || '').slice(0,4); const rating = item.vote_average ? item.vote_average.toFixed(1) : '–'; el('hero-meta').innerHTML = `<span class="rating-badge">⭐ ${rating}</span><span class="text-purple-400 text-sm">${year}</span><span class="text-purple-600 text-sm uppercase text-xs">${type === 'tv' ? '● Dizi' : '● Film'}</span>`; ['hero-badge','hero-title','hero-desc','hero-meta','hero-btns'].forEach(id => { const el2 = el(id); el2.style.opacity = '1'; el2.style.transform = 'translateY(0)'; }); el('hero-play').onclick = () => { currentItem = { ...item, media_type: type }; playModal(); }; el('hero-btns').querySelector('button:last-child').onclick = () => openModal(item, type); }
+    function playHero() { if (!heroData) return; openModal(heroData, heroData.media_type || 'movie'); } function infoHero() { if (!heroData) return; openModal(heroData, heroData.media_type || 'movie'); }
+    async function switchView(viewName) { closeAll(); document.getElementById('view-home').classList.add('hidden'); document.getElementById('view-movies').classList.add('hidden'); document.getElementById('view-series').classList.add('hidden'); document.getElementById('view-' + viewName).classList.remove('hidden'); if (viewName === 'home') { loadHero('all'); } else if (viewName === 'movies') { loadHero('movie'); const action = await tmdb('/discover/movie', { with_genres: 28 }); renderRow('action-row', action.results, () => 'movie'); const comedy = await tmdb('/discover/movie', { with_genres: 35 }); renderRow('comedy-row', comedy.results, () => 'movie'); const scifi = await tmdb('/discover/movie', { with_genres: 878 }); renderRow('scifi-row', scifi.results, () => 'movie'); } else if (viewName === 'series') { loadHero('tv'); const action = await tmdb('/discover/tv', { with_genres: 10759 }); renderRow('action-series-row', action.results, () => 'tv'); const scifi = await tmdb('/discover/tv', { with_genres: 10765 }); renderRow('scifi-series-row', scifi.results, () => 'tv'); const anim = await tmdb('/discover/tv', { with_genres: 16 }); renderRow('anim-series-row', anim.results, () => 'tv'); } window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    async function loadTrending() { const data = await tmdb('/trending/all/week'); renderRow('trending-row', data.results, item => item.media_type || 'movie'); } async function loadMovies() { const data = await tmdb('/movie/now_playing'); renderRow('movies-row', data.results, () => 'movie'); } async function loadSeries() { const data = await tmdb('/tv/popular'); renderRow('series-row', data.results, () => 'tv'); }
+    function renderRow(rowId, items, typeGetter) { const row = document.getElementById(rowId); row.innerHTML = ''; items.slice(0, 18).forEach(item => { if (!item.poster_path) return; const type = typeGetter(item); const title = item.title || item.name || ''; const div = document.createElement('div'); div.className = 'card-wrap'; div.innerHTML = `<img class="card-img" src="${IMG_BASE}w342${item.poster_path}" loading="lazy" /><p class="card-title">${title}</p>`; div.addEventListener('click', () => openModal(item, type)); row.appendChild(div); }); }
+    async function openModal(item, type) { history.pushState({ modalOpen: true }, ''); currentItem = { ...item, media_type: type }; const overlay = document.getElementById('modal-overlay'); document.getElementById('modal-title').textContent = item.title || item.name; document.getElementById('modal-desc').textContent = item.overview || 'Konu detayı bulunamadı...'; document.getElementById('modal-bg-img').src = item.backdrop_path ? `${IMG_BASE}original${item.backdrop_path}` : ''; document.getElementById('modal-poster').src = item.poster_path ? `${IMG_BASE}w500${item.poster_path}` : ''; const year = (item.release_date || item.first_air_date || '').slice(0,4); const rating = item.vote_average ? item.vote_average.toFixed(1) : '–'; document.getElementById('modal-meta').innerHTML = `<span class="rating-badge">IMDB ${rating}</span><span class="text-purple-300 font-bold">${year}</span><span class="text-xs text-purple-400 border border-purple-500/30 px-2 py-0.5 rounded font-bold tracking-widest">${type === 'tv' ? 'DİZİ' : 'FİLM'}</span>`; overlay.classList.add('open'); checkWatchlistStatus(item.id); document.body.style.overflow = 'hidden'; loadComments(item.id); document.getElementById('modal-seasons-wrap').classList.add('hidden'); document.getElementById('modal-cast').textContent = 'Yükleniyor...'; const trailerBtn = document.getElementById('modal-trailer-btn'); trailerBtn.classList.add('hidden'); try { const details = await tmdb(`/${type}/${item.id}`, { append_to_response: 'external_ids,seasons,credits,videos' }); currentItem.imdb_id = details.imdb_id || (details.external_ids && details.external_ids.imdb_id); if (details.credits && details.credits.cast) { document.getElementById('modal-cast').textContent = details.credits.cast.slice(0, 6).map(c => c.name).join(', ') || 'Bilinmiyor'; } if (details.videos && details.videos.results) { const trailer = details.videos.results.find(v => v.type === 'Trailer' && v.site === 'YouTube'); if (trailer) { trailerBtn.classList.remove('hidden'); trailerBtn.onclick = () => window.open(`https://www.youtube.com/watch?v=${trailer.key}`, '_blank'); } } if (type === 'tv' && details.seasons) { currentSeasons = details.seasons.filter(s => s.season_number > 0); document.getElementById('modal-seasons-wrap').classList.remove('hidden'); renderSeasonTabs(item.id); } } catch(e) { document.getElementById('modal-cast').textContent = 'Bilinmiyor'; } }
+    function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); document.body.style.overflow = ''; document.getElementById('player-frame').src = ''; document.getElementById('modal-poster').parentElement.classList.remove('hidden'); const btnArea = document.getElementById('modal-desc').nextElementSibling; if(btnArea) btnArea.classList.remove('hidden'); const cList = document.getElementById('comments-list'); if(cList) cList.parentElement.classList.remove('hidden'); if (window.history.state && window.history.state.modalOpen) { window.history.back(); } }
+    window.onpopstate = function(event) { const overlay = document.getElementById('modal-overlay'); if (overlay && overlay.classList.contains('open')) { closeModal(); } };
+    function renderSeasonTabs(showId) { const tabs = document.getElementById('season-tabs'); tabs.innerHTML = ''; currentSeasons.forEach((s, i) => { const btn = document.createElement('button'); btn.className = 'season-tab' + (i === 0 ? ' active' : ''); btn.textContent = `Sezon ${s.season_number}`; btn.onclick = () => { document.querySelectorAll('.season-tab').forEach(b => b.classList.remove('active')); btn.classList.add('active'); loadEpisodes(showId, s.season_number); }; tabs.appendChild(btn); }); if (currentSeasons.length > 0) loadEpisodes(showId, currentSeasons[0].season_number); }
+    async function loadEpisodes(showId, seasonNum) { const list = document.getElementById('episode-list'); list.innerHTML = '<div class="text-purple-400">Yükleniyor...</div>'; try { const data = await tmdb(`/tv/${showId}/season/${seasonNum}`); list.innerHTML = ''; (data.episodes || []).forEach(ep => { const div = document.createElement('div'); div.className = 'bg-purple-950/40 border border-purple-800/30 p-4 rounded-lg hover:bg-purple-800/50 cursor-pointer transition flex flex-col gap-1 group'; div.innerHTML = `<div class="text-xs text-purple-400 mb-1">Bölüm ${ep.episode_number}</div><div class="text-sm font-bold text-purple-100 uppercase truncate group-hover:text-white">${ep.name}</div><div class="text-xs text-purple-500 flex justify-between mt-2"><span>${ep.runtime ? ep.runtime+' dk' : ''}</span><svg class="w-4 h-4 text-purple-600 group-hover:text-purple-300 transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>`; div.onclick = () => playEpisode(ep); list.appendChild(div); }); } catch(e) { list.innerHTML = '<p class="text-purple-600 text-sm">Bölümler yüklenemedi.</p>'; } }
+    function playEpisode(ep) { openPlayer(currentItem, ep); } function playModal() { if (!currentItem) return; openPlayer(currentItem, null); }
+    function openPlayer(item, episode) { const imdb = item.imdb_id; if (!imdb) { showToast('🎬 IMDB ID bulunamadı.'); return; } saveToHistory(item, item.media_type); broadcastToTayfa(item, episode); let url = `https://playimdb.com/title/${imdb}`; if (episode) { url = `https://vidsrc.xyz/embed/tv?imdb=${imdb}&season=${episode.season_number}&episode=${episode.episode_number}`; } const title = (item.title || item.name || '') + (episode ? ` – Sezon ${episode.season_number} Bölüm ${episode.episode_number}` : ''); document.getElementById('player-title').textContent = title; document.getElementById('player-frame').src = url; document.getElementById('player-overlay').classList.add('open'); document.body.style.overflow = 'hidden'; }
+    function closePlayer() { document.getElementById('player-overlay').classList.remove('open'); document.getElementById('player-frame').src = ''; document.body.style.overflow = ''; } function closeAll() { closeModal(); closePlayer(); }
+    function handleSearch(val) { clearTimeout(searchTimer); const box = document.getElementById('search-results'); if (!val.trim()) { box.classList.add('hidden'); return; } searchTimer = setTimeout(() => doSearch(val), 400); }
+    async function doSearch(q) { const box = document.getElementById('search-results'); if (API_KEY === 'BURAYA_API_KEY_GELECEK') { box.classList.add('hidden'); return; } try { const data = await tmdb('/search/multi', { query: q }); const items = data.results.filter(i => i.poster_path && (i.media_type === 'movie' || i.media_type === 'tv')).slice(0, 6); if (!items.length) { box.classList.add('hidden'); return; } box.innerHTML = items.map(i => `<div class="flex items-center gap-3 p-3 hover:bg-purple-900/30 cursor-pointer transition-colors border-b border-purple-900/30 last:border-0" onclick="searchSelect(${i.id}, '${i.media_type}')"><img src="${IMG_BASE}w92${i.poster_path}" class="w-8 h-12 object-cover rounded" /><div><p class="text-sm text-purple-100">${i.title || i.name}</p><p class="text-xs text-purple-600">${i.media_type === 'tv' ? 'Dizi' : 'Film'} · ${(i.release_date || i.first_air_date || '').slice(0,4)}</p></div></div>`).join(''); box.classList.remove('hidden'); } catch(e) { box.classList.add('hidden'); } }
+    async function searchSelect(id, type) { document.getElementById('search-results').classList.add('hidden'); document.getElementById('search-input').value = ''; try { const item = await tmdb(`/${type}/${id}`); openModal(item, type); } catch(e) { showToast('İçerik bulunamadı.'); } }
+    document.addEventListener('click', e => { if (!e.target.closest('#search-input') && !e.target.closest('#search-results')) document.getElementById('search-results').classList.add('hidden'); });
+    function showToast(msg, long = false) { const t = document.getElementById('toast'); document.getElementById('toast-msg').textContent = msg; t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)'; t.style.pointerEvents = 'all'; setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(16px)'; t.style.pointerEvents = 'none'; }, long ? 4000 : 2500); }
+    async function playRandom() { showToast('🎲 Rastgele efsane seçiliyor...', false); try { const randomPage = Math.floor(Math.random() * 20) + 1; const data = await tmdb('/movie/popular', { page: randomPage }); const items = data.results.filter(m => m.backdrop_path && m.poster_path); if (items.length > 0) { openModal(items[Math.floor(Math.random() * items.length)], 'movie'); } else { showToast('Tekrar dene.'); } } catch(e) { showToast('Hata.'); } }
 
-  function postComment() {
-    if(!currentItem) return;
-    const input = document.getElementById('comment-input'); const text = input.value.trim();
-    const user = localStorage.getItem('kadavra_vip_user') || 'Gizemli Pampik';
-    if(text === '') return;
-    database.ref('comments/' + currentItem.id).push({ user: user, text: text, timestamp: Date.now() });
-    input.value = ''; showToast('Yorumun mekana düştü!');
-  }
+    // TAYFA, ŞUKU VE YORUM MOTORLARI
+    function broadcastToTayfa(item, episode) {
+      const user = localStorage.getItem('kadavra_vip_user') || 'Kayıtsız'; const title = (item.title || item.name || ''); const epText = episode ? ` (S${episode.season_number} B${episode.episode_number})` : ''; const safeUser = user.toLowerCase().replace(/[.#$\[\]]/g, '_'); 
+      const ref = database.ref('tayfa_akis/' + safeUser);
+      ref.once('value').then(snap => {
+        const data = snap.val(); let currentLikes = null;
+        if (data && data.id === item.id) { currentLikes = data.likes || null; }
+        ref.set({ user: user, title: title + epText, poster: item.poster_path, type: item.media_type || 'movie', id: item.id, timestamp: Date.now(), likes: currentLikes });
+      });
+    }
 
-  function likeComment(itemId, commentKey) {
-    const myUser = localStorage.getItem('kadavra_vip_user');
-    if(!myUser) return;
-    const ref = database.ref(`comments/${itemId}/${commentKey}/likes/${myUser}`);
-    ref.once('value').then(snap => { if(snap.exists()) ref.remove(); else ref.set(true); });
-  }
-
-  function loadComments(itemId) {
-    const list = document.getElementById('comments-list');
-    const avatar = document.getElementById('comment-avatar');
-    const currentUser = localStorage.getItem('kadavra_vip_user') || '?';
-    const isAdmin = adminler.includes(currentUser.toLowerCase());
-    
-    if(avatar) avatar.textContent = currentUser.charAt(0).toUpperCase();
-    list.innerHTML = '<p class="text-purple-400 text-sm">Yorumlar çekiliyor...</p>';
-
-    database.ref('comments/' + itemId).on('value', (snapshot) => {
-      if(!snapshot.exists()) { list.innerHTML = '<p class="text-purple-400 text-sm">Henüz kimse yorum yapmamış. İlk raconu sen kes!</p>'; return; }
-      list.innerHTML = ''; let comments = [];
-      snapshot.forEach(child => { let val = child.val(); val._key = child.key; comments.push(val); }); 
-      comments.sort((a,b) => b.timestamp - a.timestamp); 
-
-      comments.forEach(comment => {
-        const date = new Date(comment.timestamp).toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' });
-        const likersArray = comment.likes ? Object.keys(comment.likes) : [];
-        const likeCount = likersArray.length;
-        const likersText = likeCount > 0 ? likersArray.join(', ') : '';
+    function listenTayfa() {
+      database.ref('tayfa_akis').on('value', (snapshot) => {
+        const row = document.getElementById('tayfa-row'); if (!row) return; row.innerHTML = '';
+        let rawData = []; snapshot.forEach(child => { let val = child.val(); val._safeUser = child.key; rawData.push(val); }); 
+        rawData.sort((a, b) => b.timestamp - a.timestamp); 
+        let uniqueData = []; let seenUsers = new Set();
+        rawData.forEach(w => { if (!seenUsers.has(w.user)) { seenUsers.add(w.user); uniqueData.push(w); } });
         
-        const isMine = comment.user === currentUser;
-        const canDelete = isMine || isAdmin;
-        const deleteBtn = canDelete ? `<button onclick="deleteComment('${itemId}', '${comment._key}')" class="text-red-500 hover:text-red-400 font-bold ml-3" title="Yorumu Sil">🗑️</button>` : '';
-        const userIsAdmin = adminler.includes(comment.user.toLowerCase());
-
-        const div = document.createElement('div');
-        div.className = 'bg-purple-950/30 border border-purple-800/30 p-3 rounded-xl mb-3 relative group';
-        div.innerHTML = `
-          <div class="flex items-center justify-between mb-1">
-            <span class="text-sm font-bold tracking-wider ${userIsAdmin ? 'text-red-400 drop-shadow-[0_0_5px_rgba(248,113,113,0.8)]' : 'text-purple-300'}">${comment.user} ${userIsAdmin ? '👑' : ''}</span>
-            <div><span class="text-purple-600 text-[10px]">${date}</span>${deleteBtn}</div>
-          </div>
-          <p class="text-purple-100 text-sm break-words">${comment.text}</p>
-          <div class="mt-2 flex items-center gap-2">
-            <button onclick="likeComment('${itemId}', '${comment._key}')" class="text-[10px] text-purple-400 hover:text-purple-200 bg-purple-900/40 px-2 py-1 rounded transition-colors">
-              👍 ${likeCount > 0 ? likeCount : 'Şukula'}
-            </button>
-            ${likeCount > 0 ? `<span class="text-[9px] text-purple-500 opacity-0 group-hover:opacity-100 transition-opacity">Kimler: ${likersText}</span>` : ''}
-          </div>
-        `;
-        list.appendChild(div);
+        uniqueData.slice(0, 10).forEach(watch => {
+          if (!watch.poster) return;
+          const likersArray = watch.likes ? Object.keys(watch.likes) : []; const likeCount = likersArray.length; const likersText = likeCount > 0 ? likersArray.join(', ') : '';
+          const div = document.createElement('div'); div.className = 'card-wrap relative group';
+          div.innerHTML = `
+            <div class="absolute top-2 left-2 z-20 bg-purple-900/90 text-purple-100 text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded shadow-lg flex items-center gap-1.5 border border-purple-500/50"><span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span> ${watch.user}</div>
+            <button onclick="event.stopPropagation(); giveSuku('${watch._safeUser}', '${watch.user}')" class="absolute top-2 right-2 z-30 bg-black/80 hover:bg-purple-600 border border-purple-500/50 text-white text-[10px] font-bold px-2 py-1 rounded transition-colors opacity-0 group-hover:opacity-100 flex items-center gap-1 backdrop-blur-sm">👍 ${likeCount > 0 ? likeCount : 'Şukula'}</button>
+            ${likeCount > 0 ? `<div class="absolute bottom-2 left-2 right-2 text-center text-[9px] text-purple-200 bg-black/80 rounded px-1 py-0.5 line-clamp-1 backdrop-blur-sm z-30 opacity-0 group-hover:opacity-100 transition-opacity">Kimler: ${likersText}</div>` : ''}
+            <img class="card-img" src="${IMG_BASE}w342${watch.poster}" loading="lazy" />
+            <p class="card-title">${watch.title}</p>
+          `;
+          div.addEventListener('click', () => searchSelect(watch.id, watch.type)); row.appendChild(div);
+        });
       });
-    });
-  }
+    }
 
-  let chatOpen = false; let chatFirstLoad = true;
-  function toggleChat() {
-    chatOpen = !chatOpen; const sidebar = document.getElementById('chat-sidebar');
-    if(chatOpen) {
-      sidebar.classList.remove('translate-x-full'); document.getElementById('chat-notif').classList.add('hidden');
-      document.getElementById('chat-btn').classList.remove('animate-bounce');
-      const box = document.getElementById('chat-messages'); box.scrollTop = box.scrollHeight;
-    } else { sidebar.classList.add('translate-x-full'); }
-  }
+    function giveSuku(targetUserKey, targetUserName) {
+      const myUser = localStorage.getItem('kadavra_vip_user'); if(!myUser) return;
+      const safeMe = myUser.replace(/[.#$\[\]]/g, '_');
+      database.ref(`tayfa_akis/${targetUserKey}/likes/${safeMe}`).once('value').then(snap => {
+        if(snap.exists()) snap.ref.remove(); else { snap.ref.set(true); showToast(`${targetUserName} pampiğine şukunu verdin!`); }
+      });
+    }
 
-  function sendChatMessage() {
-    const input = document.getElementById('chat-input'); const text = input.value.trim();
-    if(!text) return;
-    const user = localStorage.getItem('kadavra_vip_user') || 'Gizemli Pampik';
-    database.ref('yeralti_sohbet').push({ user: user, text: text, timestamp: Date.now() });
-    input.value = '';
-  }
+    function deleteComment(itemId, commentKey) { if(confirm('Bu yorumu ebediyete uğurlamak istediğine emin misin pampik?')) { database.ref(`comments/${itemId}/${commentKey}`).remove(); showToast('Yorum çöp tenekesini boyladı.'); } }
+    function deleteChatMessage(msgKey) { if(confirm('Bu mesajı siliyoruz, emin misin?')) database.ref(`yeralti_sohbet/${msgKey}`).remove(); }
 
-  function likeChatMessage(msgKey) {
-    const myUser = localStorage.getItem('kadavra_vip_user');
-    if(!myUser) return;
-    const ref = database.ref(`yeralti_sohbet/${msgKey}/likes/${myUser}`);
-    ref.once('value').then(snap => { if(snap.exists()) ref.remove(); else ref.set(true); });
-  }
+    function postComment() {
+      if(!currentItem) return; const input = document.getElementById('comment-input'); const text = input.value.trim();
+      const user = localStorage.getItem('kadavra_vip_user') || 'Gizemli Pampik'; if(text === '') return;
+      database.ref('comments/' + currentItem.id).push({ user: user, text: text, timestamp: Date.now() });
+      input.value = ''; showToast('Yorumun mekana düştü!');
+    }
 
-  function listenChat() {
-    document.getElementById('chat-btn').classList.remove('hidden');
-    const currentUser = localStorage.getItem('kadavra_vip_user') || '?';
-    const isAdmin = adminler.includes(currentUser.toLowerCase());
+    function likeComment(itemId, commentKey) {
+      const myUser = localStorage.getItem('kadavra_vip_user'); if(!myUser) return;
+      database.ref(`comments/${itemId}/${commentKey}/likes/${myUser}`).once('value').then(snap => { if(snap.exists()) snap.ref.remove(); else snap.ref.set(true); });
+    }
 
-    database.ref('yeralti_sohbet').limitToLast(50).on('value', snap => {
-      const box = document.getElementById('chat-messages'); if(!box) return;
-      box.innerHTML = ''; let messageCount = 0; let msgs = [];
-      snap.forEach(child => { let msg = child.val(); msg._key = child.key; msgs.push(msg); });
-      msgs.sort((a,b) => a.timestamp - b.timestamp);
-
-      msgs.forEach(msg => {
-        messageCount++; 
-        const isMe = msg.user === currentUser;
-        const msgIsAdmin = adminler.includes(msg.user.toLowerCase());
-        const canDelete = isMe || isAdmin;
-        const date = new Date(msg.timestamp).toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' });
-        
-        const likersArray = msg.likes ? Object.keys(msg.likes) : [];
-        const likeCount = likersArray.length;
-        const likersText = likeCount > 0 ? likersArray.join(', ') : '';
-
-        const deleteBtn = canDelete ? `<button onclick="deleteChatMessage('${msg._key}')" class="text-red-500 hover:text-red-300 ml-2" title="Mesajı Uçur">🗑️</button>` : '';
-
-        const div = document.createElement('div');
-        div.className = `max-w-[85%] rounded-xl p-2.5 flex flex-col group relative ${isMe ? 'bg-purple-600/80 self-end rounded-br-sm' : 'bg-gray-800/80 self-start rounded-bl-sm border border-purple-900/50'}`;
-        div.innerHTML = `
-          <div class="flex justify-between items-baseline gap-3 mb-1">
-            <span class="text-[10px] ${msgIsAdmin ? 'text-red-400 font-extrabold drop-shadow-[0_0_5px_rgba(248,113,113,0.8)]' : (isMe ? 'text-purple-200' : 'text-purple-400')} uppercase tracking-wider">${msg.user} ${msgIsAdmin ? '👑' : ''}</span>
-            <div><span class="text-[9px] opacity-60">${date}</span>${deleteBtn}</div>
-          </div>
-          <div class="text-sm text-purple-50 break-words leading-snug">${msg.text}</div>
-          <div class="mt-1 flex items-center justify-end gap-1">
-            ${likeCount > 0 ? `<span class="text-[8px] text-purple-300 opacity-0 group-hover:opacity-100 transition-opacity mr-1">${likersText}</span>` : ''}
-            <button onclick="likeChatMessage('${msg._key}')" class="text-[10px] bg-black/40 px-1.5 py-0.5 rounded hover:bg-black/60 transition-colors ${likeCount > 0 ? 'text-purple-300' : 'text-gray-400 opacity-0 group-hover:opacity-100'}">
-              👍 ${likeCount > 0 ? likeCount : ''}
-            </button>
-          </div>
-        `;
-        box.appendChild(div);
+    function loadComments(itemId) {
+      const list = document.getElementById('comments-list'); const avatarImg = document.getElementById('comment-pp-img');
+      const avatarDiv = document.getElementById('comment-avatar');
+      const currentUser = localStorage.getItem('kadavra_vip_user') || '?';
+      const safeNick = currentUser.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      const isAdmin = adminler.includes(currentUser.toLowerCase());
+      
+      database.ref('kullanicilar/' + safeNick + '/pp').once('value').then(snap => {
+        if(snap.exists()) { avatarImg.src = snap.val(); avatarImg.classList.remove('hidden'); avatarDiv.textContent = ''; avatarDiv.appendChild(avatarImg); }
+        else { avatarImg.classList.add('hidden'); avatarDiv.textContent = currentUser.charAt(0).toUpperCase(); }
       });
       
-      if(chatOpen) { box.scrollTop = box.scrollHeight; } 
-      else if (!chatFirstLoad && messageCount > 0) {
-        const notif = document.getElementById('chat-notif'); const btn = document.getElementById('chat-btn');
-        if(notif) notif.classList.remove('hidden');
-        if(btn) { btn.classList.add('animate-bounce'); setTimeout(() => btn.classList.remove('animate-bounce'), 1000); }
+      list.innerHTML = '<p class="text-purple-400 text-sm">Yorumlar çekiliyor...</p>';
+
+      database.ref('comments/' + itemId).on('value', (snapshot) => {
+        if(!snapshot.exists()) { list.innerHTML = '<p class="text-purple-400 text-sm">Henüz kimse yorum yapmamış. İlk raconu sen kes!</p>'; return; }
+        list.innerHTML = ''; let comments = [];
+        snapshot.forEach(child => { let val = child.val(); val._key = child.key; comments.push(val); }); 
+        comments.sort((a,b) => b.timestamp - a.timestamp); 
+
+        comments.forEach(comment => {
+          const date = new Date(comment.timestamp).toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' });
+          const likersArray = comment.likes ? Object.keys(comment.likes) : []; const likeCount = likersArray.length; const likersText = likeCount > 0 ? likersArray.join(', ') : '';
+          const isMine = comment.user === currentUser; const canDelete = isMine || isAdmin;
+          const deleteBtn = canDelete ? `<button onclick="deleteComment('${itemId}', '${comment._key}')" class="text-red-500 hover:text-red-400 font-bold ml-3" title="Yorumu Sil">🗑️</button>` : '';
+          const userIsAdmin = adminler.includes(comment.user.toLowerCase());
+          const cSafe = comment.user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+
+          const div = document.createElement('div'); div.className = 'bg-purple-950/30 border border-purple-800/30 p-3 rounded-xl mb-3 relative group flex gap-3';
+          
+          // Yorum yapanın PP'sini çek
+          let ppHTML = `<div class="w-8 h-8 rounded-full bg-purple-800 flex items-center justify-center font-bold text-white shrink-0" id="pp-${comment._key}">${comment.user.charAt(0).toUpperCase()}</div>`;
+          database.ref('kullanicilar/' + cSafe + '/pp').once('value').then(snap => {
+             if(snap.exists()) document.getElementById(`pp-${comment._key}`).innerHTML = `<img src="${snap.val()}" class="w-full h-full object-cover rounded-full">`;
+          });
+
+          div.innerHTML = `
+            ${ppHTML}
+            <div class="flex-1">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-sm font-bold tracking-wider ${userIsAdmin ? 'text-red-400 drop-shadow-[0_0_5px_rgba(248,113,113,0.8)]' : 'text-purple-300'}">${comment.user} ${userIsAdmin ? '👑' : ''}</span>
+                <div><span class="text-purple-600 text-[10px]">${date}</span>${deleteBtn}</div>
+              </div>
+              <p class="text-purple-100 text-sm break-words">${comment.text}</p>
+              <div class="mt-2 flex items-center gap-2">
+                <button onclick="likeComment('${itemId}', '${comment._key}')" class="text-[10px] text-purple-400 hover:text-purple-200 bg-purple-900/40 px-2 py-1 rounded transition-colors">👍 ${likeCount > 0 ? likeCount : 'Şukula'}</button>
+                ${likeCount > 0 ? `<span class="text-[9px] text-purple-500 opacity-0 group-hover:opacity-100 transition-opacity">Kimler: ${likersText}</span>` : ''}
+              </div>
+            </div>
+          `;
+          list.appendChild(div);
+        });
+      });
+    }
+
+    let chatOpen = false; let chatFirstLoad = true;
+    function toggleChat() {
+      chatOpen = !chatOpen; const sidebar = document.getElementById('chat-sidebar');
+      if(chatOpen) { sidebar.classList.remove('translate-x-full'); document.getElementById('chat-notif').classList.add('hidden'); document.getElementById('chat-btn').classList.remove('animate-bounce'); const box = document.getElementById('chat-messages'); box.scrollTop = box.scrollHeight; } else { sidebar.classList.add('translate-x-full'); }
+    }
+
+    function sendChatMessage() {
+      const input = document.getElementById('chat-input'); const text = input.value.trim(); if(!text) return;
+      const user = localStorage.getItem('kadavra_vip_user') || 'Gizemli Pampik'; database.ref('yeralti_sohbet').push({ user: user, text: text, timestamp: Date.now() }); input.value = '';
+    }
+
+    function likeChatMessage(msgKey) {
+      const myUser = localStorage.getItem('kadavra_vip_user'); if(!myUser) return;
+      database.ref(`yeralti_sohbet/${msgKey}/likes/${myUser}`).once('value').then(snap => { if(snap.exists()) snap.ref.remove(); else snap.ref.set(true); });
+    }
+
+    function listenChat() {
+      document.getElementById('chat-btn').classList.remove('hidden');
+      const currentUser = localStorage.getItem('kadavra_vip_user') || '?';
+      const isAdmin = adminler.includes(currentUser.toLowerCase());
+
+      database.ref('yeralti_sohbet').limitToLast(50).on('value', snap => {
+        const box = document.getElementById('chat-messages'); if(!box) return; box.innerHTML = ''; let messageCount = 0; let msgs = [];
+        snap.forEach(child => { let msg = child.val(); msg._key = child.key; msgs.push(msg); });
+        msgs.sort((a,b) => a.timestamp - b.timestamp);
+
+        msgs.forEach(msg => {
+          messageCount++; const isMe = msg.user === currentUser; const msgIsAdmin = adminler.includes(msg.user.toLowerCase()); const canDelete = isMe || isAdmin;
+          const date = new Date(msg.timestamp).toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' });
+          const likersArray = msg.likes ? Object.keys(msg.likes) : []; const likeCount = likersArray.length; const likersText = likeCount > 0 ? likersArray.join(', ') : '';
+          const deleteBtn = canDelete ? `<button onclick="deleteChatMessage('${msg._key}')" class="text-red-500 hover:text-red-300 ml-2" title="Mesajı Uçur">🗑️</button>` : '';
+
+          const div = document.createElement('div');
+          div.className = `max-w-[85%] rounded-xl p-2.5 flex flex-col group relative ${isMe ? 'bg-purple-600/80 self-end rounded-br-sm' : 'bg-gray-800/80 self-start rounded-bl-sm border border-purple-900/50'}`;
+          div.innerHTML = `
+            <div class="flex justify-between items-baseline gap-3 mb-1">
+              <span class="text-[10px] ${msgIsAdmin ? 'text-red-400 font-extrabold drop-shadow-[0_0_5px_rgba(248,113,113,0.8)]' : (isMe ? 'text-purple-200' : 'text-purple-400')} uppercase tracking-wider">${msg.user} ${msgIsAdmin ? '👑' : ''}</span>
+              <div><span class="text-[9px] opacity-60">${date}</span>${deleteBtn}</div>
+            </div>
+            <div class="text-sm text-purple-50 break-words leading-snug">${msg.text}</div>
+            <div class="mt-1 flex items-center justify-end gap-1">
+              ${likeCount > 0 ? `<span class="text-[8px] text-purple-300 opacity-0 group-hover:opacity-100 transition-opacity mr-1">${likersText}</span>` : ''}
+              <button onclick="likeChatMessage('${msg._key}')" class="text-[10px] bg-black/40 px-1.5 py-0.5 rounded hover:bg-black/60 transition-colors ${likeCount > 0 ? 'text-purple-300' : 'text-gray-400 opacity-0 group-hover:opacity-100'}">👍 ${likeCount > 0 ? likeCount : ''}</button>
+            </div>
+          `;
+          box.appendChild(div);
+        });
+        
+        if(chatOpen) { box.scrollTop = box.scrollHeight; } else if (!chatFirstLoad && messageCount > 0) { const notif = document.getElementById('chat-notif'); const btn = document.getElementById('chat-btn'); if(notif) notif.classList.remove('hidden'); if(btn) { btn.classList.add('animate-bounce'); setTimeout(() => btn.classList.remove('animate-bounce'), 1000); } }
+        chatFirstLoad = false;
+      });
+    }
+
+    // KAYIT, GİRİŞ VE UYANDIRMA
+    const gecerliReferanslar = ['501.lejyon', 'ballibabuska', 'redbullcanavari', 'arap hüseyin', 'aponunanasinisikiyim', 'kastamonayi'];
+    let authMode = 'login'; 
+
+    function toggleAuth(mode) {
+      authMode = mode; const refInput = document.getElementById('auth-ref'); const btn = document.getElementById('auth-btn'); const tabLogin = document.getElementById('tab-login'); const tabRegister = document.getElementById('tab-register'); document.getElementById('auth-error').classList.add('hidden'); 
+      if (mode === 'register') { refInput.classList.remove('hidden'); btn.textContent = 'Mekana Kaydol ve Ak'; tabRegister.classList.replace('text-purple-400', 'text-purple-100'); tabRegister.classList.replace('border-transparent', 'border-purple-500'); tabLogin.classList.replace('text-purple-100', 'text-purple-400'); tabLogin.classList.replace('border-purple-500', 'border-transparent'); } 
+      else { refInput.classList.add('hidden'); btn.textContent = 'İçeri Gir'; tabLogin.classList.replace('text-purple-400', 'text-purple-100'); tabLogin.classList.replace('border-transparent', 'border-purple-500'); tabRegister.classList.replace('text-purple-100', 'text-purple-400'); tabRegister.classList.replace('border-purple-500', 'border-transparent'); }
+    }
+
+    function handleAuth() {
+      const nick = document.getElementById('auth-nick').value.trim(); const pass = document.getElementById('auth-pass').value.trim(); const ref = document.getElementById('auth-ref').value.trim(); const error = document.getElementById('auth-error');
+      if (!nick || !pass) { error.textContent = 'Nick ve Şifre boş olamaz kanki!'; error.classList.remove('hidden'); return; }
+      const safeNick = nick.toLowerCase().replace(/[.#$\[\]]/g, '_'); 
+      if (authMode === 'register') {
+        if (!gecerliReferanslar.includes(ref)) { error.textContent = 'Referans kodu patlak! Lejyondan değilsin galiba?'; error.classList.remove('hidden'); return; }
+        database.ref('kullanicilar/' + safeNick).once('value').then((snap) => {
+          if (snap.exists()) { error.textContent = 'Bu nick çoktan kapılmış kral, başka bir şey bul.'; error.classList.remove('hidden'); } 
+          else { database.ref('kullanicilar/' + safeNick).set({ sifre: pass, refKodu: ref }); girisBasarili(nick, pass); }
+        });
+      } else {
+        database.ref('kullanicilar/' + safeNick).once('value').then((snap) => {
+          if (!snap.exists()) { error.textContent = 'Böyle bir pampik yok, önce "Kayıt Ol" sekmesine geç!'; error.classList.remove('hidden'); } 
+          else { if (snap.val().sifre !== pass) { error.textContent = 'Şifre yanlış kanki, zorlama!'; error.classList.remove('hidden'); } else { girisBasarili(nick, pass); } }
+        });
       }
-      chatFirstLoad = false;
-    });
-  }
-
-  // ════════════════════ 4. LEJYON KAYIT VE GİRİŞ MOTORU ════════════════════
-  const gecerliReferanslar = ['501.lejyon', 'ballibabuska', 'redbullcanavari', 'arap hüseyin', 'aponunanasinisikiyim', 'kastamonayi'];
-  let authMode = 'login'; 
-
-  function toggleAuth(mode) {
-    authMode = mode;
-    const refInput = document.getElementById('auth-ref'); const btn = document.getElementById('auth-btn');
-    const tabLogin = document.getElementById('tab-login'); const tabRegister = document.getElementById('tab-register');
-    document.getElementById('auth-error').classList.add('hidden'); 
-
-    if (mode === 'register') {
-      refInput.classList.remove('hidden'); btn.textContent = 'Mekana Kaydol ve Ak';
-      tabRegister.classList.replace('text-purple-400', 'text-purple-100'); tabRegister.classList.replace('border-transparent', 'border-purple-500');
-      tabLogin.classList.replace('text-purple-100', 'text-purple-400'); tabLogin.classList.replace('border-purple-500', 'border-transparent');
-    } else {
-      refInput.classList.add('hidden'); btn.textContent = 'İçeri Gir';
-      tabLogin.classList.replace('text-purple-400', 'text-purple-100'); tabLogin.classList.replace('border-transparent', 'border-purple-500');
-      tabRegister.classList.replace('text-purple-100', 'text-purple-400'); tabRegister.classList.replace('border-purple-500', 'border-transparent');
     }
-  }
 
-  function handleAuth() {
-    const nick = document.getElementById('auth-nick').value.trim();
-    const pass = document.getElementById('auth-pass').value.trim();
-    const ref = document.getElementById('auth-ref').value.trim();
-    const error = document.getElementById('auth-error');
-
-    if (!nick || !pass) { error.textContent = 'Nick ve Şifre boş olamaz kanki!'; error.classList.remove('hidden'); return; }
-    const safeNick = nick.toLowerCase().replace(/[.#$\[\]]/g, '_'); 
-
-    if (authMode === 'register') {
-      if (!gecerliReferanslar.includes(ref)) { error.textContent = 'Referans kodu patlak! Lejyondan değilsin galiba?'; error.classList.remove('hidden'); return; }
-      database.ref('kullanicilar/' + safeNick).once('value').then((snap) => {
-        if (snap.exists()) { error.textContent = 'Bu nick çoktan kapılmış kral, başka bir şey bul.'; error.classList.remove('hidden'); } 
-        else { database.ref('kullanicilar/' + safeNick).set({ sifre: pass, refKodu: ref }); girisBasarili(nick, pass); }
-      });
-    } else {
-      database.ref('kullanicilar/' + safeNick).once('value').then((snap) => {
-        if (!snap.exists()) { error.textContent = 'Böyle bir pampik yok, önce "Kayıt Ol" sekmesine geç!'; error.classList.remove('hidden'); } 
-        else {
-          if (snap.val().sifre !== pass) { error.textContent = 'Şifre yanlış kanki, zorlama!'; error.classList.remove('hidden'); } 
-          else { girisBasarili(nick, pass); }
-        }
-      });
+    function autoLoginCheck() {
+      const savedUser = localStorage.getItem('kadavra_vip_user'); const savedPass = localStorage.getItem('kadavra_vip_pass');
+      if (savedUser && savedPass) {
+        const safeNick = savedUser.toLowerCase().replace(/[.#$\[\]]/g, '_');
+        database.ref('kullanicilar/' + safeNick).once('value').then((snap) => {
+           if(snap.exists() && snap.val().sifre === savedPass) { girisBasarili(savedUser, savedPass, true); }
+        });
+      }
     }
-  }
 
-  function girisBasarili(user, pass) {
-    localStorage.setItem('kadavra_vip_user', user); localStorage.setItem('kadavra_vip_pass', pass); 
-    const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
-    
-    // Adamı IP adresine kadar fişle
-    fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d => {
-       database.ref('kullanicilar/' + safeNick).update({ sonGiris: Date.now(), cihaz: navigator.userAgent, ip: d.ip });
-    }).catch(e => { database.ref('kullanicilar/' + safeNick).update({ sonGiris: Date.now(), cihaz: navigator.userAgent }); });
+    function girisBasarili(user, pass, isAuto = false) {
+      localStorage.setItem('kadavra_vip_user', user); localStorage.setItem('kadavra_vip_pass', pass); 
+      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      
+      fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d => { database.ref('kullanicilar/' + safeNick).update({ sonGiris: Date.now(), cihaz: navigator.userAgent, ip: d.ip }); }).catch(e => { database.ref('kullanicilar/' + safeNick).update({ sonGiris: Date.now(), cihaz: navigator.userAgent }); });
 
-    const badge = document.getElementById('profile-badge'); 
-    if(badge) { 
-      badge.textContent = user.charAt(0).toUpperCase(); 
-      badge.title = adminler.includes(user.toLowerCase()) ? 'Lejyon Paneli (Tıkla)' : user; 
-      badge.onclick = adminler.includes(user.toLowerCase()) ? openAdminPanel : null; // Adminse panel açılsın
+      const badge = document.getElementById('profile-badge'); 
+      if(badge) { badge.textContent = user.charAt(0).toUpperCase(); badge.title = 'Profilim'; badge.onclick = () => openProfilePanel(user); }
+      
+      const loginScreen = document.getElementById('login-screen');
+      if (loginScreen) { if(isAuto) { loginScreen.style.display = 'none'; showToast(`Tekrar hoş geldin pampik: ${user} 🍿`); } else { loginScreen.style.opacity = '0'; setTimeout(() => { loginScreen.remove(); showToast(`Hoş geldin V.I.P. Üye: ${user} 👑`); }, 300); } }
+      listenTayfa(); listenChat(); init(); 
     }
-    
-    const loginScreen = document.getElementById('login-screen');
-    if (loginScreen) { loginScreen.style.opacity = '0'; setTimeout(() => { loginScreen.remove(); loadHistory(); loadWatchlist(); showToast(`Hoş geldin V.I.P. Üye: ${user} 👑`); }, 300); }
-    listenTayfa(); listenChat(); init(); 
-  }
 
-  function autoLoginCheck() {
-    const savedUser = localStorage.getItem('kadavra_vip_user'); const savedPass = localStorage.getItem('kadavra_vip_pass');
-    if (savedUser && savedPass) {
-      const safeNick = savedUser.toLowerCase().replace(/[.#$\[\]]/g, '_');
-      database.ref('kullanicilar/' + safeNick).once('value').then((snap) => {
-         if(snap.exists() && snap.val().sifre === savedPass) {
-            const loginScreen = document.getElementById('login-screen');
-            if(loginScreen) loginScreen.style.display = 'none';
-            
-            fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d => {
-               database.ref('kullanicilar/' + safeNick).update({ sonGiris: Date.now(), cihaz: navigator.userAgent, ip: d.ip });
-            }).catch(e => { database.ref('kullanicilar/' + safeNick).update({ sonGiris: Date.now(), cihaz: navigator.userAgent }); });
-
-            const badge = document.getElementById('profile-badge'); 
-            if(badge) { 
-              badge.textContent = savedUser.charAt(0).toUpperCase(); 
-              badge.title = adminler.includes(savedUser.toLowerCase()) ? 'Lejyon Paneli (Tıkla)' : savedUser; 
-              badge.onclick = adminler.includes(savedUser.toLowerCase()) ? openAdminPanel : null; 
-            }
-            listenTayfa(); listenChat(); init();
-            loadHistory(); loadWatchlist(); showToast(`Tekrar hoş geldin pampik: ${savedUser} 🍿`);
-         }
-      });
-    }
-  }
-
-  autoLoginCheck();
+    autoLoginCheck();
   </script>
 </body>
 
