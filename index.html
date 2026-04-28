@@ -16,16 +16,16 @@
   <meta property="og:description" content="Parolayı biliyorsan içeri gir. Kalitenin tek adresi.">
   <meta property="og:image" content="https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?q=80&w=1000&auto=format&fit=crop">
   <meta property="og:url" content="https://kadavraflix.xyz">
-  <meta name="theme-color" content="#7c3aed">
+  <meta name="theme-color" content="#e50914">
 
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            neon: '#e50914', // Netflix Kırmızısı
-            'neon-dim': '#b91c1c', // Koyu Kan Kırmızısı
-            'dark-base': '#050505', // Zifiri Siyah
+            neon: '#e50914',
+            'neon-dim': '#b91c1c',
+            'dark-base': '#050505',
             'dark-card': '#111111',
             'dark-panel': '#181818',
           },
@@ -41,21 +41,21 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
-    body { background: #0a0010; font-family: 'Outfit', sans-serif; color: #e2d9f3; overflow-x: hidden; cursor: default; }
+    body { background: #050505; font-family: 'Outfit', sans-serif; color: #fecaca; overflow-x: hidden; cursor: default; }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #0a0010; }
+    ::-webkit-scrollbar-track { background: #050505; }
     ::-webkit-scrollbar-thumb { background: #b91c1c; border-radius: 99px; }
-    .neon-text  { color: #f87171; text-shadow: 0 0 20px #e50914, 0 0 40px #b91c1c; }
-    .neon-border{ border-color: #e50914; box-shadow: 0 0 12px rgba(229, 9, 20, 0.3); }
+    .neon-text  { color: #fca5a5; text-shadow: 0 0 20px #ef4444, 0 0 40px #b91c1c; }
+    .neon-border{ border-color: #ef4444; box-shadow: 0 0 12px rgba(229, 9, 20, 0.4); }
     .neon-btn { background: linear-gradient(135deg, #b91c1c, #e50914); box-shadow: 0 0 18px rgba(229, 9, 20, 0.4); transition: all .25s ease; }
     .neon-btn:hover { background: linear-gradient(135deg, #e50914, #f87171); box-shadow: 0 0 32px rgba(229, 9, 20, 0.6), 0 0 60px rgba(185, 28, 28, 0.4); transform: translateY(-1px) scale(1.02); }
     .ghost-btn { border: 1px solid rgba(229, 9, 20, 0.5); backdrop-filter: blur(8px); transition: all .25s ease; }
     .ghost-btn:hover { background: rgba(229, 9, 20, 0.15); border-color: #f87171; box-shadow: 0 0 20px rgba(229, 9, 20, 0.4); }
     #navbar { transition: background .4s ease, backdrop-filter .4s ease; }
-    #navbar.scrolled { background: rgba(10,0,16,.92); backdrop-filter: blur(16px); border-bottom: 1px solid #7c3aed33; }
+    #navbar.scrolled { background: rgba(5,5,5,.92); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(229,9,20,0.3); }
     #hero { min-height: 96vh; position: relative; display: flex; align-items: flex-end; }
     #hero-bg { position: absolute; inset: 0; background-size: cover; background-position: center top; transition: opacity .7s ease; }
-    #hero-bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to right, rgba(10,0,16,.95) 0%, rgba(10,0,16,.6) 50%, rgba(10,0,16,.1) 100%), linear-gradient(to top, rgba(10,0,16,1) 0%, rgba(10,0,16,.3) 40%, transparent 70%); }
+    #hero-bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to right, rgba(5,5,5,.95) 0%, rgba(5,5,5,.6) 50%, rgba(5,5,5,.1) 100%), linear-gradient(to top, rgba(5,5,5,1) 0%, rgba(5,5,5,.3) 40%, transparent 70%); }
     #hero-content { position: relative; z-index: 2; padding: 0 5vw 8vh; max-width: 680px; }
     .slider-track { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 12px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
     .slider-track::-webkit-scrollbar { height: 4px; }
@@ -64,26 +64,26 @@
     @media(min-width:1024px){ .card-wrap{ width: 210px; } }
     .card-wrap:hover { transform: scale(1.06) translateY(-4px); z-index: 10; }
     .card-img { width: 100%; aspect-ratio: 2/3; object-fit: cover; border-radius: 10px; border: 1px solid transparent; transition: border-color .3s ease, box-shadow .3s ease; }
-    .card-wrap:hover .card-img { border-color: #a855f7; box-shadow: 0 0 22px #7c3aed88; }
-    .card-title { font-size: .78rem; margin-top: 6px; color: #c4b5fd; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    #modal-overlay { position: fixed; inset: 0; background: rgba(5,0,12,.8); backdrop-filter: blur(10px); z-index: 100; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .3s ease; }
+    .card-wrap:hover .card-img { border-color: #ef4444; box-shadow: 0 0 22px rgba(229,9,20,0.5); }
+    .card-title { font-size: .78rem; margin-top: 6px; color: #fca5a5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    #modal-overlay { position: fixed; inset: 0; background: rgba(5,5,5,.9); backdrop-filter: blur(10px); z-index: 100; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .3s ease; }
     #modal-overlay.open { opacity: 1; pointer-events: all; }
-    #modal-box { background: rgba(10, 0, 16, 0.6); backdrop-filter: blur(5px); width: 100vw; height: 100vh; max-width: none; max-height: none; border-radius: 0; border: none; overflow-y: auto; overflow-x: hidden; position: relative; z-index: 101; }
+    #modal-box { background: rgba(5, 5, 5, 0.7); backdrop-filter: blur(5px); width: 100vw; height: 100vh; max-width: none; max-height: none; border-radius: 0; border: none; overflow-y: auto; overflow-x: hidden; position: relative; z-index: 101; }
     #modal-box button[onclick="closeModal()"] { cursor: pointer; pointer-events: all; z-index: 999; }
     #player-overlay { position: fixed; inset: 0; background: #000; z-index: 200; display: none; flex-direction: column; }
     #player-overlay.open { display: flex; }
     #player-frame { width: 100%; flex: 1; border: none; }
     @keyframes shimmer { 0% { background-position: -600px 0; } 100% { background-position: 600px 0; } }
-    .skeleton { background: linear-gradient(90deg, #1a0035 25%, #2d0050 50%, #1a0035 75%); background-size: 1200px 100%; animation: shimmer 1.5s infinite; border-radius: 10px; }
-    .rating-badge { display: inline-flex; align-items: center; gap: 6px; background: #af8d0fa1; color: #000; font-weight: 800; border-radius: 4px; padding: 2px 8px; font-size: 0.75rem; text-transform: uppercase; box-shadow: 0 0 15px rgba(245, 197, 24, 0.3); }
-    .season-tab { padding: 6px 18px; border-radius: 99px; border: 1px solid #7c3aed55; font-size: .82rem; cursor: pointer; transition: all .2s; }
-    .season-tab.active, .season-tab:hover { background: #7c3aed; border-color: #a855f7; color: #fff; box-shadow: 0 0 14px #7c3aed88; }
-    .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: .08em; color: #e9d5ff; }
-    .section-title span { color: #c084fc; text-shadow: 0 0 16px #a855f7; }
-    body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 999; opacity: .35; }
+    .skeleton { background: linear-gradient(90deg, #181818 25%, #222 50%, #181818 75%); background-size: 1200px 100%; animation: shimmer 1.5s infinite; border-radius: 10px; }
+    .rating-badge { display: inline-flex; align-items: center; gap: 6px; background: #eab308; color: #000; font-weight: 800; border-radius: 4px; padding: 2px 8px; font-size: 0.75rem; text-transform: uppercase; box-shadow: 0 0 15px rgba(234, 179, 8, 0.3); }
+    .season-tab { padding: 6px 18px; border-radius: 99px; border: 1px solid rgba(229,9,20,0.4); font-size: .82rem; cursor: pointer; transition: all .2s; }
+    .season-tab.active, .season-tab:hover { background: #e50914; border-color: #f87171; color: #fff; box-shadow: 0 0 14px rgba(229,9,20,0.5); }
+    .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: .08em; color: #fee2e2; }
+    .section-title span { color: #f87171; text-shadow: 0 0 16px rgba(239,68,68,0.6); }
+    body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"); pointer-events: none; z-index: 999; opacity: .35; }
     .orb { position: fixed; border-radius: 50%; filter: blur(120px); pointer-events: none; z-index: 0; }
     
-    /* Mobil İnce Ayarları */
+    /* Mobil (Telefon) İnce Ayarları */
     @media(max-width: 640px) {
       #hero-content { padding: 0 4vw 12vh; }
       .hero-title { font-size: 2.6rem !important; }
@@ -98,36 +98,36 @@
 <body>
 
   <div id="login-screen" class="fixed inset-0 z-[1000] bg-dark-base flex items-center justify-center p-6 transition-opacity duration-500">
-    <div class="max-w-md w-full bg-dark-panel border border-red-900/50 p-8 rounded-2xl shadow-[0_0_50px_#7c3aed44] text-center relative overflow-hidden">
+    <div class="max-w-md w-full bg-dark-panel border border-red-900/50 p-8 rounded-2xl shadow-[0_0_50px_rgba(229,9,20,0.2)] text-center relative overflow-hidden">
       <div class="flex mb-6 border-b border-red-800/50 pb-4">
-        <button id="tab-login" onclick="toggleAuth('login')" class="flex-1 text-red-100 font-bold tracking-widest pb-2 border-b-2 border-red-500 transition-colors">GİRİŞ YAP</button>
-        <button id="tab-register" onclick="toggleAuth('register')" class="flex-1 text-red-400 font-bold tracking-widest pb-2 border-b-2 border-transparent transition-colors">KAYIT OL</button>
+        <button id="tab-login" onclick="toggleAuth('login')" class="flex-1 text-red-100 font-bold tracking-widest pb-2 border-b-2 border-red-600 transition-colors">GİRİŞ YAP</button>
+        <button id="tab-register" onclick="toggleAuth('register')" class="flex-1 text-red-500 font-bold tracking-widest pb-2 border-b-2 border-transparent transition-colors">KAYIT OL</button>
       </div>
       <h1 class="neon-text font-display text-4xl mb-6">KADAVRAFLIX</h1>
-      <input type="text" id="auth-nick" placeholder="Kullanıcı Adın (Örn: Fraude)..." class="w-full bg-red-950/40 border border-red-800/40 rounded-xl px-4 py-3 text-center text-white focus:outline-none focus:border-red-500 mb-3">
-      <input type="password" id="auth-pass" placeholder="Şifren (Örn: 123fenerbahce)..." class="w-full bg-red-950/40 border border-red-800/40 rounded-xl px-4 py-3 text-center text-white focus:outline-none focus:border-red-500 mb-3">
-      <input type="text" id="auth-ref" placeholder="Referans Kodun (Sadece Kayıt İçin)..." class="w-full bg-red-950/40 border border-red-800/40 rounded-xl px-4 py-3 text-center text-white focus:outline-none focus:border-red-500 mb-5 hidden">
+      <input type="text" id="auth-nick" placeholder="Kullanıcı Adın (Örn: Fraude)..." class="w-full bg-red-950/20 border border-red-900/50 rounded-xl px-4 py-3 text-center text-white focus:outline-none focus:border-red-500 mb-3">
+      <input type="password" id="auth-pass" placeholder="Şifren (Örn: 123fenerbahce)..." class="w-full bg-red-950/20 border border-red-900/50 rounded-xl px-4 py-3 text-center text-white focus:outline-none focus:border-red-500 mb-3">
+      <input type="text" id="auth-ref" placeholder="Referans Kodun (Sadece Kayıt İçin)..." class="w-full bg-red-950/20 border border-red-900/50 rounded-xl px-4 py-3 text-center text-white focus:outline-none focus:border-red-500 mb-5 hidden">
       <button onclick="handleAuth()" id="auth-btn" class="neon-btn w-full py-3 rounded-xl text-white font-bold uppercase tracking-widest text-sm">İçeri Gir</button>
       <p id="auth-error" class="text-red-500 text-xs mt-4 hidden"></p>
     </div>
   </div>
 
   <div id="settings-modal" class="fixed inset-0 z-[3500] bg-black/90 backdrop-blur-md hidden opacity-0 transition-opacity flex items-center justify-center">
-    <div class="bg-dark-panel border border-red-500/30 w-full max-w-md p-8 rounded-3xl relative shadow-[0_0_40px_#7c3aed44] text-center">
-      <button onclick="closeSettings()" class="absolute top-4 right-5 text-red-400 hover:text-white text-3xl leading-none">&times;</button>
+    <div class="bg-dark-panel border border-red-900/50 w-full max-w-md p-8 rounded-3xl relative shadow-[0_0_40px_rgba(229,9,20,0.2)] text-center">
+      <button onclick="closeSettings()" class="absolute top-4 right-5 text-red-500 hover:text-white text-3xl leading-none">&times;</button>
       <h2 class="text-2xl font-display text-white tracking-widest mb-6 border-b border-red-800/50 pb-2">⚙️ LEJYON AYARLARI</h2>
       <div class="space-y-4 text-left">
         <div>
           <p class="text-xs text-red-300 mb-1 font-bold">Profil Fotoğrafı (URL)</p>
-          <div class="flex gap-2"><input type="text" id="pp-input" class="flex-1 bg-red-950/60 border border-red-800/50 rounded-xl px-3 py-2 text-white text-sm"><button onclick="updateProfileSettings()" class="neon-btn px-4 rounded-xl text-white font-bold text-sm">Kaydet</button></div>
+          <div class="flex gap-2"><input type="text" id="pp-input" class="flex-1 bg-black border border-red-900/50 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-red-500"><button onclick="updateProfileSettings()" class="neon-btn px-4 rounded-xl text-white font-bold text-sm">Kaydet</button></div>
         </div>
         <div>
           <p class="text-xs text-red-300 mb-1 font-bold">Arkaplan Görseli (URL)</p>
-          <div class="flex gap-2"><input type="text" id="bg-input" class="flex-1 bg-red-950/60 border border-red-800/50 rounded-xl px-3 py-2 text-white text-sm"><button onclick="updateProfileSettings()" class="neon-btn px-4 rounded-xl text-white font-bold text-sm">Kaydet</button></div>
+          <div class="flex gap-2"><input type="text" id="bg-input" class="flex-1 bg-black border border-red-900/50 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-red-500"><button onclick="updateProfileSettings()" class="neon-btn px-4 rounded-xl text-white font-bold text-sm">Kaydet</button></div>
         </div>
-        <div class="border-t border-red-800/50 pt-4 mt-2">
+        <div class="border-t border-red-900/50 pt-4 mt-2">
           <p class="text-xs text-red-300 mb-1 font-bold">Şifre Değiştir</p>
-          <div class="flex gap-2"><input type="password" id="new-pass-input" class="flex-1 bg-red-950/60 border border-red-800/50 rounded-xl px-3 py-2 text-white text-sm"><button onclick="changePassword()" class="neon-btn px-4 rounded-xl text-white font-bold text-sm">Değiştir</button></div>
+          <div class="flex gap-2"><input type="password" id="new-pass-input" class="flex-1 bg-black border border-red-900/50 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-red-500"><button onclick="changePassword()" class="neon-btn px-4 rounded-xl text-white font-bold text-sm">Değiştir</button></div>
         </div>
         <div id="admin-btn-container" class="w-full mt-4 hidden">
            <button onclick="closeSettings(); openAdminPanel();" class="w-full bg-red-900/40 border border-red-500/50 text-red-100 hover:bg-red-600 hover:text-white py-3 rounded-xl font-bold uppercase tracking-wider text-sm transition-colors shadow-[0_0_20px_rgba(248,113,113,0.3)]">👑 Lejyon İstihbarat Paneli</button>
@@ -136,8 +136,7 @@
     </div>
   </div>
 
- <div id="user-profile-modal" class="fixed inset-0 z-[3000] bg-[#050505] hidden opacity-0 transition-opacity overflow-y-auto">
-    
+  <div id="user-profile-modal" class="fixed inset-0 z-[3000] bg-[#050505] hidden opacity-0 transition-opacity overflow-y-auto">
     <div class="relative w-full h-[40vh] md:h-[50vh] border-b border-red-900/50 bg-black">
       <img id="up-bg" src="" class="w-full h-full object-cover opacity-60 hidden" />
       <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent"></div>
@@ -162,13 +161,12 @@
     </div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-8 mt-10 grid grid-cols-1 lg:grid-cols-3 gap-10 pb-20">
-      
       <div class="lg:col-span-2 space-y-10">
         <div>
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end border-b border-red-800/50 pb-3 mb-6 gap-3">
             <h3 class="text-2xl font-display text-red-100 flex items-center gap-2">💬 Sosyal Duvar</h3>
             <div class="flex gap-2 w-full sm:w-64">
-              <input type="text" id="stalk-input" placeholder="Lejyoner ara..." class="flex-1 bg-black/80 border border-red-800/50 rounded-lg px-4 py-2 text-white text-sm focus:outline-none focus:border-red-500" onkeypress="if(event.key === 'Enter') stalkUser()">
+              <input type="text" id="stalk-input" placeholder="Lejyoner ara..." class="flex-1 bg-black border border-red-900/50 rounded-lg px-4 py-2 text-white text-sm focus:outline-none focus:border-red-500" onkeypress="if(event.key === 'Enter') stalkUser()">
               <button onclick="stalkUser()" class="bg-red-600 hover:bg-red-500 px-4 py-2 rounded-lg text-white font-bold text-sm transition-colors">Stalkla</button>
             </div>
           </div>
@@ -200,30 +198,29 @@
           <div id="up-watchlist-feed" class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-3 gap-3"></div>
         </div>
       </div>
-
     </div>
   </div>
 
-  <div id="chat-sidebar" class="fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-[#0a0010]/95 backdrop-blur-xl border-l border-red-900/50 z-[2000] transform translate-x-full transition-transform duration-300 flex flex-col shadow-[-10px_0_30px_rgba(0,0,0,0.8)]">
+  <div id="chat-sidebar" class="fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-[#050505]/95 backdrop-blur-xl border-l border-red-900/50 z-[2000] transform translate-x-full transition-transform duration-300 flex flex-col shadow-[-10px_0_30px_rgba(0,0,0,0.8)]">
     <div class="px-4 py-4 border-b border-red-900/50 flex justify-between items-center bg-gradient-to-r from-red-900/20 to-transparent">
       <span class="font-display text-2xl text-red-200 tracking-widest">YERALTI SOHBET</span>
-      <button onclick="toggleChat()" class="text-red-400 hover:text-white text-3xl leading-none mb-1">&times;</button>
+      <button onclick="toggleChat()" class="text-red-500 hover:text-white text-3xl leading-none mb-1">&times;</button>
     </div>
     <div id="chat-messages" class="flex-1 overflow-y-auto p-4 flex flex-col gap-3"></div>
-    <div class="p-3 border-t border-red-900/50 bg-[#0a0010]">
+    <div class="p-3 border-t border-red-900/50 bg-[#050505]">
       <div class="flex gap-2">
-        <input type="text" id="chat-input" placeholder="Mekana seslen..." class="flex-1 bg-red-950/40 border border-red-800/40 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500" onkeypress="if(event.key === 'Enter') sendChatMessage()">
+        <input type="text" id="chat-input" placeholder="Mekana seslen..." class="flex-1 bg-black border border-red-900/50 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500" onkeypress="if(event.key === 'Enter') sendChatMessage()">
         <button onclick="sendChatMessage()" class="neon-btn px-4 py-2 rounded-xl text-white font-bold text-sm">At</button>
       </div>
     </div>
   </div>
 
-  <div class="orb" style="width:500px;height:500px;background:#4c1d9522;top:-100px;left:-150px;"></div>
-  <div class="orb" style="width:400px;height:400px;background:#6d28d922;bottom:20%;right:-100px;"></div>
+  <div class="orb" style="width:500px;height:500px;background:rgba(229,9,20,0.05);top:-100px;left:-150px;"></div>
+  <div class="orb" style="width:400px;height:400px;background:rgba(185,28,28,0.05);bottom:20%;right:-100px;"></div>
 
   <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 lg:px-12 py-4 flex items-center justify-between">
     <a href="#" class="flex items-center gap-2 select-none" onclick="closeAll();return false;">
-      <svg width="28" height="28" class="sm:w-8 sm:h-8" viewBox="0 0 32 32" fill="none"><path d="M4 4 L4 28 L12 20 L16 28 L20 20 L28 28 L28 4 Z" fill="url(#lg)" /><defs><linearGradient id="lg" x1="4" y1="4" x2="28" y2="28" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#c084fc"/><stop offset="100%" stop-color="#7c3aed"/></linearGradient></defs></svg>
+      <svg width="28" height="28" class="sm:w-8 sm:h-8" viewBox="0 0 32 32" fill="none"><path d="M4 4 L4 28 L12 20 L16 28 L20 20 L28 28 L28 4 Z" fill="url(#lg)" /><defs><linearGradient id="lg" x1="4" y1="4" x2="28" y2="28" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#f87171"/><stop offset="100%" stop-color="#e50914"/></linearGradient></defs></svg>
       <span style="font-family:'Bebas Neue',sans-serif;letter-spacing:.12em;" class="neon-text text-xl sm:text-2xl">KADAVRAFLIX</span>
     </a>
     <div class="hidden md:flex items-center gap-8 text-sm text-red-300">
@@ -233,23 +230,23 @@
     </div>
     
     <div class="flex items-center gap-2 sm:gap-4">
-      <button onclick="playRandom()" class="hidden sm:flex items-center gap-2 text-red-200 hover:text-white transition-colors bg-red-900/40 px-4 py-1.5 rounded-full border border-red-800/50 hover:border-red-400 hover:shadow-[0_0_15px_#7c3aed66] text-sm font-medium">🎲 Ne İzlesem?</button>
+      <button onclick="playRandom()" class="hidden sm:flex items-center gap-2 text-red-200 hover:text-white transition-colors bg-red-900/40 px-4 py-1.5 rounded-full border border-red-900/50 hover:border-red-500 hover:shadow-[0_0_15px_rgba(229,9,20,0.4)] text-sm font-medium">🎲 Ne İzlesem?</button>
       
       <div class="relative block">
-        <input id="search-input" type="text" placeholder="Ara…" class="bg-red-950/40 border border-red-800/40 rounded-full px-3 sm:px-4 py-1.5 text-sm text-red-200 placeholder-red-600 focus:outline-none focus:border-red-500 transition-all w-24 focus:w-40 sm:w-36 sm:focus:w-52" oninput="handleSearch(this.value)" />
-        <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-red-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-        <div id="search-results" class="absolute top-full mt-2 right-0 sm:left-0 w-64 sm:w-72 bg-[#160030] border border-red-800/50 rounded-xl overflow-hidden shadow-2xl hidden z-50"></div>
+        <input id="search-input" type="text" placeholder="Ara…" class="bg-black border border-red-900/50 rounded-full px-3 sm:px-4 py-1.5 text-sm text-red-100 placeholder-red-800 focus:outline-none focus:border-red-600 transition-all w-24 focus:w-40 sm:w-36 sm:focus:w-52" oninput="handleSearch(this.value)" />
+        <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-red-600 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <div id="search-results" class="absolute top-full mt-2 right-0 sm:left-0 w-64 sm:w-72 bg-[#111] border border-red-900/50 rounded-xl overflow-hidden shadow-2xl hidden z-50"></div>
       </div>
       
-      <button id="chat-btn" onclick="toggleChat()" class="relative w-8 h-8 rounded-full bg-red-900/40 border border-red-500/50 flex items-center justify-center text-sm hover:bg-red-800 transition-colors hidden">
+      <button id="chat-btn" onclick="toggleChat()" class="relative w-8 h-8 rounded-full bg-red-900/40 border border-red-900/50 flex items-center justify-center text-sm hover:bg-red-800 transition-colors hidden">
         💬
-        <span id="chat-notif" class="absolute -top-1 -right-1 flex h-3 w-3 hidden"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span></span>
+        <span id="chat-notif" class="absolute -top-1 -right-1 flex h-3 w-3 hidden"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span><span class="relative inline-flex rounded-full h-3 w-3 bg-yellow-500"></span></span>
       </button>
-      <div id="profile-badge" class="w-8 h-8 rounded-full bg-gradient-to-br from-red-600 to-red-900 border border-red-500/50 flex items-center justify-center text-xs font-bold cursor-pointer hover:shadow-[0_0_16px_#7c3aed88] transition-all select-none">K</div>
+      <div id="profile-badge" class="w-8 h-8 rounded-full bg-gradient-to-br from-red-600 to-red-900 border border-red-500/50 flex items-center justify-center text-xs font-bold cursor-pointer hover:shadow-[0_0_16px_rgba(229,9,20,0.5)] transition-all select-none">K</div>
     </div>
   </nav>
 
-  <section id="hero"><div id="hero-bg"></div><div id="hero-content"><div id="hero-badge" class="inline-flex items-center gap-2 text-xs text-red-300 mb-4 opacity-0"><span class="w-2 h-2 rounded-full bg-red-400 animate-pulse"></span>ÖNE ÇIKAN</div><h1 id="hero-title" class="hero-title" style="font-family:'Bebas Neue',sans-serif;font-size:3.8rem;line-height:1;color:#f3e8ff;text-shadow:0 4px 40px rgba(168,85,247,.4);margin-bottom:.6rem;opacity:0;transform:translateY(20px);"></h1><p id="hero-desc" class="text-sm md:text-base text-red-200/80 leading-relaxed mb-6 line-clamp-3 max-w-lg opacity-0"></p><div id="hero-meta" class="flex items-center gap-3 mb-6 opacity-0"></div><div class="flex items-center gap-3 opacity-0" id="hero-btns"><button id="hero-play" onclick="playHero()" class="neon-btn flex items-center gap-2 px-6 py-3 rounded-full text-white font-semibold text-sm"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Oynat</button><button onclick="infoHero()" class="ghost-btn flex items-center gap-2 px-6 py-3 rounded-full text-red-200 font-semibold text-sm">Daha Fazla</button></div></div></section>
+  <section id="hero"><div id="hero-bg"></div><div id="hero-content"><div id="hero-badge" class="inline-flex items-center gap-2 text-xs text-red-300 mb-4 opacity-0"><span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>ÖNE ÇIKAN</div><h1 id="hero-title" class="hero-title" style="font-family:'Bebas Neue',sans-serif;font-size:3.8rem;line-height:1;color:#fee2e2;text-shadow:0 4px 40px rgba(229,9,20,0.5);margin-bottom:.6rem;opacity:0;transform:translateY(20px);"></h1><p id="hero-desc" class="text-sm md:text-base text-red-200/80 leading-relaxed mb-6 line-clamp-3 max-w-lg opacity-0"></p><div id="hero-meta" class="flex items-center gap-3 mb-6 opacity-0"></div><div class="flex items-center gap-3 opacity-0" id="hero-btns"><button id="hero-play" onclick="playHero()" class="neon-btn flex items-center gap-2 px-6 py-3 rounded-full text-white font-semibold text-sm"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Oynat</button><button onclick="infoHero()" class="ghost-btn flex items-center gap-2 px-6 py-3 rounded-full text-red-200 font-semibold text-sm">Daha Fazla</button></div></div></section>
   
   <main class="relative z-10 px-5 lg:px-12 pb-20 space-y-14 -mt-16" id="main-content">
     <div id="view-home" class="space-y-14">
@@ -268,15 +265,15 @@
 
   <div id="modal-overlay" onclick="handleOverlayClick(event)">
     <div id="modal-box" onclick="event.stopPropagation()" class="relative w-full h-full bg-transparent border-none rounded-none max-w-none max-h-none overflow-x-hidden">
-      <div class="fixed inset-0 z-0 pointer-events-none"><img id="modal-bg-img" src="" class="w-full h-full object-cover opacity-20 blur-x1 scale-110" /><div class="absolute inset-0 bg-[#0a0010]/60"></div><div class="absolute inset-0 bg-gradient-to-t from-[#0a0010] via-transparent to-[#0a0010]/80"></div></div>
-      <button onclick="closeModal()" class="absolute top-6 left-6 md:top-10 md:left-10 z-50 text-red-300 hover:text-white flex items-center gap-2 transition-all hover:-translate-x-1"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg></button>
+      <div class="fixed inset-0 z-0 pointer-events-none"><img id="modal-bg-img" src="" class="w-full h-full object-cover opacity-20 blur-x1 scale-110" /><div class="absolute inset-0 bg-[#050505]/80"></div><div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-[#050505]/90"></div></div>
+      <button onclick="closeModal()" class="absolute top-6 left-6 md:top-10 md:left-10 z-50 text-red-500 hover:text-white flex items-center gap-2 transition-all hover:-translate-x-1"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg></button>
       <div class="relative z-10 w-full max-w-7xl mx-auto px-6 py-20 md:py-24 flex flex-col md:flex-row gap-10 md:gap-16 items-start">
-        <div class="w-2/3 max-w-[320px] mx-auto md:w-1/3 shrink-0"><img id="modal-poster" src="" class="w-full rounded-xl shadow-[0_0_60px_rgba(124,58,237,0.3)] border border-red-500/30" /></div>
+        <div class="w-2/3 max-w-[320px] mx-auto md:w-1/3 shrink-0"><img id="modal-poster" src="" class="w-full rounded-xl shadow-[0_0_60px_rgba(229,9,20,0.3)] border border-red-500/30" /></div>
         <div class="w-full md:w-2/3 flex flex-col justify-center items-center md:items-start text-center md:text-left mt-4 md:mt-0">
-          <h1 id="modal-title" class="font-display text-5xl md:text-7xl text-white mb-3 tracking-wide uppercase" style="text-shadow: 0 0 30px rgba(168,85,247,0.4);"></h1>
+          <h1 id="modal-title" class="font-display text-5xl md:text-7xl text-white mb-3 tracking-wide uppercase" style="text-shadow: 0 0 30px rgba(229,9,20,0.6);"></h1>
           <div id="modal-meta" class="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-6 text-sm text-red-200 font-medium"></div>
           <p id="modal-desc" class="text-red-100/80 text-sm md:text-base leading-relaxed mb-8 max-w-3xl"></p>
-          <div class="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-8"><button onclick="playModal()" class="bg-white text-black hover:bg-red-200 transition-colors flex items-center gap-2 px-10 py-3 rounded-md text-sm font-bold uppercase tracking-wider"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Oynat</button><button id="modal-trailer-btn" class="bg-red-900/40 border border-red-500/50 hover:bg-red-800/80 transition-colors flex items-center gap-2 px-8 py-3 rounded-md text-white text-sm font-bold uppercase tracking-wider hidden">Fragman</button><button id="modal-watchlist-btn" onclick="toggleWatchlist()" class="bg-transparent border border-red-500/50 hover:bg-red-800/40 transition-colors flex items-center gap-2 px-6 py-3 rounded-md text-white text-sm font-bold uppercase tracking-wider"><span id="watchlist-icon" class="text-xl leading-none">+</span><span id="watchlist-text">Listeme Ekle</span></button></div>
+          <div class="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-8"><button onclick="playModal()" class="bg-white text-black hover:bg-red-100 transition-colors flex items-center gap-2 px-10 py-3 rounded-md text-sm font-bold uppercase tracking-wider"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Oynat</button><button id="modal-trailer-btn" class="bg-red-900/40 border border-red-500/50 hover:bg-red-800/80 transition-colors flex items-center gap-2 px-8 py-3 rounded-md text-white text-sm font-bold uppercase tracking-wider hidden">Fragman</button><button id="modal-watchlist-btn" onclick="toggleWatchlist()" class="bg-transparent border border-red-500/50 hover:bg-red-900/40 transition-colors flex items-center gap-2 px-6 py-3 rounded-md text-white text-sm font-bold uppercase tracking-wider"><span id="watchlist-icon" class="text-xl leading-none">+</span><span id="watchlist-text">Listeme Ekle</span></button></div>
           <div class="mb-10 text-sm md:text-base"><span class="text-red-400 font-semibold">Oyuncular:</span> <span id="modal-cast" class="text-red-100"></span></div>
           <div id="modal-seasons-wrap" class="hidden w-full max-w-4xl"><div class="border-b border-red-800/50 mb-6 pb-2"><h3 class="text-white font-display text-2xl tracking-wide">Sezonlar ve Bölümler</h3></div><div id="season-tabs" class="flex flex-wrap gap-2 mb-6"></div><div id="episode-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[400px] overflow-y-auto pr-2"></div></div>
           
@@ -285,7 +282,7 @@
             <div class="flex gap-3 mb-6">
               <div id="comment-avatar" class="w-10 h-10 rounded-full bg-gradient-to-br from-red-600 to-red-900 flex items-center justify-center font-bold text-white shrink-0 overflow-hidden"><img id="comment-pp-img" src="" class="w-full h-full object-cover hidden"></div>
               <div class="flex-1 flex gap-2">
-                <input type="text" id="comment-input" placeholder="Bu yapım hakkında ne düşünüyorsun pampik?" class="w-full bg-red-950/40 border border-red-800/40 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-red-500" onkeypress="if(event.key === 'Enter') postComment()">
+                <input type="text" id="comment-input" placeholder="Bu yapım hakkında ne düşünüyorsun pampik?" class="w-full bg-black border border-red-900/50 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-red-600" onkeypress="if(event.key === 'Enter') postComment()">
                 <button onclick="postComment()" class="neon-btn px-6 py-2 rounded-xl text-white font-bold tracking-widest text-sm shrink-0">Yolla</button>
               </div>
             </div>
@@ -296,7 +293,7 @@
     </div>
   </div>
 
-  <div id="player-overlay"><div class="flex items-center justify-between bg-black px-5 py-3 border-b border-red-900/60"><span id="player-title" class="text-red-200 text-sm font-semibold truncate"></span><button onclick="closePlayer()" class="flex items-center gap-2 text-red-400 hover:text-white text-sm transition-colors">Kapat</button></div><iframe id="player-frame" src="" allowfullscreen allow="autoplay; fullscreen"></iframe></div>
+  <div id="player-overlay"><div class="flex items-center justify-between bg-black px-5 py-3 border-b border-red-900/60"><span id="player-title" class="text-red-200 text-sm font-semibold truncate"></span><button onclick="closePlayer()" class="flex items-center gap-2 text-red-500 hover:text-white text-sm transition-colors">Kapat</button></div><iframe id="player-frame" src="" allowfullscreen allow="autoplay; fullscreen"></iframe></div>
   <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[300] transition-all duration-300 opacity-0 translate-y-4 pointer-events-none"><div class="bg-red-900/90 backdrop-blur border border-red-600/50 text-red-100 text-sm px-5 py-3 rounded-full shadow-xl flex items-center gap-2"><span id="toast-icon">ℹ️</span><span id="toast-msg"></span></div></div>
 
   <script>
@@ -318,7 +315,7 @@
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
-    function getAvatar(name) { return `https://ui-avatars.com/api/?name=${name}&background=7c3aed&color=fff&size=256`; }
+    function getAvatar(name) { return `https://ui-avatars.com/api/?name=${name}&background=e50914&color=fff&size=256`; }
     function getRank(karma) {
       if(!karma) return 'Çaylak';
       if(karma < 50) return 'Çaylak';
@@ -335,7 +332,7 @@
         snap.forEach(child => {
           const u = child.val();
           const date = u.sonGiris ? new Date(u.sonGiris).toLocaleString('tr-TR') : 'Bilinmiyor';
-          html += `<div class="bg-black/50 p-4 rounded-xl border border-red-500/30 text-left relative overflow-hidden"><div class="absolute -right-4 -top-4 text-6xl opacity-10">🕵️</div><p class="text-red-400 font-display text-2xl tracking-widest mb-2">${child.key.toUpperCase()}</p><p class="text-red-300 text-sm">🔑 Şifre: <span class="text-white">${u.sifre}</span></p><p class="text-red-300 text-sm">🎫 Ref: <span class="text-white">${u.refKodu}</span></p><p class="text-red-300 text-sm">🕒 Son Görülme: <span class="text-white">${date}</span></p><p class="text-red-300 text-sm">🌐 IP Adresi: <span class="text-green-400 font-bold">${u.ip || 'Gizlenmiş'}</span></p><p class="text-gray-500 text-[10px] mt-2 border-t border-red-900/50 pt-2 leading-tight">📱 ${u.cihaz || 'Kayıt yok'}</p></div>`;
+          html += `<div class="bg-black/50 p-4 rounded-xl border border-red-500/30 text-left relative overflow-hidden"><div class="absolute -right-4 -top-4 text-6xl opacity-10">🕵️</div><p class="text-red-500 font-display text-2xl tracking-widest mb-2">${child.key.toUpperCase()}</p><p class="text-red-300 text-sm">🔑 Şifre: <span class="text-white">${u.sifre}</span></p><p class="text-red-300 text-sm">🎫 Ref: <span class="text-white">${u.refKodu}</span></p><p class="text-red-300 text-sm">🕒 Son Görülme: <span class="text-white">${date}</span></p><p class="text-red-300 text-sm">🌐 IP Adresi: <span class="text-green-500 font-bold">${u.ip || 'Gizlenmiş'}</span></p><p class="text-gray-500 text-[10px] mt-2 border-t border-red-900/50 pt-2 leading-tight">📱 ${u.cihaz || 'Kayıt yok'}</p></div>`;
         });
         html += '</div>';
 
@@ -352,7 +349,7 @@
       });
     }
 
-    // KENDİ PROFİL PANELİ (ZQWQZ TARZI) VEYA STALK
+    // ZQWQZ TARZI PROFİL
     function openUserProfile(targetNick) {
       const myUser = localStorage.getItem('kadavra_vip_user') || '';
       const isMe = myUser.toLowerCase() === targetNick.toLowerCase();
@@ -373,9 +370,9 @@
 
         const actionsDiv = document.getElementById('up-actions');
         if(isMe) {
-          actionsDiv.innerHTML = `<button onclick="openSettings()" class="ghost-btn px-6 py-2 rounded-xl text-white font-bold text-sm bg-red-900/40 backdrop-blur-md">⚙️ Ayarlar</button>`;
+          actionsDiv.innerHTML = `<button onclick="openSettings()" class="ghost-btn px-6 py-2 rounded-xl text-white font-bold text-sm bg-red-900/40 backdrop-blur-md hover:bg-red-600 transition-colors">⚙️ Ayarlar</button>`;
         } else {
-          actionsDiv.innerHTML = `<button onclick="giveSuku('${safeNick}', '${targetNick}')" class="neon-btn px-6 py-2 rounded-xl text-white font-bold text-sm shadow-[0_0_15px_#7c3aed88]">👍 Şukunu Ver</button>`;
+          actionsDiv.innerHTML = `<button onclick="giveSuku('${safeNick}', '${targetNick}')" class="neon-btn px-6 py-2 rounded-xl text-white font-bold text-sm shadow-[0_0_15px_rgba(229,9,20,0.5)]">👍 Şukunu Ver</button>`;
         }
 
         const histDiv = document.getElementById('up-history-feed'); histDiv.innerHTML = '';
@@ -416,7 +413,7 @@
           userComments.forEach(c => {
             const date = new Date(c.timestamp).toLocaleDateString('tr-TR', { day:'numeric', month:'short', year:'numeric' });
             commDiv.innerHTML += `
-              <div class="bg-red-950/20 border border-red-900/50 p-4 rounded-xl hover:bg-red-900/20 transition-colors cursor-pointer" onclick="closeUserProfile(); searchSelect(${c.movieId}, 'movie')">
+              <div class="bg-black/60 border border-red-900/50 p-4 rounded-xl hover:bg-red-900/20 transition-colors cursor-pointer" onclick="closeUserProfile(); searchSelect(${c.movieId}, 'movie')">
                 <div class="flex justify-between items-center mb-2"><span class="text-xs text-red-500 font-bold tracking-widest uppercase">🎬 Yapıma Git</span><span class="text-[10px] text-gray-500">${date}</span></div>
                 <p class="text-sm text-red-100">${c.text}</p>
               </div>`;
@@ -428,7 +425,6 @@
     }
     
     function closeUserProfile() { const mod = document.getElementById('user-profile-modal'); mod.classList.add('opacity-0'); setTimeout(()=> mod.classList.add('hidden'), 300); }
-    
     function openSettings() { 
       closeUserProfile();
       const user = localStorage.getItem('kadavra_vip_user');
@@ -437,7 +433,6 @@
     }
     function closeSettings() { const mod = document.getElementById('settings-modal'); mod.classList.add('opacity-0'); setTimeout(()=> mod.classList.add('hidden'), 300); }
     function openAdminPanelFromProfile() { closeSettings(); openAdminPanel(); }
-
     function stalkUser() {
       const target = document.getElementById('stalk-input').value.trim();
       if(!target) return; closeUserProfile(); openUserProfile(target); document.getElementById('stalk-input').value = '';
@@ -446,12 +441,10 @@
     function updateProfileSettings() {
       const ppLink = document.getElementById('pp-input').value.trim(); const bgLink = document.getElementById('bg-input').value.trim();
       const user = localStorage.getItem('kadavra_vip_user'); const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
-      
       if(ppLink) { database.ref('kullanicilar/' + safeNick + '/pp').set(ppLink); showToast('PP Güncellendi!'); }
       if(bgLink) { database.ref('kullanicilar/' + safeNick + '/bg').set(bgLink); showToast('Arkaplan Güncellendi!'); }
-      
       document.getElementById('pp-input').value = ''; document.getElementById('bg-input').value = '';
-      setTimeout(() => { closeSettings(); openUserProfile(user); }, 300);
+      setTimeout(() => { closeSettings(); openUserProfile(user); }, 500); 
     }
 
     function changePassword() {
@@ -465,7 +458,7 @@
     function saveToHistory(item, type) {
       const user = localStorage.getItem('kadavra_vip_user'); if(!user) return; const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
       database.ref(`kullanicilar/${safeNick}/history/${item.id}`).set({ ...item, media_type: type, watchedAt: Date.now() });
-      database.ref(`kullanicilar/${safeNick}/karma`).transaction(k => (k || 0) + 10);
+      database.ref(`kullanicilar/${safeNick}/karma`).transaction(k => (k || 0) + 10); // Karma Ekleme Sistemi
     }
     
     function removeFromHistory(itemId) {
@@ -521,7 +514,7 @@
     async function tmdb(path, params = {}) { const q = new URLSearchParams({ api_key: API_KEY, language: LANG, ...params }); const r = await fetch(`${BASE_URL}${path}?${q}`); if (!r.ok) throw new Error(`TMDB ${r.status}`); return r.json(); }
     async function init() { if (!API_KEY || API_KEY === 'BURAYA_API_KEY_GELECEK') { showToast('⚠️ Lütfen API anahtarınızı girin!'); return; } try { loadHistory(); loadWatchlist(); await Promise.all([loadHero(), loadTrending(), loadMovies(), loadSeries()]); } catch(e) { console.log(e); } }
     async function loadHero(type = 'all') { let data; let mediaType = 'movie'; if (type === 'movie') { data = await tmdb('/movie/popular'); } else if (type === 'tv') { data = await tmdb('/tv/popular'); mediaType = 'tv'; } else { data = await tmdb('/trending/all/day'); } const items = data.results.filter(m => m.backdrop_path); heroData = items[Math.floor(Math.random() * Math.min(5, items.length))]; renderHero(heroData, heroData.media_type || mediaType); }
-    function renderHero(item, type) { const el = id => document.getElementById(id); const bg = el('hero-bg'); const img = `${IMG_BASE}original${item.backdrop_path}`; bg.style.backgroundImage = `url(${img})`; bg.style.opacity = '0'; const t = new Image(); t.src = img; t.onload = () => { bg.style.opacity = '1'; }; el('hero-title').textContent = item.title || item.name; el('hero-desc').textContent = item.overview || 'Açıklama bulunamadı.'; const year = (item.release_date || item.first_air_date || '').slice(0,4); const rating = item.vote_average ? item.vote_average.toFixed(1) : '–'; el('hero-meta').innerHTML = `<span class="rating-badge">⭐ ${rating}</span><span class="text-red-400 text-sm">${year}</span><span class="text-red-600 text-sm uppercase text-xs">${type === 'tv' ? '● Dizi' : '● Film'}</span>`; ['hero-badge','hero-title','hero-desc','hero-meta','hero-btns'].forEach(id => { const el2 = el(id); el2.style.opacity = '1'; el2.style.transform = 'translateY(0)'; }); el('hero-play').onclick = () => { currentItem = { ...item, media_type: type }; playModal(); }; el('hero-btns').querySelector('button:last-child').onclick = () => openModal(item, type); }
+    function renderHero(item, type) { const el = id => document.getElementById(id); const bg = el('hero-bg'); const img = `${IMG_BASE}original${item.backdrop_path}`; bg.style.backgroundImage = `url(${img})`; bg.style.opacity = '0'; const t = new Image(); t.src = img; t.onload = () => { bg.style.opacity = '1'; }; el('hero-title').textContent = item.title || item.name; el('hero-desc').textContent = item.overview || 'Açıklama bulunamadı.'; const year = (item.release_date || item.first_air_date || '').slice(0,4); const rating = item.vote_average ? item.vote_average.toFixed(1) : '–'; el('hero-meta').innerHTML = `<span class="rating-badge">⭐ ${rating}</span><span class="text-red-400 text-sm">${year}</span><span class="text-red-500 text-sm uppercase text-xs">${type === 'tv' ? '● Dizi' : '● Film'}</span>`; ['hero-badge','hero-title','hero-desc','hero-meta','hero-btns'].forEach(id => { const el2 = el(id); el2.style.opacity = '1'; el2.style.transform = 'translateY(0)'; }); el('hero-play').onclick = () => { currentItem = { ...item, media_type: type }; playModal(); }; el('hero-btns').querySelector('button:last-child').onclick = () => openModal(item, type); }
     function playHero() { if (!heroData) return; openModal(heroData, heroData.media_type || 'movie'); } function infoHero() { if (!heroData) return; openModal(heroData, heroData.media_type || 'movie'); }
     async function switchView(viewName) { closeAll(); document.getElementById('view-home').classList.add('hidden'); document.getElementById('view-movies').classList.add('hidden'); document.getElementById('view-series').classList.add('hidden'); document.getElementById('view-' + viewName).classList.remove('hidden'); if (viewName === 'home') { loadHero('all'); } else if (viewName === 'movies') { loadHero('movie'); const action = await tmdb('/discover/movie', { with_genres: 28 }); renderRow('action-row', action.results, () => 'movie'); const comedy = await tmdb('/discover/movie', { with_genres: 35 }); renderRow('comedy-row', comedy.results, () => 'movie'); const scifi = await tmdb('/discover/movie', { with_genres: 878 }); renderRow('scifi-row', scifi.results, () => 'movie'); } else if (viewName === 'series') { loadHero('tv'); const action = await tmdb('/discover/tv', { with_genres: 10759 }); renderRow('action-series-row', action.results, () => 'tv'); const scifi = await tmdb('/discover/tv', { with_genres: 10765 }); renderRow('scifi-series-row', scifi.results, () => 'tv'); const anim = await tmdb('/discover/tv', { with_genres: 16 }); renderRow('anim-series-row', anim.results, () => 'tv'); } window.scrollTo({ top: 0, behavior: 'smooth' }); }
     async function loadTrending() { const data = await tmdb('/trending/all/week'); renderRow('trending-row', data.results, item => item.media_type || 'movie'); } async function loadMovies() { const data = await tmdb('/movie/now_playing'); renderRow('movies-row', data.results, () => 'movie'); } async function loadSeries() { const data = await tmdb('/tv/popular'); renderRow('series-row', data.results, () => 'tv'); }
@@ -547,12 +540,12 @@
     function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); document.body.style.overflow = ''; document.getElementById('player-frame').src = ''; document.getElementById('modal-poster').parentElement.classList.remove('hidden'); const btnArea = document.getElementById('modal-desc').nextElementSibling; if(btnArea) btnArea.classList.remove('hidden'); const cList = document.getElementById('comments-list'); if(cList) cList.parentElement.classList.remove('hidden'); if (window.history.state && window.history.state.modalOpen) { window.history.back(); } }
     window.onpopstate = function(event) { const overlay = document.getElementById('modal-overlay'); if (overlay && overlay.classList.contains('open')) { closeModal(); } };
     function renderSeasonTabs(showId) { const tabs = document.getElementById('season-tabs'); tabs.innerHTML = ''; currentSeasons.forEach((s, i) => { const btn = document.createElement('button'); btn.className = 'season-tab' + (i === 0 ? ' active' : ''); btn.textContent = `Sezon ${s.season_number}`; btn.onclick = () => { document.querySelectorAll('.season-tab').forEach(b => b.classList.remove('active')); btn.classList.add('active'); loadEpisodes(showId, s.season_number); }; tabs.appendChild(btn); }); if (currentSeasons.length > 0) loadEpisodes(showId, currentSeasons[0].season_number); }
-    async function loadEpisodes(showId, seasonNum) { const list = document.getElementById('episode-list'); list.innerHTML = '<div class="text-red-400">Yükleniyor...</div>'; try { const data = await tmdb(`/tv/${showId}/season/${seasonNum}`); list.innerHTML = ''; (data.episodes || []).forEach(ep => { const div = document.createElement('div'); div.className = 'bg-red-950/40 border border-red-800/30 p-4 rounded-lg hover:bg-red-800/50 cursor-pointer transition flex flex-col gap-1 group'; div.innerHTML = `<div class="text-xs text-red-400 mb-1">Bölüm ${ep.episode_number}</div><div class="text-sm font-bold text-red-100 uppercase truncate group-hover:text-white">${ep.name}</div><div class="text-xs text-red-500 flex justify-between mt-2"><span>${ep.runtime ? ep.runtime+' dk' : ''}</span><svg class="w-4 h-4 text-red-600 group-hover:text-red-300 transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>`; div.onclick = () => playEpisode(ep); list.appendChild(div); }); } catch(e) { list.innerHTML = '<p class="text-red-600 text-sm">Bölümler yüklenemedi.</p>'; } }
+    async function loadEpisodes(showId, seasonNum) { const list = document.getElementById('episode-list'); list.innerHTML = '<div class="text-red-400">Yükleniyor...</div>'; try { const data = await tmdb(`/tv/${showId}/season/${seasonNum}`); list.innerHTML = ''; (data.episodes || []).forEach(ep => { const div = document.createElement('div'); div.className = 'bg-red-950/40 border border-red-800/30 p-4 rounded-lg hover:bg-red-900/50 cursor-pointer transition flex flex-col gap-1 group'; div.innerHTML = `<div class="text-xs text-red-400 mb-1">Bölüm ${ep.episode_number}</div><div class="text-sm font-bold text-red-100 uppercase truncate group-hover:text-white">${ep.name}</div><div class="text-xs text-red-500 flex justify-between mt-2"><span>${ep.runtime ? ep.runtime+' dk' : ''}</span><svg class="w-4 h-4 text-red-600 group-hover:text-red-300 transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>`; div.onclick = () => playEpisode(ep); list.appendChild(div); }); } catch(e) { list.innerHTML = '<p class="text-red-600 text-sm">Bölümler yüklenemedi.</p>'; } }
     function playEpisode(ep) { openPlayer(currentItem, ep); } function playModal() { if (!currentItem) return; openPlayer(currentItem, null); }
     function openPlayer(item, episode) { const imdb = item.imdb_id; if (!imdb) { showToast('🎬 IMDB ID bulunamadı.'); return; } saveToHistory(item, item.media_type); broadcastToTayfa(item, episode); let url = `https://playimdb.com/title/${imdb}`; if (episode) { url = `https://vidsrc.xyz/embed/tv?imdb=${imdb}&season=${episode.season_number}&episode=${episode.episode_number}`; } const title = (item.title || item.name || '') + (episode ? ` – Sezon ${episode.season_number} Bölüm ${episode.episode_number}` : ''); document.getElementById('player-title').textContent = title; document.getElementById('player-frame').src = url; document.getElementById('player-overlay').classList.add('open'); document.body.style.overflow = 'hidden'; }
     function closePlayer() { document.getElementById('player-overlay').classList.remove('open'); document.getElementById('player-frame').src = ''; document.body.style.overflow = ''; } function closeAll() { closeModal(); closePlayer(); }
     function handleSearch(val) { clearTimeout(searchTimer); const box = document.getElementById('search-results'); if (!val.trim()) { box.classList.add('hidden'); return; } searchTimer = setTimeout(() => doSearch(val), 400); }
-    async function doSearch(q) { const box = document.getElementById('search-results'); if (API_KEY === 'BURAYA_API_KEY_GELECEK') { box.classList.add('hidden'); return; } try { const data = await tmdb('/search/multi', { query: q }); const items = data.results.filter(i => i.poster_path && (i.media_type === 'movie' || i.media_type === 'tv')).slice(0, 6); if (!items.length) { box.classList.add('hidden'); return; } box.innerHTML = items.map(i => `<div class="flex items-center gap-3 p-3 hover:bg-red-900/30 cursor-pointer transition-colors border-b border-red-900/30 last:border-0" onclick="searchSelect(${i.id}, '${i.media_type}')"><img src="${IMG_BASE}w92${i.poster_path}" class="w-8 h-12 object-cover rounded" /><div><p class="text-sm text-red-100">${i.title || i.name}</p><p class="text-xs text-red-600">${i.media_type === 'tv' ? 'Dizi' : 'Film'} · ${(i.release_date || i.first_air_date || '').slice(0,4)}</p></div></div>`).join(''); box.classList.remove('hidden'); } catch(e) { box.classList.add('hidden'); } }
+    async function doSearch(q) { const box = document.getElementById('search-results'); if (API_KEY === 'BURAYA_API_KEY_GELECEK') { box.classList.add('hidden'); return; } try { const data = await tmdb('/search/multi', { query: q }); const items = data.results.filter(i => i.poster_path && (i.media_type === 'movie' || i.media_type === 'tv')).slice(0, 6); if (!items.length) { box.classList.add('hidden'); return; } box.innerHTML = items.map(i => `<div class="flex items-center gap-3 p-3 hover:bg-red-900/30 cursor-pointer transition-colors border-b border-red-900/30 last:border-0" onclick="searchSelect(${i.id}, '${i.media_type}')"><img src="${IMG_BASE}w92${i.poster_path}" class="w-8 h-12 object-cover rounded" /><div><p class="text-sm text-red-100">${i.title || i.name}</p><p class="text-xs text-red-500">${i.media_type === 'tv' ? 'Dizi' : 'Film'} · ${(i.release_date || i.first_air_date || '').slice(0,4)}</p></div></div>`).join(''); box.classList.remove('hidden'); } catch(e) { box.classList.add('hidden'); } }
     async function searchSelect(id, type) { document.getElementById('search-results').classList.add('hidden'); document.getElementById('search-input').value = ''; try { const item = await tmdb(`/${type}/${id}`); openModal(item, type); } catch(e) { showToast('İçerik bulunamadı.'); } }
     document.addEventListener('click', e => { if (!e.target.closest('#search-input') && !e.target.closest('#search-results')) document.getElementById('search-results').classList.add('hidden'); });
     function showToast(msg, long = false) { const t = document.getElementById('toast'); document.getElementById('toast-msg').textContent = msg; t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)'; t.style.pointerEvents = 'all'; setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(16px)'; t.style.pointerEvents = 'none'; }, long ? 4000 : 2500); }
@@ -640,11 +633,11 @@
           const date = new Date(comment.timestamp).toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' });
           const likersArray = comment.likes ? Object.keys(comment.likes) : []; const likeCount = likersArray.length; const likersText = likeCount > 0 ? likersArray.join(', ') : '';
           const isMine = comment.user === currentUser; const canDelete = isMine || isAdmin;
-          const deleteBtn = canDelete ? `<button onclick="deleteComment('${itemId}', '${comment._key}')" class="text-red-500 hover:text-red-400 font-bold ml-3" title="Yorumu Sil">🗑️</button>` : '';
+          const deleteBtn = canDelete ? `<button onclick="deleteComment('${itemId}', '${comment._key}')" class="text-gray-500 hover:text-red-500 font-bold ml-3" title="Yorumu Sil">🗑️</button>` : '';
           const userIsAdmin = adminler.includes(comment.user.toLowerCase());
           const cSafe = comment.user.toLowerCase().replace(/[.#$\[\]]/g, '_');
 
-          const div = document.createElement('div'); div.className = 'bg-red-950/30 border border-red-800/30 p-3 rounded-xl mb-3 relative group flex gap-3';
+          const div = document.createElement('div'); div.className = 'bg-black/60 border border-red-900/30 p-3 rounded-xl mb-3 relative group flex gap-3 hover:border-red-900/60 transition-colors';
           
           let ppHTML = `<div class="w-8 h-8 rounded-full bg-red-800 flex items-center justify-center font-bold text-white shrink-0 overflow-hidden" id="pp-${comment._key}">${comment.user.charAt(0).toUpperCase()}</div>`;
           database.ref('kullanicilar/' + cSafe + '/pp').once('value').then(snap => {
@@ -655,12 +648,12 @@
             ${ppHTML}
             <div class="flex-1">
               <div class="flex items-center justify-between mb-1">
-                <span onclick="openUserProfile('${comment.user}')" class="cursor-pointer hover:underline text-sm font-bold tracking-wider ${userIsAdmin ? 'text-red-400 drop-shadow-[0_0_5px_rgba(248,113,113,0.8)]' : 'text-red-300'}">${comment.user} ${userIsAdmin ? '👑' : ''}</span>
-                <div><span class="text-red-600 text-[10px]">${date}</span>${deleteBtn}</div>
+                <span onclick="openUserProfile('${comment.user}')" class="cursor-pointer hover:underline text-sm font-bold tracking-wider ${userIsAdmin ? 'text-red-500 drop-shadow-[0_0_5px_rgba(229,9,20,0.8)]' : 'text-red-200'}">${comment.user} ${userIsAdmin ? '👑' : ''}</span>
+                <div><span class="text-gray-500 text-[10px]">${date}</span>${deleteBtn}</div>
               </div>
-              <p class="text-red-100 text-sm break-words">${comment.text}</p>
+              <p class="text-gray-200 text-sm break-words">${comment.text}</p>
               <div class="mt-2 flex items-center gap-2">
-                <button onclick="likeComment('${itemId}', '${comment._key}')" class="text-[10px] text-red-400 hover:text-red-200 bg-red-900/40 px-2 py-1 rounded transition-colors">👍 ${likeCount > 0 ? likeCount : 'Şukula'}</button>
+                <button onclick="likeComment('${itemId}', '${comment._key}')" class="text-[10px] text-red-400 hover:text-white bg-red-900/40 px-2 py-1 rounded transition-colors">👍 ${likeCount > 0 ? likeCount : 'Şukula'}</button>
                 ${likeCount > 0 ? `<span class="text-[9px] text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">Kimler: ${likersText}</span>` : ''}
               </div>
             </div>
@@ -701,19 +694,19 @@
           messageCount++; const isMe = msg.user === currentUser; const msgIsAdmin = adminler.includes(msg.user.toLowerCase()); const canDelete = isMe || isAdmin;
           const date = new Date(msg.timestamp).toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' });
           const likersArray = msg.likes ? Object.keys(msg.likes) : []; const likeCount = likersArray.length; const likersText = likeCount > 0 ? likersArray.join(', ') : '';
-          const deleteBtn = canDelete ? `<button onclick="deleteChatMessage('${msg._key}')" class="text-red-500 hover:text-red-300 ml-2" title="Mesajı Uçur">🗑️</button>` : '';
+          const deleteBtn = canDelete ? `<button onclick="deleteChatMessage('${msg._key}')" class="text-gray-500 hover:text-red-500 ml-2" title="Mesajı Uçur">🗑️</button>` : '';
 
           const div = document.createElement('div');
-          div.className = `max-w-[85%] rounded-xl p-2.5 flex flex-col group relative ${isMe ? 'bg-red-600/80 self-end rounded-br-sm' : 'bg-gray-800/80 self-start rounded-bl-sm border border-red-900/50'}`;
+          div.className = `max-w-[85%] rounded-xl p-2.5 flex flex-col group relative ${isMe ? 'bg-red-800/80 self-end rounded-br-sm' : 'bg-[#111] self-start rounded-bl-sm border border-red-900/30'}`;
           div.innerHTML = `
             <div class="flex justify-between items-baseline gap-3 mb-1">
-              <span onclick="openUserProfile('${msg.user}')" class="cursor-pointer hover:underline text-[10px] ${msgIsAdmin ? 'text-red-400 font-extrabold drop-shadow-[0_0_5px_rgba(248,113,113,0.8)]' : (isMe ? 'text-red-200' : 'text-red-400')} uppercase tracking-wider">${msg.user} ${msgIsAdmin ? '👑' : ''}</span>
+              <span onclick="openUserProfile('${msg.user}')" class="cursor-pointer hover:underline text-[10px] ${msgIsAdmin ? 'text-red-400 font-extrabold drop-shadow-[0_0_5px_rgba(229,9,20,0.8)]' : (isMe ? 'text-red-200' : 'text-red-400')} uppercase tracking-wider">${msg.user} ${msgIsAdmin ? '👑' : ''}</span>
               <div><span class="text-[9px] opacity-60">${date}</span>${deleteBtn}</div>
             </div>
-            <div class="text-sm text-red-50 break-words leading-snug">${msg.text}</div>
+            <div class="text-sm text-gray-200 break-words leading-snug">${msg.text}</div>
             <div class="mt-1 flex items-center justify-end gap-1">
               ${likeCount > 0 ? `<span class="text-[8px] text-red-300 opacity-0 group-hover:opacity-100 transition-opacity mr-1">${likersText}</span>` : ''}
-              <button onclick="likeChatMessage('${msg._key}')" class="text-[10px] bg-black/40 px-1.5 py-0.5 rounded hover:bg-black/60 transition-colors ${likeCount > 0 ? 'text-red-300' : 'text-gray-400 opacity-0 group-hover:opacity-100'}">👍 ${likeCount > 0 ? likeCount : ''}</button>
+              <button onclick="likeChatMessage('${msg._key}')" class="text-[10px] bg-black/40 px-1.5 py-0.5 rounded hover:bg-black/60 transition-colors ${likeCount > 0 ? 'text-red-400' : 'text-gray-500 opacity-0 group-hover:opacity-100'}">👍 ${likeCount > 0 ? likeCount : ''}</button>
             </div>
           `;
           box.appendChild(div);
@@ -730,8 +723,8 @@
 
     function toggleAuth(mode) {
       authMode = mode; const refInput = document.getElementById('auth-ref'); const btn = document.getElementById('auth-btn'); const tabLogin = document.getElementById('tab-login'); const tabRegister = document.getElementById('tab-register'); document.getElementById('auth-error').classList.add('hidden'); 
-      if (mode === 'register') { refInput.classList.remove('hidden'); btn.textContent = 'Mekana Kaydol ve Ak'; tabRegister.classList.replace('text-red-400', 'text-red-100'); tabRegister.classList.replace('border-transparent', 'border-red-500'); tabLogin.classList.replace('text-red-100', 'text-red-400'); tabLogin.classList.replace('border-red-500', 'border-transparent'); } 
-      else { refInput.classList.add('hidden'); btn.textContent = 'İçeri Gir'; tabLogin.classList.replace('text-red-400', 'text-red-100'); tabLogin.classList.replace('border-transparent', 'border-red-500'); tabRegister.classList.replace('text-red-100', 'text-red-400'); tabRegister.classList.replace('border-red-500', 'border-transparent'); }
+      if (mode === 'register') { refInput.classList.remove('hidden'); btn.textContent = 'Mekana Kaydol ve Ak'; tabRegister.classList.replace('text-red-500', 'text-red-100'); tabRegister.classList.replace('border-transparent', 'border-red-600'); tabLogin.classList.replace('text-red-100', 'text-red-500'); tabLogin.classList.replace('border-red-600', 'border-transparent'); } 
+      else { refInput.classList.add('hidden'); btn.textContent = 'İçeri Gir'; tabLogin.classList.replace('text-red-500', 'text-red-100'); tabLogin.classList.replace('border-transparent', 'border-red-600'); tabRegister.classList.replace('text-red-100', 'text-red-500'); tabRegister.classList.replace('border-red-600', 'border-transparent'); }
     }
 
     function handleAuth() {
