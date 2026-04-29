@@ -692,7 +692,19 @@
 
       </button>
 
-      <div id="profile-badge" class="w-8 h-8 rounded-sm bg-gradient-to-br from-red-600 to-red-900 border border-red-500/50 flex items-center justify-center text-xs font-bold cursor-pointer hover:shadow-[0_0_16px_rgba(229,9,20,0.5)] transition-all select-none">K</div>
+      <!-- PROFİL DROPDOWN MENÜSÜ -->
+      <div class="relative group">
+        <div id="profile-badge" class="w-8 h-8 rounded-sm bg-gradient-to-br from-red-600 to-red-900 border border-red-500/50 flex items-center justify-center text-xs font-bold cursor-pointer hover:shadow-[0_0_16px_rgba(229,9,20,0.5)] transition-all select-none">K</div>
+        
+        <div class="absolute right-0 mt-2 w-52 bg-[#0a0a0a] border border-red-900/50 rounded-sm shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[5000] flex flex-col overflow-hidden">
+          <button onclick="openUserProfile(localStorage.getItem('kadavra_vip_user'))" class="text-left px-4 py-3 text-xs font-bold text-white hover:bg-red-900/40 border-b border-red-900/30 transition-colors">👤 Profilim</button>
+          <button onclick="openSettings()" class="text-left px-4 py-3 text-xs font-bold text-gray-300 hover:bg-red-900/40 hover:text-white border-b border-red-900/30 transition-colors">⚙️ Ayarlar</button>
+          <button onclick="openRanksModal()" class="text-left px-4 py-3 text-xs font-bold text-gray-300 hover:bg-red-900/40 hover:text-white border-b border-red-900/30 transition-colors">🎖️ Rütbe Rehberi</button>
+          <button onclick="openKarmaInfo()" class="text-left px-4 py-3 text-xs font-bold text-yellow-500 hover:bg-yellow-900/40 hover:text-yellow-400 border-b border-red-900/30 transition-colors">⚡ Karma Geçmişi / Info</button>
+          <button id="nav-admin-btn" onclick="openAdminPanel()" class="text-left px-4 py-3 text-xs font-bold text-red-500 hover:bg-red-900/40 hover:text-white border-b border-red-900/30 transition-colors hidden">👑 Lejyon İstihbarat</button>
+          <button onclick="logoutUser()" class="text-left px-4 py-3 text-xs font-bold text-gray-500 hover:bg-gray-800 hover:text-red-500 transition-colors">🚪 Çıkış Yap</button>
+        </div>
+      </div>
 
     </div>
 
@@ -796,7 +808,32 @@
 
   </div>
 
+  <!-- KARMA GEÇMİŞİ VE BİLGİ EKRANI (TAMİR EDİLMİŞ) -->
+  <div id="karma-info-modal" class="fixed inset-0 z-[4500] bg-black/95 backdrop-blur-xl hidden opacity-0 transition-opacity flex items-center justify-center">
+    <div class="bg-[#0a0a0a] border border-red-900/50 w-full max-w-lg p-8 rounded-sm relative shadow-2xl mx-4 max-h-[90vh] flex flex-col">
+      <button onclick="closeKarmaInfo()" class="absolute top-4 right-5 text-gray-500 hover:text-white text-3xl leading-none">&times;</button>
+      <h2 class="text-2xl font-display text-yellow-500 tracking-widest mb-1 uppercase drop-shadow-[0_0_10px_rgba(234,179,8,0.5)]">⚡ Karma Dökümü</h2>
+      <p class="text-white font-bold text-sm mb-4 border-b border-red-900/50 pb-4">Mevcut İtibarın: <span id="karma-total-display" class="text-green-400 font-display text-xl tracking-wider">0</span></p>
+      
+      <!-- Üst Kısım: Nasıl Kasılır? -->
+      <div class="space-y-2 text-left text-xs text-gray-300 leading-relaxed font-mono border-b border-red-900/50 pb-4 mb-4 shrink-0">
+        <p><span class="text-white font-bold">1. İzleyerek:</span> Player açıkken her 5 dakikada artan çarpanla <span class="text-green-400">+10 Karma'dan başlayarak</span> kazanırsın.</p>
+        <p><span class="text-white font-bold">2. Yorum Yaparak:</span> Sitenin can damarı muhabbettir. Attığın her yorum sana <span class="text-green-400">+5 Karma</span> getirir.</p>
+        <p><span class="text-white font-bold">3. Şukulanarak:</span> Tayfa seni sever ve yorumunu şukularsa <span class="text-green-400">+2 Karma</span> alırsın.</p>
+        <div class="mt-4 pt-3 text-center">
+          <p class="text-red-400 uppercase tracking-widest font-bold">Damlaya damlaya Lejyon Baronu olursun pampik!</p>
+        </div>
+      </div>
 
+      <!-- Alt Kısım: Geçmiş Akışı -->
+      <div class="flex-1 overflow-y-auto pr-2 scrollbar-thin text-left">
+        <h3 class="text-sm font-bold text-red-500 mb-3 uppercase tracking-wider">Son Kazançların</h3>
+        <div id="karma-history-feed" class="space-y-2 font-mono text-xs">
+          <!-- JS Burayı dolduracak -->
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- PLAYER -->
 
@@ -804,6 +841,34 @@
 
   <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[300] transition-all duration-300 opacity-0 translate-y-4 pointer-events-none"><div class="bg-red-900/90 backdrop-blur border border-red-600/50 text-red-100 text-sm px-5 py-3 rounded-sm shadow-xl flex items-center gap-2"><span id="toast-icon">ℹ️</span><span id="toast-msg"></span></div></div>
 
+
+
+  <!-- KARMA GEÇMİŞİ VE BİLGİ EKRANI (TAMİR EDİLMİŞ) -->
+  <div id="karma-info-modal" class="fixed inset-0 z-[4500] bg-black/95 backdrop-blur-xl hidden opacity-0 transition-opacity flex items-center justify-center">
+    <div class="bg-[#0a0a0a] border border-red-900/50 w-full max-w-lg p-8 rounded-sm relative shadow-2xl mx-4 max-h-[90vh] flex flex-col">
+      <button onclick="closeKarmaInfo()" class="absolute top-4 right-5 text-gray-500 hover:text-white text-3xl leading-none">&times;</button>
+      <h2 class="text-2xl font-display text-yellow-500 tracking-widest mb-1 uppercase drop-shadow-[0_0_10px_rgba(234,179,8,0.5)]">⚡ Karma Dökümü</h2>
+      <p class="text-white font-bold text-sm mb-4 border-b border-red-900/50 pb-4">Mevcut İtibarın: <span id="karma-total-display" class="text-green-400 font-display text-xl tracking-wider">0</span></p>
+      
+      <!-- Üst Kısım: Nasıl Kasılır? -->
+      <div class="space-y-2 text-left text-xs text-gray-300 leading-relaxed font-mono border-b border-red-900/50 pb-4 mb-4 shrink-0">
+        <p><span class="text-white font-bold">1. İzleyerek:</span> Player açıkken her 5 dakikada artan çarpanla <span class="text-green-400">+10 Karma'dan başlayarak</span> kazanırsın.</p>
+        <p><span class="text-white font-bold">2. Yorum Yaparak:</span> Sitenin can damarı muhabbettir. Attığın her yorum sana <span class="text-green-400">+5 Karma</span> getirir.</p>
+        <p><span class="text-white font-bold">3. Şukulanarak:</span> Tayfa seni sever ve yorumunu şukularsa <span class="text-green-400">+2 Karma</span> alırsın.</p>
+        <div class="mt-4 pt-3 text-center">
+          <p class="text-red-400 uppercase tracking-widest font-bold">Damlaya damlaya Lejyon Baronu olursun pampik!</p>
+        </div>
+      </div>
+
+      <!-- Alt Kısım: Geçmiş Akışı -->
+      <div class="flex-1 overflow-y-auto pr-2 scrollbar-thin text-left">
+        <h3 class="text-sm font-bold text-red-500 mb-3 uppercase tracking-wider">Son Kazançların</h3>
+        <div id="karma-history-feed" class="space-y-2 font-mono text-xs">
+          <!-- JS Burayı dolduracak -->
+        </div>
+      </div>
+    </div>
+  </div>
 
 
   <!-- SİTENİN BEYNİ (JAVASCRIPT) -->
@@ -1000,6 +1065,8 @@
 
         if(!snap.exists()) { showToast('Kullanıcı bulunamadı!'); return; }
 
+        logKarmaEvent('admin', val, 'İstihbarat Merkezi Müdahalesi');
+
         database.ref('kullanicilar/' + safeNick).update({ karma: val, infiniteKarma: false });
 
         showToast(`${nick} karması ${val} yapıldı.`);
@@ -1115,11 +1182,8 @@
         const actionsDiv = document.getElementById('up-actions');
 
         if(isMe) {
-
-          actionsDiv.innerHTML = `<button onclick="openSettings()" class="border border-red-900/50 bg-[#111] hover:bg-red-900/50 px-4 py-1.5 rounded-sm text-white font-bold text-xs uppercase tracking-wider transition-colors">⚙️ Ayarlar</button>`;
-
+          actionsDiv.innerHTML = `<span class="border border-red-900/50 bg-[#111] px-4 py-1.5 rounded-sm text-gray-500 font-bold text-[10px] uppercase tracking-wider">Bu adam aynı sen</span>`;
           checkFactionEligibility(karma, data.yol); 
-
         } else {
 
           const isFollowing = data.followers && data.followers[mySafeNick];
@@ -1691,7 +1755,7 @@
               });
 
               showToast(`⚡ +${gain} Karma (Aktif İzleme Bonusu!)`);
-
+              logKarmaEvent('izleme', gain, 'Aktif İzleme Bonusu');
             }
 
           });
@@ -1905,6 +1969,10 @@
       database.ref('comments/' + currentItem.id).push({ user: user, text: text, timestamp: Date.now() });
 
       input.value = ''; showToast('Yorumun mekana düştü!');
+
+      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      database.ref(`kullanicilar/${safeNick}/karma`).transaction(k => (k || 0) + 5);
+      logKarmaEvent('yorum', 5, 'Racon Kesildi (Yorum)');
 
     }
 
@@ -2158,6 +2226,141 @@
     }
 
 
+    // ════════════ KARMA GEÇMİŞİ MOTORU ════════════
+    function logKarmaEvent(type, amount, detail) {
+      const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
+      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      
+      let icon = '⚡';
+      if(type === 'izleme') icon = '🎬';
+      if(type === 'yorum') icon = '💬';
+      if(type === 'suku') icon = '👍';
+      if(type === 'admin') icon = '👑';
+
+      database.ref(`kullanicilar/${safeNick}/karmaHistory`).push({
+        type: type,
+        icon: icon,
+        amount: amount,
+        detail: detail,
+        timestamp: Date.now()
+      });
+    }
+
+    function openKarmaInfo() { 
+      const mod = document.getElementById('karma-info-modal'); 
+      const feed = document.getElementById('karma-history-feed');
+      const totalDisplay = document.getElementById('karma-total-display');
+      
+      const user = localStorage.getItem('kadavra_vip_user');
+      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+
+      feed.innerHTML = '<p class="text-gray-500 font-mono">Kayıtlar yeraltından çekiliyor...</p>';
+
+      // Önce Toplam Karmayı Çek
+      database.ref(`kullanicilar/${safeNick}`).once('value').then(snap => {
+        if(snap.exists()) {
+           const data = snap.val();
+           totalDisplay.textContent = data.infiniteKarma ? '∞' : (data.karma || 0);
+        }
+      });
+
+      // Sonra Geçmişi Çek
+      database.ref(`kullanicilar/${safeNick}/karmaHistory`).limitToLast(30).once('value').then(snap => {
+        feed.innerHTML = '';
+        if(!snap.exists()) { feed.innerHTML = '<p class="text-gray-600 font-mono">Henüz hiç karma kazanmadın.</p>'; return; }
+        
+        let logs = []; snap.forEach(child => logs.push(child.val()));
+        logs.sort((a,b) => b.timestamp - a.timestamp); 
+
+        logs.forEach(log => {
+          const date = new Date(log.timestamp).toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' });
+          const dateStr = new Date(log.timestamp).toLocaleDateString('tr-TR', { day:'numeric', month:'short' });
+          const color = log.amount > 0 ? 'text-green-500' : 'text-red-500';
+          const sign = log.amount > 0 ? '+' : '';
+
+          feed.innerHTML += `
+            <div class="bg-black border border-gray-800 p-2 rounded-sm flex justify-between items-center hover:border-gray-600 transition-colors mb-2">
+              <div class="flex items-center gap-2">
+                <span class="text-lg">${log.icon}</span>
+                <div>
+                  <p class="text-gray-300 font-bold">${log.detail}</p>
+                  <p class="text-[9px] text-gray-600">${dateStr} - ${date}</p>
+                </div>
+              </div>
+              <span class="${color} font-bold text-sm">${sign}${log.amount}</span>
+            </div>
+          `;
+        });
+      });
+
+      mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50); 
+    }
+    
+    function closeKarmaInfo() { const mod = document.getElementById('karma-info-modal'); mod.classList.add('opacity-0'); setTimeout(()=> mod.classList.add('hidden'), 300); }
+    function logoutUser() { localStorage.removeItem('kadavra_vip_user'); localStorage.removeItem('kadavra_vip_pass'); location.reload(); }
+
+    // ════════════ KARMA GEÇMİŞİ MOTORU ════════════
+    function logKarmaEvent(type, amount, detail) {
+      const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
+      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      
+      let icon = '⚡';
+      if(type === 'izleme') icon = '🎬';
+      if(type === 'yorum') icon = '💬';
+      if(type === 'suku') icon = '👍';
+      if(type === 'admin') icon = '👑';
+
+      database.ref(`kullanicilar/${safeNick}/karmaHistory`).push({
+        type: type,
+        icon: icon,
+        amount: amount,
+        detail: detail,
+        timestamp: Date.now()
+      });
+    }
+
+    // Modal açıldığında geçmişi listele
+    function openKarmaInfo() { 
+      const mod = document.getElementById('karma-info-modal'); 
+      const feed = document.getElementById('karma-history-feed');
+      
+      const user = localStorage.getItem('kadavra_vip_user');
+      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+
+      feed.innerHTML = '<p class="text-gray-500">Kayıtlar çekiliyor...</p>';
+
+      database.ref(`kullanicilar/${safeNick}/karmaHistory`).limitToLast(30).once('value').then(snap => {
+        feed.innerHTML = '';
+        if(!snap.exists()) { feed.innerHTML = '<p class="text-gray-600">Henüz karma kazanmadın.</p>'; return; }
+        
+        let logs = []; snap.forEach(child => logs.push(child.val()));
+        logs.sort((a,b) => b.timestamp - a.timestamp); // En yeni en üste
+
+        logs.forEach(log => {
+          const date = new Date(log.timestamp).toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' });
+          const dateStr = new Date(log.timestamp).toLocaleDateString('tr-TR', { day:'numeric', month:'short' });
+          const color = log.amount > 0 ? 'text-green-500' : 'text-red-500';
+          const sign = log.amount > 0 ? '+' : '';
+
+          feed.innerHTML += `
+            <div class="bg-black border border-gray-800 p-2 rounded-sm flex justify-between items-center hover:border-gray-600 transition-colors">
+              <div class="flex items-center gap-2">
+                <span class="text-lg">${log.icon}</span>
+                <div>
+                  <p class="text-gray-300">${log.detail}</p>
+                  <p class="text-[9px] text-gray-600">${dateStr} - ${date}</p>
+                </div>
+              </div>
+              <span class="${color} font-bold text-sm">${sign}${log.amount}</span>
+            </div>
+          `;
+        });
+      });
+
+      mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50); 
+    }
+
+
     
 
     // ════════════════════ KAYIT VE GİRİŞ MOTORU (GÜVENLİ) ════════════════════
@@ -2263,8 +2466,11 @@
 
 
       const badge = document.getElementById('profile-badge'); 
-
-      if(badge) { badge.textContent = user.charAt(0).toUpperCase(); badge.title = 'Profilim'; badge.onclick = () => openUserProfile(user); }
+      if(badge) { badge.textContent = user.charAt(0).toUpperCase(); }
+      if(adminler.includes(user.toLowerCase())) {
+        const navAdminBtn = document.getElementById('nav-admin-btn');
+        if(navAdminBtn) navAdminBtn.classList.remove('hidden');
+      }
 
       
 
@@ -2275,7 +2481,7 @@
       listenTayfa(); listenChat(); init(); 
 
     }
-
+    
     
 
   </script>
