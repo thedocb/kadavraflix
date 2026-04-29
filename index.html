@@ -234,7 +234,15 @@
 
         </div>
 
-
+          <!-- VIP Chat Özelleştirme -->
+        <div id="vip-settings-container" class="border-t border-yellow-900/50 pt-4 mt-4 hidden">
+          <p class="text-[10px] text-yellow-500 mb-1 uppercase tracking-wider font-bold">💎 V.I.P Chat Özelleştirme</p>
+          <div class="flex gap-2">
+            <input type="text" id="vip-prefix-input" placeholder="İkon (Örn: 🔱, 💀)" class="w-1/3 bg-black border border-yellow-900/50 rounded-sm px-3 py-2 text-white text-xs focus:outline-none focus:border-yellow-500">
+            <input type="text" id="vip-color-input" placeholder="Renk Sınıfı (Örn: text-purple-400)" class="flex-1 bg-black border border-yellow-900/50 rounded-sm px-3 py-2 text-white text-xs focus:outline-none focus:border-yellow-500">
+          </div>
+          <p class="text-[8px] text-gray-500 mt-1">Sadece Onur Konuklarına Özeldir. Renk için Tailwind class'ı kullan (Örn: text-green-400)</p>
+        </div>
 
         <div id="admin-btn-container" class="w-full mt-4 hidden">
 
@@ -289,6 +297,16 @@
               <button onclick="adminSetKarma()" class="bg-red-600 hover:bg-red-500 px-4 py-2 rounded-sm text-white font-bold text-xs">Ekle/Değiştir</button>
 
             </div>
+
+            <div class="bg-black border border-red-900/30 p-4 rounded-sm mt-6">
+            <h3 class="text-sm font-bold text-red-400 mb-3 uppercase">🛡️ Admin Yönetimi</h3>
+            <div class="flex gap-2 mb-2">
+              <input type="text" id="admin-grant-nick" placeholder="Kullanıcı Nick" class="flex-1 bg-[#111] border border-red-900/50 rounded-sm px-3 py-2 text-white text-xs">
+              <button onclick="adminGrantAccess()" class="bg-green-700 hover:bg-green-600 px-4 py-2 rounded-sm text-white font-bold text-xs">Yetki Ver</button>
+              <button onclick="adminRevokeAccess()" class="bg-red-800 hover:bg-red-700 px-4 py-2 rounded-sm text-white font-bold text-xs">Yetkiyi Al</button>
+            </div>
+            <div id="admin-current-list" class="mt-4 space-y-1 max-h-[100px] overflow-y-auto scrollbar-thin text-xs text-gray-400 font-mono"></div>
+          </div>
 
             <button onclick="adminSetInfiniteKarma()" class="w-full bg-yellow-600 hover:bg-yellow-500 text-black px-4 py-2 rounded-sm font-bold text-xs uppercase transition-colors">∞ Onur Konuğu Yap (Sonsuz Karma)</button>
             <div class="border-t border-red-900/50 pt-4 mt-4 mb-2 flex gap-2">
@@ -445,21 +463,31 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-8 py-4 flex flex-wrap gap-8 justify-start text-left border-b border-red-900/30 bg-[#0a0a0a]">
 
 
-      <div><p class="text-2xl font-display text-yellow-500" id="up-stat-karma">0</p><p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mt-1">Karma</p></div>
-
-      <div><p class="text-2xl font-display text-white" id="up-stat-followers">0</p><p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mt-1">Takipçi</p></div>
-
-      <div><p class="text-2xl font-display text-white" id="up-stat-following">0</p><p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mt-1">Takip Edilen</p></div>
-
+<div><p class="text-2xl font-display text-yellow-500" id="up-stat-karma">0</p><p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mt-1">Karma</p></div>
+      <div class="cursor-pointer hover:opacity-80 transition-opacity" onclick="openFollowList('followers')">
+        <p class="text-2xl font-display text-white" id="up-stat-followers">0</p>
+        <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mt-1">Takipçi</p>
+      </div>
+      <div class="cursor-pointer hover:opacity-80 transition-opacity" onclick="openFollowList('following')">
+        <p class="text-2xl font-display text-white" id="up-stat-following">0</p>
+        <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mt-1">Takip Edilen</p>
+      </div>
       <div><p class="text-2xl font-display text-white" id="up-stat-history">0</p><p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mt-1">İzlenen</p></div>
-
       <button onclick="openRanksModal()" class="ml-auto border border-red-900/50 hover:border-red-500 bg-[#111] hover:bg-red-900/20 px-4 py-2 rounded-sm text-gray-300 hover:text-white font-bold text-[10px] uppercase tracking-wider transition-colors flex items-center gap-2">
         🎖️ Rütbe Rehberini Gör
       </button>
 
     </div>
 
-
+    <!-- TAKİPÇİ / TAKİP EDİLEN LİSTESİ MODALI -->
+  <div id="follow-list-modal" class="fixed inset-0 z-[4000] bg-black/90 backdrop-blur-sm hidden opacity-0 transition-opacity flex items-center justify-center">
+    <div class="bg-[#0a0a0a] border border-red-900/50 w-full max-w-sm p-6 rounded-sm relative shadow-2xl mx-4 max-h-[80vh] flex flex-col">
+      <button onclick="closeFollowList()" class="absolute top-4 right-5 text-gray-500 hover:text-white text-2xl leading-none">&times;</button>
+      <h2 id="follow-list-title" class="text-xl font-bold text-red-500 tracking-widest mb-4 border-b border-red-900/50 pb-2 uppercase">Liste</h2>
+      <div id="follow-list-content" class="flex-1 overflow-y-auto pr-2 scrollbar-thin space-y-2">
+      </div>
+    </div>
+  </div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-8 mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
 
@@ -872,8 +900,6 @@
 
     const LANG = 'tr-TR';
 
-    const adminler = ['kadavra', 'fraude', 'arda']; 
-
 
 
     const firebaseConfig = {
@@ -898,6 +924,17 @@
 
     const database = firebase.database();
 
+    let adminler = ['kadavra', 'fraude',]; 
+
+    database.ref('sistem/adminler').on('value', snap => {
+      if(snap.exists()) {
+         adminler = ['kadavra', 'fraude', ...Object.keys(snap.val())];
+      } else {
+         adminler = ['kadavra', 'fraude',];
+      }
+    });
+
+    function getAvatar(name) { return `https://ui-avatars.com/api/?name=${name}&background=e50914&color=fff&size=256`; }
 
 
     function getAvatar(name) { return `https://ui-avatars.com/api/?name=${name}&background=e50914&color=fff&size=256`; }
@@ -1017,18 +1054,23 @@
 
 
       database.ref('referanslar').once('value').then(snap => {
-
         let rHtml = '';
-
-        if(snap.exists()) { snap.forEach(child => { rHtml += `<div class="flex justify-between"><span>${child.key}</span><span class="text-green-500">Aktif</span></div>`; }); } 
-
+        if(snap.exists()) { 
+          snap.forEach(child => { 
+            rHtml += `<div class="flex justify-between items-center border-b border-red-900/30 pb-1 mb-1">
+                        <span>${child.key}</span>
+                        <div class="flex gap-3 items-center">
+                          <span class="text-green-500 text-[10px]">Aktif</span>
+                          <button onclick="adminDeleteRefCode('${child.key}')" class="text-red-500 hover:text-white text-sm" title="Kodu İmha Et">🗑️</button>
+                        </div>
+                      </div>`; 
+          }); 
+        } 
         else { rHtml = 'Kayıtlı kod yok.'; }
-
         document.getElementById('admin-ref-list').innerHTML = rHtml;
-
       });
 
-
+      refreshAdminListUI();
 
       const mod = document.getElementById('admin-modal'); mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50); 
 
@@ -1100,6 +1142,14 @@
 
       document.getElementById('admin-new-ref').value = ''; openAdminPanel();
 
+    }
+
+    function adminDeleteRefCode(code) {
+      if(confirm(`'${code}' adlı referans kodunu yok ediyoruz, emin misin?`)) {
+        database.ref('referanslar/' + code).remove();
+        showToast('Kod yokedildi!');
+        openAdminPanel(); // Listeyi yenile
+      }
     }
 
 
@@ -1384,6 +1434,14 @@
 
         document.getElementById('bio-input').value = data.bio || ''; document.getElementById('loc-input').value = data.loc || '';
 
+        if(data.infiniteKarma) {
+           document.getElementById('vip-settings-container').classList.remove('hidden');
+           document.getElementById('vip-prefix-input').value = data.vipPrefix || '';
+           document.getElementById('vip-color-input').value = data.vipColor || '';
+        } else {
+           document.getElementById('vip-settings-container').classList.add('hidden');
+        }
+
       });
 
       if(adminler.includes(user.toLowerCase())) document.getElementById('admin-btn-container').classList.remove('hidden');
@@ -1414,6 +1472,10 @@
 
       if(bio) updates.bio = bio; if(loc) updates.loc = loc;
 
+      if(!document.getElementById('vip-settings-container').classList.contains('hidden')) {
+          updates.vipPrefix = document.getElementById('vip-prefix-input').value.trim();
+          updates.vipColor = document.getElementById('vip-color-input').value.trim();
+      }
       
 
       database.ref('kullanicilar/' + safeNick).update(updates).then(() => {
@@ -2127,11 +2189,27 @@
 
 
     function sendChatMessage() {
-
       const input = document.getElementById('chat-input'); const text = input.value.trim(); if(!text) return;
-
-      const user = localStorage.getItem('kadavra_vip_user') || 'Gizemli Pampik'; database.ref('yeralti_sohbet').push({ user: user, text: text, timestamp: Date.now() }); input.value = '';
-
+      const user = localStorage.getItem('kadavra_vip_user') || 'Gizemli Pampik'; 
+      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      
+      // Anlık VIP verisini çekip mesaja damgalıyoruz
+      database.ref('kullanicilar/' + safeNick).once('value').then(snap => {
+         let vipPrefix = ''; let vipColor = ''; let isVip = false;
+         if(snap.exists()) {
+             const d = snap.val();
+             if(d.infiniteKarma) {
+                 isVip = true;
+                 vipPrefix = d.vipPrefix || '💎';
+                 vipColor = d.vipColor || 'text-yellow-400';
+             }
+         }
+         database.ref('yeralti_sohbet').push({ 
+             user: user, text: text, timestamp: Date.now(), 
+             isVip: isVip, vipPrefix: vipPrefix, vipColor: vipColor 
+         }); 
+         input.value = '';
+      });
     }
 
 
@@ -2186,7 +2264,11 @@
 
             <div class="flex justify-between items-baseline gap-3 mb-1">
 
-              <span onclick="openUserProfile('${msg.user}')" class="cursor-pointer hover:underline text-[10px] ${msgIsAdmin ? 'text-red-400 font-extrabold drop-shadow-[0_0_5px_rgba(229,9,20,0.8)]' : (isMe ? 'text-red-200' : 'text-red-400')} uppercase tracking-wider">${msg.user} ${msgIsAdmin ? '👑' : ''}</span>
+              ${(function(){
+                  if (msgIsAdmin) return `<span onclick="openUserProfile('${msg.user}')" class="cursor-pointer hover:underline text-[10px] text-red-400 font-extrabold drop-shadow-[0_0_5px_rgba(229,9,20,0.8)] uppercase tracking-wider">${msg.user} 👑</span>`;
+                  if (msg.isVip) return `<span onclick="openUserProfile('${msg.user}')" class="cursor-pointer hover:underline text-[10px] ${msg.vipColor || 'text-yellow-400'} font-extrabold drop-shadow-[0_0_5px_rgba(234,179,8,0.5)] uppercase tracking-wider">${msg.vipPrefix ? msg.vipPrefix+' ' : ''}${msg.user}</span>`;
+                  return `<span onclick="openUserProfile('${msg.user}')" class="cursor-pointer hover:underline text-[10px] ${isMe ? 'text-red-200' : 'text-red-400'} uppercase tracking-wider">${msg.user}</span>`;
+              })()}
 
               <div><span class="text-[9px] opacity-60">${date}</span>${deleteBtn}</div>
 
@@ -2218,6 +2300,78 @@
 
     }
 
+    function openFollowList(type) {
+      if(!currentProfileNick) return;
+      const safeNick = currentProfileNick.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      const mod = document.getElementById('follow-list-modal');
+      const title = document.getElementById('follow-list-title');
+      const content = document.getElementById('follow-list-content');
+
+      title.textContent = type === 'followers' ? 'Takipçiler' : 'Takip Edilenler';
+      content.innerHTML = '<p class="text-xs text-gray-500">Yükleniyor...</p>';
+
+      database.ref(`kullanicilar/${safeNick}/${type}`).once('value').then(snap => {
+        content.innerHTML = '';
+        if(!snap.exists()) {
+          content.innerHTML = '<p class="text-xs text-gray-600 font-mono">Kimse yok pampik.</p>';
+          return;
+        }
+        
+        snap.forEach(child => {
+          const userSafeNick = child.key;
+          const normalNick = userSafeNick.replace(/_/g, '.'); // Basit çeviri, tam doğru nick için db'den çekmek daha iyi ama şimdilik iş görür.
+          
+          content.innerHTML += `
+            <div class="bg-[#111] border border-red-900/30 p-2 rounded-sm flex items-center gap-3 hover:border-red-500/50 transition-colors cursor-pointer" onclick="closeFollowList(); openUserProfile('${normalNick}')">
+               <div class="w-8 h-8 rounded-sm bg-red-800 flex items-center justify-center font-bold text-white shrink-0 text-xs">${normalNick.charAt(0).toUpperCase()}</div>
+               <span class="text-sm font-bold text-gray-200 uppercase tracking-wider">${normalNick}</span>
+            </div>
+          `;
+        });
+      });
+
+      mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50);
+    }
+
+    function closeFollowList() {
+      const mod = document.getElementById('follow-list-modal'); mod.classList.add('opacity-0'); setTimeout(()=> mod.classList.add('hidden'), 300);
+    }
+
+
+    function adminGrantAccess() {
+      let nick = document.getElementById('admin-grant-nick').value.trim();
+      if(!nick) return; const safeNick = nick.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      database.ref(`sistem/adminler/${safeNick}`).set(true).then(() => {
+         showToast(`${nick} artık bir Lejyon Admini!`);
+         document.getElementById('admin-grant-nick').value = '';
+         refreshAdminListUI();
+      });
+    }
+
+    function adminRevokeAccess() {
+      let nick = document.getElementById('admin-grant-nick').value.trim();
+      if(!nick) return; const safeNick = nick.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      
+      // Kurucu adminleri koru
+      if(['kadavra', 'fraude',].includes(safeNick)) {
+         showToast('Kurucu adminin yetkisi alınamaz kral!'); return;
+      }
+
+      database.ref(`sistem/adminler/${safeNick}`).remove().then(() => {
+         showToast(`${nick} adlı kişinin adminliği alındı.`);
+         document.getElementById('admin-grant-nick').value = '';
+         refreshAdminListUI();
+      });
+    }
+
+    function refreshAdminListUI() {
+       const listDiv = document.getElementById('admin-current-list');
+       if(!listDiv) return;
+       listDiv.innerHTML = '<p class="text-white font-bold mb-1 border-b border-gray-800 pb-1">Mevcut Adminler:</p>';
+       adminler.forEach(a => {
+          listDiv.innerHTML += `<div>👑 ${a}</div>`;
+       });
+    }
 
     // ════════════ KARMA GEÇMİŞİ MOTORU ════════════
     function logKarmaEvent(type, amount, detail) {
