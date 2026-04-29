@@ -1,917 +1,2285 @@
 <!DOCTYPE html>
+
 <html lang="tr">
+
 <head>
+
   <meta charset="UTF-8" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>Kadavraflix</title>
+
   <script src="https://cdn.tailwindcss.com"></script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
+
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍿</text></svg>">
+
   <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+
   <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
+
   
+
   <meta property="og:title" content="Kadavraflix - Yeraltı Sineması">
+
   <meta property="og:description" content="Parolayı biliyorsan içeri gir. Kalitenin tek adresi.">
-  <meta property="og:image" content="https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?q=80&w=1000&auto=format&fit=crop">
+
   <meta property="og:url" content="https://kadavraflix.xyz">
+
   <meta name="theme-color" content="#e50914">
 
+
+
   <script>
+
     tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            neon: '#e50914',
-            'neon-dim': '#b91c1c',
-            'dark-base': '#050505',
-            'dark-card': '#111111',
-            'dark-panel': '#181818',
-          },
-          fontFamily: {
-            display: ['Bebas Neue', 'sans-serif'],
-            body: ['Outfit', 'sans-serif'],
-          },
-        }
-      }
+
+      theme: { extend: { colors: { neon: '#e50914', 'neon-dim': '#b91c1c', 'dark-base': '#050505', 'dark-card': '#111111', 'dark-panel': '#181818', }, fontFamily: { display: ['Bebas Neue', 'sans-serif'], body: ['Outfit', 'sans-serif'], }, } }
+
     }
+
   </script>
 
+
+
   <style>
+
     *, *::before, *::after { box-sizing: border-box; }
+
     html { scroll-behavior: smooth; }
+
     body { background: #050505; font-family: 'Outfit', sans-serif; color: #fecaca; overflow-x: hidden; cursor: default; }
+
     ::-webkit-scrollbar { width: 6px; height: 6px; }
+
     ::-webkit-scrollbar-track { background: #050505; }
+
     ::-webkit-scrollbar-thumb { background: #b91c1c; border-radius: 4px; }
+
     .neon-text  { color: #fca5a5; text-shadow: 0 0 20px #ef4444, 0 0 40px #b91c1c; }
+
     .neon-border{ border-color: #ef4444; box-shadow: 0 0 12px rgba(229, 9, 20, 0.4); }
+
     .neon-btn { background: linear-gradient(135deg, #b91c1c, #e50914); box-shadow: 0 0 18px rgba(229, 9, 20, 0.4); transition: all .25s ease; }
+
     .neon-btn:hover { background: linear-gradient(135deg, #e50914, #f87171); box-shadow: 0 0 32px rgba(229, 9, 20, 0.6), 0 0 60px rgba(185, 28, 28, 0.4); transform: translateY(-1px) scale(1.02); }
+
     .ghost-btn { border: 1px solid rgba(229, 9, 20, 0.5); backdrop-filter: blur(8px); transition: all .25s ease; }
+
     .ghost-btn:hover { background: rgba(229, 9, 20, 0.15); border-color: #f87171; box-shadow: 0 0 20px rgba(229, 9, 20, 0.4); }
+
     #navbar { transition: background .4s ease, backdrop-filter .4s ease; }
+
     #navbar.scrolled { background: rgba(5,5,5,.92); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(229,9,20,0.3); }
+
     #hero { min-height: 96vh; position: relative; display: flex; align-items: flex-end; }
+
     #hero-bg { position: absolute; inset: 0; background-size: cover; background-position: center top; transition: opacity .7s ease; }
+
     #hero-bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to right, rgba(5,5,5,.95) 0%, rgba(5,5,5,.6) 50%, rgba(5,5,5,.1) 100%), linear-gradient(to top, rgba(5,5,5,1) 0%, rgba(5,5,5,.3) 40%, transparent 70%); }
+
     #hero-content { position: relative; z-index: 2; padding: 0 5vw 8vh; max-width: 680px; }
+
     .slider-track { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 12px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
+
     .slider-track::-webkit-scrollbar { height: 4px; }
+
     .card-wrap { flex: 0 0 auto; width: 160px; scroll-snap-align: start; cursor: pointer; transition: transform .3s ease; }
+
     @media(min-width:640px){ .card-wrap{ width: 190px; } }
+
     @media(min-width:1024px){ .card-wrap{ width: 210px; } }
+
     .card-wrap:hover { transform: scale(1.06) translateY(-4px); z-index: 10; }
+
     .card-img { width: 100%; aspect-ratio: 2/3; object-fit: cover; border-radius: 4px; border: 1px solid transparent; transition: border-color .3s ease, box-shadow .3s ease; }
+
     .card-wrap:hover .card-img { border-color: #ef4444; box-shadow: 0 0 22px rgba(229,9,20,0.5); }
+
     .card-title { font-size: .78rem; margin-top: 6px; color: #fca5a5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
     #modal-overlay { position: fixed; inset: 0; background: rgba(5,5,5,.9); backdrop-filter: blur(10px); z-index: 100; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .3s ease; }
+
     #modal-overlay.open { opacity: 1; pointer-events: all; }
+
     #modal-box { background: rgba(5, 5, 5, 0.7); backdrop-filter: blur(5px); width: 100vw; height: 100vh; max-width: none; max-height: none; border-radius: 0; border: none; overflow-y: auto; overflow-x: hidden; position: relative; z-index: 101; }
+
     #modal-box button[onclick="closeModal()"] { cursor: pointer; pointer-events: all; z-index: 999; }
+
     #player-overlay { position: fixed; inset: 0; background: #000; z-index: 200; display: none; flex-direction: column; }
+
     #player-overlay.open { display: flex; }
+
     #player-frame { width: 100%; flex: 1; border: none; }
-    @keyframes shimmer { 0% { background-position: -600px 0; } 100% { background-position: 600px 0; } }
-    .skeleton { background: linear-gradient(90deg, #181818 25%, #222 50%, #181818 75%); background-size: 1200px 100%; animation: shimmer 1.5s infinite; border-radius: 4px; }
+
     .rating-badge { display: inline-flex; align-items: center; gap: 6px; background: #eab308; color: #000; font-weight: 800; border-radius: 2px; padding: 2px 8px; font-size: 0.75rem; text-transform: uppercase; box-shadow: 0 0 15px rgba(234, 179, 8, 0.3); }
+
     .season-tab { padding: 6px 18px; border-radius: 4px; border: 1px solid rgba(229,9,20,0.4); font-size: .82rem; cursor: pointer; transition: all .2s; }
+
     .season-tab.active, .season-tab:hover { background: #e50914; border-color: #f87171; color: #fff; box-shadow: 0 0 14px rgba(229,9,20,0.5); }
+
     .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: .08em; color: #fee2e2; }
+
     .section-title span { color: #f87171; text-shadow: 0 0 16px rgba(239,68,68,0.6); }
+
     body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"); pointer-events: none; z-index: 999; opacity: .35; }
-    .orb { position: fixed; border-radius: 50%; filter: blur(120px); pointer-events: none; z-index: 0; }
+
     .scrollbar-thin::-webkit-scrollbar { width: 4px; }
+
     
-    /* Mobil İnce Ayarları */
+
     @media(max-width: 640px) {
+
       #hero-content { padding: 0 4vw 12vh; }
+
       .hero-title { font-size: 2.6rem !important; }
+
       #chat-sidebar { width: 100vw !important; max-width: 100vw !important; }
+
       #modal-title { font-size: 2.5rem !important; }
+
       #modal-box { padding-top: 1rem; }
+
       input[type="text"], input[type="password"] { font-size: 16px !important; }
+
       #navbar .neon-text { font-size: 1.4rem !important; }
+
     }
+
   </style>
+
 </head>
+
 <body>
 
+
+
+  <!-- PROFESYONEL LEJYON GİRİŞ EKRANI -->
+
   <div id="login-screen" class="fixed inset-0 z-[1000] bg-dark-base flex items-center justify-center p-6 transition-opacity duration-500">
+
     <div class="max-w-md w-full bg-dark-panel border border-red-900/50 p-8 rounded-sm shadow-[0_0_50px_rgba(229,9,20,0.2)] text-center relative overflow-hidden">
+
       <div class="flex mb-6 border-b border-red-800/50 pb-4">
+
         <button id="tab-login" onclick="toggleAuth('login')" class="flex-1 text-red-100 font-bold tracking-widest pb-2 border-b-2 border-red-600 transition-colors">GİRİŞ YAP</button>
+
         <button id="tab-register" onclick="toggleAuth('register')" class="flex-1 text-red-500 font-bold tracking-widest pb-2 border-b-2 border-transparent transition-colors">KAYIT OL</button>
+
       </div>
+
       <h1 class="neon-text font-display text-4xl mb-6">KADAVRAFLIX</h1>
+
       <input type="text" id="auth-nick" placeholder="Kullanıcı Adın (Örn: Fraude)..." class="w-full bg-red-950/20 border border-red-900/50 rounded-sm px-4 py-3 text-center text-white focus:outline-none focus:border-red-500 mb-3">
+
       <input type="password" id="auth-pass" placeholder="Şifren (Örn: 123fenerbahce)..." class="w-full bg-red-950/20 border border-red-900/50 rounded-sm px-4 py-3 text-center text-white focus:outline-none focus:border-red-500 mb-3">
+
       <input type="text" id="auth-ref" placeholder="Referans Kodun (Sadece Kayıt İçin)..." class="w-full bg-red-950/20 border border-red-900/50 rounded-sm px-4 py-3 text-center text-white focus:outline-none focus:border-red-500 mb-5 hidden">
+
       <button onclick="handleAuth()" id="auth-btn" class="neon-btn w-full py-3 rounded-sm text-white font-bold uppercase tracking-widest text-sm">İçeri Gir</button>
+
       <p id="auth-error" class="text-red-500 text-xs mt-4 hidden"></p>
+
     </div>
+
   </div>
+
+
+
+  <!-- AYARLAR MENÜSÜ -->
 
   <div id="settings-modal" class="fixed inset-0 z-[3500] bg-black/90 backdrop-blur-md hidden opacity-0 transition-opacity flex items-center justify-center">
+
     <div class="bg-[#0a0a0a] border border-red-900/50 w-full max-w-md p-6 rounded-sm relative shadow-2xl text-center max-h-[90vh] overflow-y-auto">
+
       <button onclick="closeSettings()" class="absolute top-4 right-5 text-gray-500 hover:text-white text-2xl leading-none">&times;</button>
+
       <h2 class="text-xl font-bold text-red-500 tracking-widest mb-6 border-b border-red-900/50 pb-2 uppercase">⚙️ Lejyon Ayarları</h2>
+
       <div class="space-y-4 text-left">
-        <div>
-          <p class="text-[10px] text-gray-400 mb-1 uppercase tracking-wider font-bold">Profil Fotoğrafı (URL)</p>
-          <input type="text" id="pp-input" class="w-full bg-black border border-red-900/50 rounded-sm px-3 py-2 text-white text-xs focus:outline-none focus:border-red-500">
-        </div>
-        <div>
-          <p class="text-[10px] text-gray-400 mb-1 uppercase tracking-wider font-bold">Arkaplan Görseli (URL)</p>
-          <input type="text" id="bg-input" class="w-full bg-black border border-red-900/50 rounded-sm px-3 py-2 text-white text-xs focus:outline-none focus:border-red-500">
-        </div>
-        <div>
-          <p class="text-[10px] text-gray-400 mb-1 uppercase tracking-wider font-bold">Biyografi</p>
-          <textarea id="bio-input" class="w-full h-16 bg-black border border-red-900/50 rounded-sm px-3 py-2 text-white text-xs focus:outline-none focus:border-red-500 resize-none"></textarea>
-        </div>
-        <div>
-          <p class="text-[10px] text-gray-400 mb-1 uppercase tracking-wider font-bold">Yaşadığı Yer</p>
-          <input type="text" id="loc-input" class="w-full bg-black border border-red-900/50 rounded-sm px-3 py-2 text-white text-xs focus:outline-none focus:border-red-500">
-        </div>
+
+        <div><p class="text-[10px] text-gray-400 mb-1 uppercase tracking-wider font-bold">Profil Fotoğrafı (URL)</p><input type="text" id="pp-input" class="w-full bg-black border border-red-900/50 rounded-sm px-3 py-2 text-white text-xs focus:outline-none focus:border-red-500"></div>
+
+        <div><p class="text-[10px] text-gray-400 mb-1 uppercase tracking-wider font-bold">Arkaplan Görseli (URL)</p><input type="text" id="bg-input" class="w-full bg-black border border-red-900/50 rounded-sm px-3 py-2 text-white text-xs focus:outline-none focus:border-red-500"></div>
+
+        <div><p class="text-[10px] text-gray-400 mb-1 uppercase tracking-wider font-bold">Biyografi</p><textarea id="bio-input" class="w-full h-16 bg-black border border-red-900/50 rounded-sm px-3 py-2 text-white text-xs focus:outline-none focus:border-red-500 resize-none"></textarea></div>
+
+        <div><p class="text-[10px] text-gray-400 mb-1 uppercase tracking-wider font-bold">Yaşadığı Yer</p><input type="text" id="loc-input" class="w-full bg-black border border-red-900/50 rounded-sm px-3 py-2 text-white text-xs focus:outline-none focus:border-red-500"></div>
+
         <button onclick="updateProfileSettings()" class="w-full bg-red-900/50 hover:bg-red-600 border border-red-700 py-2 rounded-sm text-white font-bold text-xs uppercase tracking-wider transition-colors mt-2">Profili Kaydet</button>
+
         
+
         <div class="border-t border-red-900/50 pt-4 mt-4">
+
           <p class="text-[10px] text-gray-400 mb-1 uppercase tracking-wider font-bold">Şifre Değiştir</p>
+
           <div class="flex gap-2"><input type="password" id="new-pass-input" class="flex-1 bg-black border border-red-900/50 rounded-sm px-3 py-2 text-white text-xs focus:outline-none focus:border-red-500"><button onclick="changePassword()" class="bg-red-900/50 hover:bg-red-600 border border-red-700 px-4 rounded-sm text-white font-bold text-xs transition-colors">Değiştir</button></div>
+
         </div>
+
+
+
+        <div class="border-t border-red-900/50 pt-4 mt-4">
+
+          <p class="text-[10px] text-gray-400 mb-1 uppercase tracking-wider font-bold">Kültür Değişimi</p>
+
+          <button onclick="changeFactionRequest()" class="w-full bg-red-900/20 border border-red-700/50 hover:bg-red-800 hover:text-white px-4 py-2 rounded-sm text-red-400 font-bold text-xs transition-colors">🔄 Yolunu Değiştir (Karmayı 500'e Sıfırlar)</button>
+
+        </div>
+
+
+
         <div id="admin-btn-container" class="w-full mt-4 hidden">
+
            <button onclick="closeSettings(); openAdminPanel();" class="w-full bg-red-900/20 border border-red-500/50 text-red-400 hover:bg-red-600 hover:text-white py-2 rounded-sm font-bold uppercase tracking-wider text-xs transition-colors">👑 İstihbarat Paneli</button>
+
         </div>
+
       </div>
+
     </div>
+
   </div>
+
+
+
+  <!-- ADMIN PANELİ (GELİŞMİŞ) -->
+
+  <div id="admin-modal" class="fixed inset-0 z-[3500] bg-black/90 backdrop-blur-md hidden opacity-0 transition-opacity flex items-center justify-center">
+
+    <div class="bg-[#0a0a0a] border border-red-900/50 w-full max-w-4xl p-8 rounded-sm relative shadow-2xl text-center max-h-[90vh] overflow-y-auto">
+
+      <button onclick="closeAdminPanel()" class="absolute top-4 right-5 text-gray-500 hover:text-white text-3xl leading-none">&times;</button>
+
+      <h2 class="text-3xl font-display text-red-500 tracking-widest mb-6 border-b border-red-900/50 pb-2">👑 LEJYON İSTİHBARAT MERKEZİ</h2>
+
+      
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
+
+        <div>
+
+          <h3 class="text-sm font-bold text-red-400 mb-3 uppercase border-b border-red-900/30 pb-1">Kullanıcı Veritabanı</h3>
+
+          <div id="admin-user-list" class="space-y-3 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin"></div>
+
+        </div>
+
+        
+
+        <div class="space-y-6">
+
+          <div class="bg-black border border-red-900/30 p-4 rounded-sm">
+
+            <h3 class="text-sm font-bold text-red-400 mb-3 uppercase">⚡ Karma Manipülasyonu</h3>
+
+            <input type="text" id="admin-target-nick" placeholder="Kullanıcı Nick" class="w-full bg-[#111] border border-red-900/50 rounded-sm px-3 py-2 text-white text-xs mb-2">
+
+            <div class="flex gap-2 mb-2">
+
+              <input type="number" id="admin-karma-val" placeholder="Miktar (Örn: 5000)" class="flex-1 bg-[#111] border border-red-900/50 rounded-sm px-3 py-2 text-white text-xs">
+
+              <button onclick="adminSetKarma()" class="bg-red-600 hover:bg-red-500 px-4 py-2 rounded-sm text-white font-bold text-xs">Ekle/Değiştir</button>
+
+            </div>
+
+            <button onclick="adminSetInfiniteKarma()" class="w-full bg-yellow-600 hover:bg-yellow-500 text-black px-4 py-2 rounded-sm font-bold text-xs uppercase transition-colors">∞ Onur Konuğu Yap (Sonsuz Karma)</button>
+            <div class="border-t border-red-900/50 pt-4 mt-4 mb-2 flex gap-2">
+              <input type="text" id="admin-custom-role" placeholder="Özel Rol (Örn: Dean Winchester)" class="flex-1 bg-[#111] border border-red-900/50 rounded-sm px-3 py-2 text-white text-xs">
+              <button onclick="adminSetCustomRole()" class="bg-red-800 hover:bg-red-700 px-4 py-2 rounded-sm text-white font-bold text-xs">Rolü Ver</button>
+            </div>
+            <button onclick="adminClearCustomRole()" class="w-full bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-sm font-bold text-xs uppercase transition-colors">Özel Rolü Sil (Normale Döndür)</button>
+          </div>
+
+          
+
+          <div class="bg-black border border-red-900/30 p-4 rounded-sm">
+
+            <h3 class="text-sm font-bold text-red-400 mb-3 uppercase">🎫 Referans Kodu Üret</h3>
+
+            <div class="flex gap-2">
+
+              <input type="text" id="admin-new-ref" placeholder="Yeni Kod Yaz..." class="flex-1 bg-[#111] border border-red-900/50 rounded-sm px-3 py-2 text-white text-xs">
+
+              <button onclick="adminAddRefCode()" class="bg-red-600 hover:bg-red-500 px-4 py-2 rounded-sm text-white font-bold text-xs">Oluştur</button>
+
+            </div>
+
+            <div id="admin-ref-list" class="mt-4 space-y-1 max-h-[150px] overflow-y-auto scrollbar-thin text-xs text-gray-400 font-mono"></div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- YOLUNU SEÇ EKRANI (FACTION SELECTION) -->
+
+  <div id="faction-modal" class="fixed inset-0 z-[4000] bg-black/95 backdrop-blur-xl hidden opacity-0 transition-opacity flex items-center justify-center">
+
+    <div class="w-full max-w-5xl p-6 text-center">
+
+      <h2 class="text-4xl md:text-6xl font-display text-white tracking-widest mb-2 drop-shadow-[0_0_15px_rgba(229,9,20,0.8)]">500 KARMAYA ULAŞTIN</h2>
+
+      <p class="text-red-400 font-bold tracking-widest uppercase mb-12">Raconu Kesme Vakti Geldi, Yolunu Seç!</p>
+
+      
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <div onclick="chooseFaction('sw')" class="group relative h-80 bg-black border border-red-900 hover:border-red-500 cursor-pointer overflow-hidden rounded-sm transition-all hover:scale-105">
+
+          <img src="https://images.unsplash.com/photo-1547700055-b61cacebece9?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity grayscale group-hover:grayscale-0">
+
+          <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
+
+          <div class="absolute bottom-6 w-full text-center">
+
+            <h3 class="text-3xl font-display text-white mb-1">GÜCÜN YOLU</h3>
+
+            <p class="text-xs text-red-400 font-bold uppercase tracking-wider">Star Wars Rütbeleri</p>
+
+          </div>
+
+        </div>
+
+        <div onclick="chooseFaction('fo')" class="group relative h-80 bg-black border border-red-900 hover:border-red-500 cursor-pointer overflow-hidden rounded-sm transition-all hover:scale-105">
+
+          <img src="https://hips.hearstapps.com/hmg-prod/images/fallout-tv-show-the-ghoul-cooper-howard-walton-goggins-prime-video-1-661515aba2822.jpg?crop=0.7421733170316032xw:1xh;0,0" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity grayscale group-hover:grayscale-0">
+
+          <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
+
+          <div class="absolute bottom-6 w-full text-center">
+
+            <h3 class="text-3xl font-display text-white mb-1">ÇORAK TOPRAKLAR</h3>
+
+            <p class="text-xs text-red-400 font-bold uppercase tracking-wider">Fallout Rütbeleri</p>
+
+          </div>
+
+        </div>
+
+        <div onclick="chooseFaction('rap')" class="group relative h-80 bg-black border border-red-900 hover:border-red-500 cursor-pointer overflow-hidden rounded-sm transition-all hover:scale-105">
+
+          <img src="https://hips.hearstapps.com/hmg-prod/images/biggie_smalls_photo_by_clarence_davis_new_york_daily_news_archive_getty_97348258.jpg" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity grayscale group-hover:grayscale-0">
+
+          <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
+
+          <div class="absolute bottom-6 w-full text-center">
+
+            <h3 class="text-3xl font-display text-white mb-1">YERALTI KÜLTÜRÜ</h3>
+
+            <p class="text-xs text-red-400 font-bold uppercase tracking-wider">Underground Rap Rütbeleri</p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- ZQWQZ TARZI TAM EKRAN PROFİL -->
 
   <div id="user-profile-modal" class="fixed inset-0 z-[3000] bg-[#050505] hidden opacity-0 transition-opacity overflow-y-auto pb-20 font-sans">
+
     <div class="relative w-full h-[45vh] md:h-[50vh] border-b-2 border-red-900 bg-black">
-      <img id="up-bg" src="" class="w-full h-full object-cover hidden" />
+
+      <img id="up-bg" src="" class="w-full h-full object-cover opacity-50 hidden" />
+
+      <div class="absolute inset-0 bg-gradient-to-t from-[#050505] to-transparent"></div>
+
       <button onclick="closeUserProfile()" class="absolute top-4 right-6 text-gray-400 hover:text-white bg-black/80 border border-red-900 px-3 py-1 text-xl transition-colors z-50 rounded-sm">X KAPAT</button>
+
     </div>
+
     
+
     <div class="max-w-7xl mx-auto px-4 sm:px-8 relative -mt-16 md:-mt-24 flex flex-col md:flex-row gap-6 items-end border-b border-red-900/50 pb-4">
+
       <img id="up-pp" src="" class="w-32 h-32 md:w-48 md:h-48 rounded-sm border-2 border-red-800 object-cover shadow-[0_0_15px_rgba(229,9,20,0.3)] z-10 bg-[#111]" />
+
       <div class="flex-1 text-left z-10 w-full flex flex-col md:flex-row md:items-end justify-between gap-4 mb-2">
+
         <div>
+
           <h2 id="up-name" class="text-4xl md:text-5xl font-display text-white tracking-widest uppercase"></h2>
+
           <div class="flex items-center gap-3 mt-1 text-xs text-gray-400 uppercase tracking-widest font-bold">
+
              <span id="up-rank" class="text-red-500"></span>
+
              <span>|</span>
+
              <span>📍 <span id="up-location">Yeraltı</span></span>
+
           </div>
+
         </div>
+
         <div id="up-actions" class="flex gap-2 z-10"></div>
+
       </div>
+
     </div>
+
+
 
     <div class="max-w-7xl mx-auto px-4 sm:px-8 py-4 flex flex-wrap gap-8 justify-start text-left border-b border-red-900/30 bg-[#0a0a0a]">
+
+
       <div><p class="text-2xl font-display text-yellow-500" id="up-stat-karma">0</p><p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mt-1">Karma</p></div>
+
       <div><p class="text-2xl font-display text-white" id="up-stat-followers">0</p><p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mt-1">Takipçi</p></div>
+
       <div><p class="text-2xl font-display text-white" id="up-stat-following">0</p><p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mt-1">Takip Edilen</p></div>
+
       <div><p class="text-2xl font-display text-white" id="up-stat-history">0</p><p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mt-1">İzlenen</p></div>
+
+      <button onclick="openRanksModal()" class="ml-auto border border-red-900/50 hover:border-red-500 bg-[#111] hover:bg-red-900/20 px-4 py-2 rounded-sm text-gray-300 hover:text-white font-bold text-[10px] uppercase tracking-wider transition-colors flex items-center gap-2">
+        🎖️ Rütbe Rehberini Gör
+      </button>
+
     </div>
+
+
 
     <div class="max-w-7xl mx-auto px-4 sm:px-8 mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
       <div class="lg:col-span-4 space-y-6">
+
         <div class="bg-[#0a0a0a] border border-red-900/30 p-5 rounded-sm">
+
           <h3 class="text-sm font-bold text-red-500 mb-3 border-b border-red-900/50 pb-2 uppercase tracking-wider">📜 Biyografi</h3>
+
           <p id="up-bio" class="text-xs text-gray-300 leading-relaxed font-mono">Biyografi bulunamadı.</p>
+
         </div>
+
         
+
         <div class="bg-[#0a0a0a] border border-red-900/30 p-5 rounded-sm">
+
           <h3 class="text-sm font-bold text-red-500 mb-3 border-b border-red-900/50 pb-2 uppercase tracking-wider">📁 Özel Koleksiyonlar</h3>
+
           <div id="up-custom-playlists" class="space-y-2">
+
             <div class="border border-red-900/30 p-3 rounded-sm bg-black hover:border-red-500 cursor-pointer transition-colors">
+
               <p class="text-xs font-bold text-white">🔥 Kadavra'nın Başyapıtları</p>
-              <p class="text-[10px] text-gray-500 mt-1">12 Film</p>
+
+              <p class="text-[10px] text-gray-500 mt-1">Yakında Eklenecek</p>
+
             </div>
-            <button class="w-full border border-dashed border-red-900/50 text-red-500 text-xs py-2 hover:bg-red-900/20 transition-colors">+ Yeni Liste Oluştur</button>
+
           </div>
+
         </div>
+
       </div>
+
       
+
       <div class="lg:col-span-5 space-y-6">
+
         <div class="bg-[#0a0a0a] border border-red-900/30 p-5 rounded-sm">
+
           <div class="flex justify-between items-end border-b border-red-900/50 pb-2 mb-4">
+
             <h3 class="text-sm font-bold text-red-500 uppercase tracking-wider">💬 Sosyal Duvar</h3>
+
           </div>
+
           <div class="flex gap-2 mb-4">
+
             <textarea id="wall-input" placeholder="Bu duvara racon kes..." class="flex-1 bg-black border border-red-900/50 rounded-sm px-3 py-2 text-gray-200 text-xs focus:outline-none focus:border-red-500 resize-none h-12"></textarea>
+
             <button onclick="postToWall()" class="bg-red-900/50 hover:bg-red-600 border border-red-700 px-4 text-white font-bold text-xs transition-colors rounded-sm">Yaz</button>
+
           </div>
+
           <div id="up-wall-feed" class="space-y-3 max-h-[500px] overflow-y-auto pr-2 scrollbar-thin"></div>
+
         </div>
+
       </div>
+
+
 
       <div class="lg:col-span-3 space-y-6">
+
         <div class="bg-[#0a0a0a] border border-red-900/30 p-4 rounded-sm">
+
           <h3 class="text-sm font-bold text-red-500 mb-3 border-b border-red-900/50 pb-2 uppercase tracking-wider">🎬 Son İzledikleri</h3>
-          <div id="up-history-feed" class="grid grid-cols-3 gap-2"></div>
+
+          <div id="up-history-feed" class="grid grid-cols-2 md:grid-cols-3 gap-2"></div>
+
         </div>
+
         <div class="bg-[#0a0a0a] border border-red-900/30 p-4 rounded-sm">
+
           <h3 class="text-sm font-bold text-red-500 mb-3 border-b border-red-900/50 pb-2 uppercase tracking-wider">📌 İzleme Listesi</h3>
-          <div id="up-watchlist-feed" class="grid grid-cols-3 gap-2"></div>
+
+          <div id="up-watchlist-feed" class="grid grid-cols-2 md:grid-cols-3 gap-2"></div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+
+  <!-- RÜTBE REHBERİ EKRANI -->
+  <div id="ranks-modal" class="fixed inset-0 z-[4500] bg-black/95 backdrop-blur-xl hidden opacity-0 transition-opacity flex items-center justify-center">
+    <div class="bg-[#0a0a0a] border border-red-900/50 w-full max-w-6xl p-8 rounded-sm relative shadow-2xl max-h-[90vh] overflow-y-auto text-center font-sans mx-4">
+      <button onclick="closeRanksModal()" class="absolute top-4 right-5 text-gray-500 hover:text-white text-3xl leading-none">&times;</button>
+      <h2 class="text-3xl font-display text-white tracking-widest mb-2 uppercase drop-shadow-[0_0_15px_rgba(229,9,20,0.8)]">🎖️ Yeraltı Rütbe Rehberi</h2>
+      <p class="text-xs text-gray-400 mb-8 uppercase tracking-widest font-bold">Lejyon içerisinde yükselebileceğin tüm basamaklar.</p>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
+        <!-- Ortak / Temel -->
+        <div class="bg-black border border-gray-800 p-4 rounded-sm">
+          <h3 class="text-sm font-bold text-gray-400 mb-4 border-b border-gray-800 pb-2 uppercase tracking-wider">Temel Yol (0 - 499)</h3>
+          <ul class="space-y-3 text-xs font-mono text-gray-300">
+            <li><span class="text-red-500 font-bold">0:</span> Çaylak</li>
+            <li><span class="text-red-500 font-bold">500:</span> YOL SEÇİMİ AÇILIR</li>
+          </ul>
+        </div>
+        <!-- Star Wars -->
+        <div class="bg-black border border-blue-900 p-4 rounded-sm">
+          <h3 class="text-sm font-bold text-blue-400 mb-4 border-b border-blue-900 pb-2 uppercase tracking-wider">Gücün Yolu</h3>
+          <ul class="space-y-3 text-xs font-mono text-blue-200">
+            <li><span class="text-blue-500 font-bold">500:</span> Padawan</li>
+            <li><span class="text-blue-500 font-bold">1K:</span> Jedi Şövalyesi</li>
+            <li><span class="text-blue-500 font-bold">5K:</span> Jedi Ustası</li>
+            <li><span class="text-blue-500 font-bold">25K:</span> Jedi Konseyi</li>
+            <li><span class="text-red-500 font-bold">100K:</span> Sith Lordu</li>
+            <li><span class="text-red-500 font-bold">250K:</span> Darth</li>
+            <li><span class="text-purple-500 font-bold">500K:</span> Gücün Dengeleyicisi</li>
+            <li><span class="text-yellow-400 font-bold">1M:</span> Gücün Ta Kendisi</li>
+          </ul>
+        </div>
+        <!-- Fallout -->
+        <div class="bg-black border border-green-900 p-4 rounded-sm">
+          <h3 class="text-sm font-bold text-green-400 mb-4 border-b border-green-900 pb-2 uppercase tracking-wider">Çorak Topraklar</h3>
+          <ul class="space-y-3 text-xs font-mono text-green-200">
+            <li><span class="text-green-500 font-bold">500:</span> Wastelander</li>
+            <li><span class="text-green-500 font-bold">1K:</span> BoS Şövalyesi</li>
+            <li><span class="text-green-500 font-bold">5K:</span> NCR Ranger</li>
+            <li><span class="text-green-500 font-bold">25K:</span> Çorak Efsanesi</li>
+            <li><span class="text-green-500 font-bold">100K:</span> Enclave Subayı</li>
+            <li><span class="text-green-500 font-bold">250K:</span> BoS Paladin</li>
+            <li><span class="text-green-500 font-bold">500K:</span> Wasteland Warlord</li>
+            <li><span class="text-yellow-400 font-bold">1M:</span> Overseer</li>
+          </ul>
+        </div>
+        <!-- Rap -->
+        <div class="bg-black border border-yellow-900 p-4 rounded-sm">
+          <h3 class="text-sm font-bold text-yellow-500 mb-4 border-b border-yellow-900 pb-2 uppercase tracking-wider">Yeraltı Kültürü</h3>
+          <ul class="space-y-3 text-xs font-mono text-yellow-200">
+            <li><span class="text-yellow-600 font-bold">500:</span> Çaylak MC</li>
+            <li><span class="text-yellow-600 font-bold">1K:</span> Battle Rapçi</li>
+            <li><span class="text-yellow-600 font-bold">5K:</span> Underground Kralı</li>
+            <li><span class="text-yellow-600 font-bold">25K:</span> Rap God</li>
+            <li><span class="text-yellow-600 font-bold">100K:</span> Label Patronu</li>
+            <li><span class="text-yellow-600 font-bold">250K:</span> Altın Plak Sahibi</li>
+            <li><span class="text-yellow-600 font-bold">500K:</span> Hip-Hop Efsanesi</li>
+            <li><span class="text-yellow-400 font-bold">1M:</span> Kültürün Sesi</li>
+          </ul>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- YERALTI SOHBET ÇEKMECESİ -->
 
   <div id="chat-sidebar" class="fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-[#050505]/95 backdrop-blur-xl border-l border-red-900/50 z-[2000] transform translate-x-full transition-transform duration-300 flex flex-col shadow-[-10px_0_30px_rgba(0,0,0,0.8)]">
+
     <div class="px-4 py-4 border-b border-red-900/50 flex justify-between items-center bg-gradient-to-r from-red-900/20 to-transparent">
+
       <span class="font-display text-2xl text-red-200 tracking-widest">YERALTI SOHBET</span>
+
       <button onclick="toggleChat()" class="text-red-500 hover:text-white text-3xl leading-none mb-1">&times;</button>
+
     </div>
+
     <div id="chat-messages" class="flex-1 overflow-y-auto p-4 flex flex-col gap-3"></div>
+
     <div class="p-3 border-t border-red-900/50 bg-[#050505]">
+
       <div class="flex gap-2">
+
         <input type="text" id="chat-input" placeholder="Mekana seslen..." class="flex-1 bg-black border border-red-900/50 rounded-sm px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500" onkeypress="if(event.key === 'Enter') sendChatMessage()">
+
         <button onclick="sendChatMessage()" class="neon-btn px-4 py-2 rounded-sm text-white font-bold text-sm">At</button>
+
       </div>
+
     </div>
+
   </div>
 
-  <div class="orb" style="width:500px;height:500px;background:rgba(229,9,20,0.05);top:-100px;left:-150px;"></div>
-  <div class="orb" style="width:400px;height:400px;background:rgba(185,28,28,0.05);bottom:20%;right:-100px;"></div>
+
+
+  <!-- NAVBAR MOBİL UYUMLU ARAMA İLE BİRLİKTE -->
 
   <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 lg:px-12 py-4 flex items-center justify-between">
+
     <a href="#" class="flex items-center gap-2 select-none" onclick="closeAll();return false;">
+
       <svg width="28" height="28" class="sm:w-8 sm:h-8" viewBox="0 0 32 32" fill="none"><path d="M4 4 L4 28 L12 20 L16 28 L20 20 L28 28 L28 4 Z" fill="url(#lg)" /><defs><linearGradient id="lg" x1="4" y1="4" x2="28" y2="28" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#f87171"/><stop offset="100%" stop-color="#e50914"/></linearGradient></defs></svg>
+
       <span style="font-family:'Bebas Neue',sans-serif;letter-spacing:.12em;" class="neon-text text-xl sm:text-2xl">KADAVRAFLIX</span>
+
     </a>
+
     <div class="hidden md:flex items-center gap-8 text-sm text-red-300">
+
       <a href="#" onclick="switchView('home'); return false;" class="hover:text-red-100 transition-colors">Anasayfa</a>
+
       <a href="#" onclick="switchView('movies'); return false;" class="hover:text-red-100 transition-colors">Filmler</a>
+
       <a href="#" onclick="switchView('series'); return false;" class="hover:text-red-100 transition-colors">Diziler</a>
+
     </div>
+
     
+
     <div class="flex items-center gap-2 sm:gap-4">
+
       <button onclick="playRandom()" class="hidden sm:flex items-center gap-2 text-red-200 hover:text-white transition-colors bg-red-900/40 px-4 py-1.5 rounded-sm border border-red-900/50 hover:border-red-500 hover:shadow-[0_0_15px_rgba(229,9,20,0.4)] text-sm font-medium">🎲 Ne İzlesem?</button>
+
       
+
       <div class="relative block">
+
         <input id="search-input" type="text" placeholder="Lejyoner veya Film Ara…" class="bg-black border border-red-900/50 rounded-sm px-3 sm:px-4 py-1.5 text-sm text-red-100 placeholder-red-800 focus:outline-none focus:border-red-600 transition-all w-32 focus:w-48 sm:w-48 sm:focus:w-64" oninput="handleSearch(this.value)" />
+
         <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-red-600 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+
         <div id="search-results" class="absolute top-full mt-2 right-0 sm:left-0 w-64 sm:w-72 bg-[#111] border border-red-900/50 rounded-sm overflow-hidden shadow-2xl hidden z-50"></div>
+
       </div>
+
       
+
       <button id="chat-btn" onclick="toggleChat()" class="relative w-8 h-8 rounded-sm bg-red-900/40 border border-red-900/50 flex items-center justify-center text-sm hover:bg-red-800 transition-colors hidden">
+
         💬
+
         <span id="chat-notif" class="absolute -top-1 -right-1 flex h-3 w-3 hidden"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span><span class="relative inline-flex rounded-full h-3 w-3 bg-yellow-500"></span></span>
+
       </button>
+
       <div id="profile-badge" class="w-8 h-8 rounded-sm bg-gradient-to-br from-red-600 to-red-900 border border-red-500/50 flex items-center justify-center text-xs font-bold cursor-pointer hover:shadow-[0_0_16px_rgba(229,9,20,0.5)] transition-all select-none">K</div>
+
     </div>
+
   </nav>
 
+
+
+  <!-- HERO VE İÇERİKLER -->
+
   <section id="hero"><div id="hero-bg"></div><div id="hero-content"><div id="hero-badge" class="inline-flex items-center gap-2 text-xs text-red-300 mb-4 opacity-0"><span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>ÖNE ÇIKAN</div><h1 id="hero-title" class="hero-title" style="font-family:'Bebas Neue',sans-serif;font-size:3.8rem;line-height:1;color:#fee2e2;text-shadow:0 4px 40px rgba(229,9,20,0.5);margin-bottom:.6rem;opacity:0;transform:translateY(20px);"></h1><p id="hero-desc" class="text-sm md:text-base text-red-200/80 leading-relaxed mb-6 line-clamp-3 max-w-lg opacity-0"></p><div id="hero-meta" class="flex items-center gap-3 mb-6 opacity-0"></div><div class="flex items-center gap-3 opacity-0" id="hero-btns"><button id="hero-play" onclick="playHero()" class="neon-btn flex items-center gap-2 px-6 py-3 rounded-sm text-white font-semibold text-sm"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Oynat</button><button onclick="infoHero()" class="ghost-btn flex items-center gap-2 px-6 py-3 rounded-sm text-red-200 font-semibold text-sm">Daha Fazla</button></div></div></section>
+
   
+
   <main class="relative z-10 px-5 lg:px-12 pb-20 space-y-14 -mt-16" id="main-content">
+
     <div id="view-home" class="space-y-14">
+
       <section id="tayfa-izliyor-section"><h2 class="section-title mb-5">TAYFA ŞU AN <span>NE İZLİYOR?</span></h2><div id="tayfa-row" class="slider-track"></div></section>
+
       <section id="continue-watching" class="hidden"><h2 class="section-title mb-5">İZLEMEYE <span>DEVAM ET</span></h2><div id="continue-row" class="slider-track"></div></section>
+
       <section id="watchlist-section" class="hidden"><h2 class="section-title mb-5">SENİN <span>LİSTEN</span></h2><div id="watchlist-row" class="slider-track"></div></section>
+
       <section id="trending"><h2 class="section-title mb-5">TREND <span>OLANLAR</span></h2><div id="trending-row" class="slider-track"></div></section>
+
       <section id="movies"><h2 class="section-title mb-5">YENİ <span>FİLMLER</span></h2><div id="movies-row" class="slider-track"></div></section>
+
       <section id="series"><h2 class="section-title mb-5">POPÜLER <span>DİZİLER</span></h2><div id="series-row" class="slider-track"></div></section>
+
     </div>
+
     <div id="view-movies" class="space-y-14 hidden"><section><h2 class="section-title mb-5">AKSİYON <span>FİLMLERİ</span></h2><div id="action-row" class="slider-track"></div></section><section><h2 class="section-title mb-5">KOMEDİ <span>FİLMLERİ</span></h2><div id="comedy-row" class="slider-track"></div></section><section><h2 class="section-title mb-5">BİLİM KURGU <span>FİLMLERİ</span></h2><div id="scifi-row" class="slider-track"></div></section></div>
+
     <div id="view-series" class="space-y-14 hidden"><section><h2 class="section-title mb-5">AKSİYON & MACERA <span>DİZİLERİ</span></h2><div id="action-series-row" class="slider-track"></div></section><section><h2 class="section-title mb-5">BİLİM KURGU & FANTEZİ <span>DİZİLERİ</span></h2><div id="scifi-series-row" class="slider-track"></div></section><section><h2 class="section-title mb-5">ANİMASYON <span>DİZİLERİ</span></h2><div id="anim-series-row" class="slider-track"></div></section></div>
+
   </main>
+
+
 
   <footer class="border-t border-red-900/50 px-8 py-8 text-center text-red-700 text-xs"><p class="neon-text font-display text-xl mb-2">KADAVRAFLIX</p><p>© 2025 Kadavraflix. Tüm içerikler TMDB üzerinden çekilmektedir.</p></footer>
 
+
+
+  <!-- FİLM DETAY VE YORUM MODALI -->
+
   <div id="modal-overlay" onclick="handleOverlayClick(event)">
+
     <div id="modal-box" onclick="event.stopPropagation()" class="relative w-full h-full bg-transparent border-none rounded-none max-w-none max-h-none overflow-x-hidden">
+
       <div class="fixed inset-0 z-0 pointer-events-none"><img id="modal-bg-img" src="" class="w-full h-full object-cover opacity-20 blur-x1 scale-110" /><div class="absolute inset-0 bg-[#050505]/80"></div><div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-[#050505]/90"></div></div>
+
       <button onclick="closeModal()" class="absolute top-6 left-6 md:top-10 md:left-10 z-50 text-red-500 hover:text-white flex items-center gap-2 transition-all hover:-translate-x-1"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg></button>
+
       <div class="relative z-10 w-full max-w-7xl mx-auto px-6 py-20 md:py-24 flex flex-col md:flex-row gap-10 md:gap-16 items-start">
+
         <div class="w-2/3 max-w-[320px] mx-auto md:w-1/3 shrink-0"><img id="modal-poster" src="" class="w-full rounded-sm shadow-[0_0_60px_rgba(229,9,20,0.3)] border border-red-500/30" /></div>
+
         <div class="w-full md:w-2/3 flex flex-col justify-center items-center md:items-start text-center md:text-left mt-4 md:mt-0">
+
           <h1 id="modal-title" class="font-display text-5xl md:text-7xl text-white mb-3 tracking-wide uppercase" style="text-shadow: 0 0 30px rgba(229,9,20,0.6);"></h1>
+
           <div id="modal-meta" class="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-6 text-sm text-red-200 font-medium"></div>
+
           <p id="modal-desc" class="text-red-100/80 text-sm md:text-base leading-relaxed mb-8 max-w-3xl"></p>
+
           <div class="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-8"><button onclick="playModal()" class="bg-white text-black hover:bg-red-100 transition-colors flex items-center gap-2 px-10 py-3 rounded-sm text-sm font-bold uppercase tracking-wider"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Oynat</button><button id="modal-trailer-btn" class="bg-red-900/40 border border-red-500/50 hover:bg-red-800/80 transition-colors flex items-center gap-2 px-8 py-3 rounded-sm text-white text-sm font-bold uppercase tracking-wider hidden">Fragman</button><button id="modal-watchlist-btn" onclick="toggleWatchlist()" class="bg-transparent border border-red-500/50 hover:bg-red-900/40 transition-colors flex items-center gap-2 px-6 py-3 rounded-sm text-white text-sm font-bold uppercase tracking-wider"><span id="watchlist-icon" class="text-xl leading-none">+</span><span id="watchlist-text">Listeme Ekle</span></button></div>
+
           <div class="mb-10 text-sm md:text-base"><span class="text-red-400 font-semibold">Oyuncular:</span> <span id="modal-cast" class="text-red-100"></span></div>
+
           <div id="modal-seasons-wrap" class="hidden w-full max-w-4xl"><div class="border-b border-red-800/50 mb-6 pb-2"><h3 class="text-white font-display text-2xl tracking-wide">Sezonlar ve Bölümler</h3></div><div id="season-tabs" class="flex flex-wrap gap-2 mb-6"></div><div id="episode-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[400px] overflow-y-auto pr-2"></div></div>
+
           
+
           <div class="w-full max-w-4xl mt-12 border-t border-red-800/50 pt-8">
+
             <h3 class="text-white font-display text-2xl tracking-wide mb-6">TAYFANIN YORUMLARI</h3>
+
             <div class="flex gap-3 mb-6">
+
               <div id="comment-avatar" class="w-10 h-10 rounded-sm bg-gradient-to-br from-red-600 to-red-900 flex items-center justify-center font-bold text-white shrink-0 overflow-hidden"><img id="comment-pp-img" src="" class="w-full h-full object-cover hidden"></div>
+
               <div class="flex-1 flex gap-2">
+
                 <input type="text" id="comment-input" placeholder="Bu yapım hakkında ne düşünüyorsun pampik?" class="w-full bg-black border border-red-900/50 rounded-sm px-4 py-2 text-sm text-white focus:outline-none focus:border-red-600" onkeypress="if(event.key === 'Enter') postComment()">
+
                 <button onclick="postComment()" class="neon-btn px-6 py-2 rounded-sm text-white font-bold tracking-widest text-sm shrink-0">Yolla</button>
+
               </div>
+
             </div>
+
             <div id="comments-list" class="space-y-3 max-h-[300px] overflow-y-auto pr-2"></div>
+
           </div>
+
         </div>
+
       </div>
+
     </div>
+
   </div>
 
+
+
+  <!-- PLAYER -->
+
   <div id="player-overlay"><div class="flex items-center justify-between bg-black px-5 py-3 border-b border-red-900/60"><span id="player-title" class="text-red-200 text-sm font-semibold truncate"></span><button onclick="closePlayer()" class="flex items-center gap-2 text-red-500 hover:text-white text-sm transition-colors">Kapat</button></div><iframe id="player-frame" src="" allowfullscreen allow="autoplay; fullscreen"></iframe></div>
+
   <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[300] transition-all duration-300 opacity-0 translate-y-4 pointer-events-none"><div class="bg-red-900/90 backdrop-blur border border-red-600/50 text-red-100 text-sm px-5 py-3 rounded-sm shadow-xl flex items-center gap-2"><span id="toast-icon">ℹ️</span><span id="toast-msg"></span></div></div>
 
+
+
+  <!-- SİTENİN BEYNİ (JAVASCRIPT) -->
+
   <script>
+
     const API_KEY = '98148cd009e2989e8e10c7d0abdfbaad';
+
     const BASE_URL = 'https://api.themoviedb.org/3';
+
     const IMG_BASE = 'https://image.tmdb.org/t/p/';
+
     const LANG = 'tr-TR';
+
     const adminler = ['kadavra', 'fraude', 'arda']; 
 
+
+
     const firebaseConfig = {
+
       apiKey: "AIzaSyCYgxFhUw_xs1SOLYsZXLKGCB_mNckL-HU",
+
       authDomain: "kadavraflix.firebaseapp.com",
+
       databaseURL: "https://kadavraflix-default-rtdb.europe-west1.firebasedatabase.app",
+
       projectId: "kadavraflix",
+
       storageBucket: "kadavraflix.firebasestorage.app",
+
       messagingSenderId: "962184141597",
+
       appId: "1:962184141597:web:271e4d2998d1dd98e25ff4"
+
     };
+
     firebase.initializeApp(firebaseConfig);
+
     const database = firebase.database();
 
+
+
     function getAvatar(name) { return `https://ui-avatars.com/api/?name=${name}&background=e50914&color=fff&size=256`; }
-    function getRank(karma) {
-      if(!karma) return 'Çaylak';
-      if(karma < 50) return 'Çaylak';
-      if(karma < 200) return 'Müdavim';
-      if(karma < 500) return 'Sinefil';
-      if(karma < 1000) return 'Kült İzleyici';
-      return 'Yeraltı Baronu';
+
+    
+
+    // ════════════ MİLYONLUK RÜTBE VE KARMA YOLLARI (FACTIONS) ════════════
+
+    const Ranks = {
+
+      'sw': { 0:'Youngling', 500:'Padawan', 1000:'Jedi Şövalyesi', 5000:'Jedi Ustası', 25000:'Jedi Konseyi', 100000:'Sith Lordu', 250000:'Darth', 500000:'Gücün Dengeleyicisi', 1000000:'Gücün Ta Kendisi' },
+
+      'fo': { 0:'Vault Dweller', 500:'Wastelander', 1000:'Brotherhood Şövalyesi', 5000:'NCR Ranger', 25000:'Çorak Toprak Efsanesi', 100000:'Enclave Subayı', 250000:'Brotherhood Paladin', 500000:'Wasteland Warlord', 1000000:'Overseer of the Wasteland' },
+
+      'rap': { 0:'Sokak Çocuğu', 500:'Çaylak MC', 1000:'Battle Rapçi', 5000:'Underground Kralı', 25000:'Rap God', 100000:'Label Patronu', 250000:'Altın Plak Sahibi', 500000:'Hip-Hop Efsanesi', 1000000:'Kültürün Sesi' },
+
+      'none': { 0:'Çaylak', 500:'Müdavim', 1000:'Sinefil', 5000:'Kült İzleyici', 25000:'Yeraltı Baronu', 100000:'Sinema İlahı', 250000:'Vizyoner', 500000:'Başyapıt', 1000000:'Kadavraflix Efsanesi' }
+
+    };
+
+
+
+      function calculateRank(karma, yol, infiniteKarma, ozelRol) {
+      if(ozelRol) return `🎭 ${ozelRol.toUpperCase()}`; // ÖZEL ROL ÖNCELİĞİ!
+      if(infiniteKarma) return '∞ YERALTI İLAHI';
+      if(!yol || !Ranks[yol]) yol = 'none';
+      let currentRank = Ranks[yol][0];
+      const thresholds = [500, 1000, 5000, 25000, 100000, 250000, 500000, 1000000];
+      for(let t of thresholds) { if(karma >= t) currentRank = Ranks[yol][t]; }
+      return currentRank;
     }
 
-    // ADMİN PANELİ 
-    function openAdminPanel() {
-      database.ref('kullanicilar').once('value').then(snap => {
-        let html = '<div class="space-y-3 w-full max-h-[50vh] overflow-y-auto pr-2">';
-        snap.forEach(child => {
-          const u = child.val();
-          const date = u.sonGiris ? new Date(u.sonGiris).toLocaleString('tr-TR') : 'Bilinmiyor';
-          html += `<div class="bg-black/50 p-4 rounded-sm border border-red-500/30 text-left relative overflow-hidden"><div class="absolute -right-4 -top-4 text-6xl opacity-10">🕵️</div><p class="text-red-500 font-display text-2xl tracking-widest mb-2">${child.key.toUpperCase()}</p><p class="text-red-300 text-sm">🔑 Şifre: <span class="text-white">${u.sifre}</span></p><p class="text-red-300 text-sm">🎫 Ref: <span class="text-white">${u.refKodu}</span></p><p class="text-red-300 text-sm">🕒 Son Görülme: <span class="text-white">${date}</span></p><p class="text-red-300 text-sm">🌐 IP Adresi: <span class="text-green-500 font-bold">${u.ip || 'Gizlenmiş'}</span></p><p class="text-gray-500 text-[10px] mt-2 border-t border-red-900/50 pt-2 leading-tight">📱 ${u.cihaz || 'Kayıt yok'}</p></div>`;
-        });
-        html += '</div>';
 
-        const overlay = document.getElementById('modal-overlay');
-        document.getElementById('modal-title').textContent = '👑 LEJYON İSTİHBARAT';
-        document.getElementById('modal-desc').innerHTML = html;
-        document.getElementById('modal-bg-img').src = '';
-        document.getElementById('modal-poster').parentElement.classList.add('hidden');
-        document.getElementById('modal-meta').innerHTML = '';
-        document.getElementById('modal-seasons-wrap').classList.add('hidden');
-        const btnArea = document.getElementById('modal-desc').nextElementSibling; if(btnArea) btnArea.classList.add('hidden');
-        const cList = document.getElementById('comments-list'); if(cList) cList.parentElement.classList.add('hidden');
-        overlay.classList.add('open'); document.body.style.overflow = 'hidden'; 
+
+    function checkFactionEligibility(karma, yol) {
+
+      if(karma >= 500 && !yol) {
+
+        document.getElementById('faction-modal').classList.remove('hidden');
+
+        setTimeout(() => document.getElementById('faction-modal').classList.remove('opacity-0'), 50);
+
+      }
+
+    }
+
+
+
+    function chooseFaction(yol) {
+
+      const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
+
+      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+
+      database.ref('kullanicilar/' + safeNick).update({ yol: yol }).then(() => {
+
+        document.getElementById('faction-modal').classList.add('opacity-0');
+
+        setTimeout(() => document.getElementById('faction-modal').classList.add('hidden'), 300);
+
+        showToast('Yolunu seçtin lejyoner. Artık dönüş yok!');
+
+        openUserProfile(user);
+
       });
+
     }
 
-    // ZQWQZ TARZI PROFİL VE STALK MOTORU
+
+
+    function changeFactionRequest() {
+
+      if(confirm("Tüm saygınlığını yitirip yeni bir yola girmek üzeresin. Karman 500'e düşecek. Emin misin lejyoner?")) {
+
+        const user = localStorage.getItem('kadavra_vip_user'); if(!user) return; 
+
+        const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+
+        database.ref('kullanicilar/' + safeNick).update({ yol: null, karma: 500, infiniteKarma: false }).then(() => {
+
+          closeSettings();
+
+          checkFactionEligibility(500, null);
+
+          showToast("Yeniden doğdun. Seçimini yap!");
+
+        });
+
+      }
+
+    }
+
+
+
+    // ════════════ ADMİN PANELİ VE REF KODLARI ════════════
+
+    function openAdminPanel() {
+
+      database.ref('kullanicilar').once('value').then(snap => {
+
+        let html = '';
+
+        snap.forEach(child => {
+
+          const u = child.val(); const date = u.sonGiris ? new Date(u.sonGiris).toLocaleString('tr-TR') : 'Bilinmiyor';
+
+          const karmaStr = u.infiniteKarma ? '∞' : (u.karma || 0);
+
+          html += `<div class="bg-black border border-red-900/50 p-3 rounded-sm mb-2"><div class="flex justify-between items-center"><span class="text-red-500 font-bold uppercase">${child.key.replace(/_/g, '.')}</span><span class="text-yellow-500 text-xs font-bold">⚡ ${karmaStr}</span></div><p class="text-[10px] text-gray-500 mt-1">Son Görülme: ${date}</p></div>`;
+
+        });
+
+        document.getElementById('admin-user-list').innerHTML = html;
+
+      });
+
+
+
+      database.ref('referanslar').once('value').then(snap => {
+
+        let rHtml = '';
+
+        if(snap.exists()) { snap.forEach(child => { rHtml += `<div class="flex justify-between"><span>${child.key}</span><span class="text-green-500">Aktif</span></div>`; }); } 
+
+        else { rHtml = 'Kayıtlı kod yok.'; }
+
+        document.getElementById('admin-ref-list').innerHTML = rHtml;
+
+      });
+
+
+
+      const mod = document.getElementById('admin-modal'); mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50); 
+
+    }
+
+
+
+    function closeAdminPanel() { const mod = document.getElementById('admin-modal'); mod.classList.add('opacity-0'); setTimeout(()=> mod.classList.add('hidden'), 300); }
+
+
+
+    function adminSetKarma() {
+
+      let nick = document.getElementById('admin-target-nick').value.trim();
+
+      let val = parseInt(document.getElementById('admin-karma-val').value.trim());
+
+      if(!nick || isNaN(val)) return;
+
+      const safeNick = nick.toLowerCase().replace(/[.#$\[\]]/g, '_');
+
+      database.ref('kullanicilar/' + safeNick).once('value').then(snap => {
+
+        if(!snap.exists()) { showToast('Kullanıcı bulunamadı!'); return; }
+
+        database.ref('kullanicilar/' + safeNick).update({ karma: val, infiniteKarma: false });
+
+        showToast(`${nick} karması ${val} yapıldı.`);
+
+        document.getElementById('admin-target-nick').value=''; document.getElementById('admin-karma-val').value='';
+
+        openAdminPanel();
+
+      });
+
+    }
+
+
+
+    function adminSetInfiniteKarma() {
+
+      let nick = document.getElementById('admin-target-nick').value.trim();
+
+      if(!nick) return; const safeNick = nick.toLowerCase().replace(/[.#$\[\]]/g, '_');
+
+      database.ref('kullanicilar/' + safeNick).once('value').then(snap => {
+
+        if(!snap.exists()) { showToast('Kullanıcı bulunamadı!'); return; }
+
+        database.ref('kullanicilar/' + safeNick).update({ infiniteKarma: true });
+
+        showToast(`${nick} artık bir Onur Konuğu (∞)`);
+
+        document.getElementById('admin-target-nick').value=''; openAdminPanel();
+
+      });
+
+    }
+
+
+
+    function adminAddRefCode() {
+
+      let code = document.getElementById('admin-new-ref').value.trim();
+
+      if(!code) return; database.ref('referanslar/' + code).set(true); showToast(`Yeni kod eklendi: ${code}`);
+
+      document.getElementById('admin-new-ref').value = ''; openAdminPanel();
+
+    }
+
+
+
+    // ════════════ ZQWQZ TARZI PROFİL VE STALK MOTORU ════════════
+
     let currentProfileNick = ''; 
 
+
+
     function openUserProfile(targetNick) {
+
       currentProfileNick = targetNick; 
+
       const myUser = localStorage.getItem('kadavra_vip_user') || '';
+
       const isMe = myUser.toLowerCase() === targetNick.toLowerCase();
+
       const safeNick = targetNick.toLowerCase().replace(/[.#$\[\]]/g, '_');
+
       const mySafeNick = myUser.toLowerCase().replace(/[.#$\[\]]/g, '_');
+
       
+
       database.ref('kullanicilar/' + safeNick).once('value').then(snap => {
+
         if(!snap.exists() && !isMe) { showToast('Böyle bir pampik yok!'); return; }
+
         const data = snap.val() || {};
+
         const karma = data.karma || 0;
+
         
+
         document.getElementById('up-name').textContent = targetNick;
-        document.getElementById('up-rank').textContent = adminler.includes(targetNick.toLowerCase()) ? '👑 LEJYON BARONU' : getRank(karma);
-        document.getElementById('up-stat-karma').textContent = karma;
+
+        if (adminler.includes(targetNick.toLowerCase()) && !data.ozelRol) {
+          document.getElementById('up-rank').textContent = '👑 LEJYON BARONU';
+        } else {
+          document.getElementById('up-rank').textContent = calculateRank(karma, data.yol, data.infiniteKarma, data.ozelRol);
+        }
+
+        document.getElementById('up-stat-karma').textContent = data.infiniteKarma ? '∞' : karma;
+
         document.getElementById('up-pp').src = data.pp || getAvatar(targetNick);
-        
+
         document.getElementById('up-bio').textContent = data.bio || 'Biyografi bulunamadı.';
+
         document.getElementById('up-location').textContent = data.loc || 'Yeraltı';
 
+
+
         const followersCount = data.followers ? Object.keys(data.followers).length : 0;
+
         const followingCount = data.following ? Object.keys(data.following).length : 0;
+
         document.getElementById('up-stat-followers').textContent = followersCount;
+
         document.getElementById('up-stat-following').textContent = followingCount;
 
+
+
         const bgImg = document.getElementById('up-bg');
+
         if(data.bg) { bgImg.src = data.bg; bgImg.classList.remove('hidden'); } else { bgImg.classList.add('hidden'); bgImg.src = ''; }
 
+
+
         const actionsDiv = document.getElementById('up-actions');
+
         if(isMe) {
+
           actionsDiv.innerHTML = `<button onclick="openSettings()" class="border border-red-900/50 bg-[#111] hover:bg-red-900/50 px-4 py-1.5 rounded-sm text-white font-bold text-xs uppercase tracking-wider transition-colors">⚙️ Ayarlar</button>`;
+
+          checkFactionEligibility(karma, data.yol); 
+
         } else {
+
           const isFollowing = data.followers && data.followers[mySafeNick];
+
           const followText = isFollowing ? 'Takipten Çık' : 'Takip Et';
+
           actionsDiv.innerHTML = `
+
             <button onclick="toggleFollow('${targetNick}')" id="follow-btn-ui" class="border ${isFollowing ? 'border-gray-600 bg-transparent text-gray-400' : 'border-red-700 bg-red-900/50 text-white hover:bg-red-600'} px-4 py-1.5 rounded-sm font-bold text-xs uppercase tracking-wider transition-colors">${followText}</button>
+
             <button onclick="giveSuku('${safeNick}', '${targetNick}')" class="bg-red-600 hover:bg-red-500 px-4 py-1.5 rounded-sm text-white font-bold text-xs uppercase tracking-wider shadow-[0_0_10px_rgba(229,9,20,0.3)]">👍 Şukula</button>
+
           `;
+
         }
+
+
 
         const histDiv = document.getElementById('up-history-feed'); histDiv.innerHTML = '';
+
         let histCount = 0;
+
         if(data.history) {
+
           let hist = Object.values(data.history); hist.sort((a,b) => b.watchedAt - a.watchedAt);
+
           histCount = hist.length;
+
           hist.slice(0, 6).forEach(item => {
-            histDiv.innerHTML += `<img src="${IMG_BASE}w185${item.poster_path}" class="w-full aspect-[2/3] object-cover rounded-sm border border-red-900/30 cursor-pointer hover:border-red-500 transition-colors" onclick="closeUserProfile(); searchSelect(${item.id}, '${item.media_type}')" title="${item.title||item.name}">`;
+
+            histDiv.innerHTML += `<div class="w-full flex-shrink-0"><img src="${IMG_BASE}w185${item.poster_path}" class="w-full aspect-[2/3] object-cover rounded-sm border border-red-900/30 cursor-pointer hover:border-red-500 transition-colors" onclick="closeUserProfile(); searchSelect(${item.id}, '${item.media_type}')" title="${item.title||item.name}"></div>`;
+
           });
+
         }
+
         document.getElementById('up-stat-history').textContent = histCount;
 
+
+
         const watchDiv = document.getElementById('up-watchlist-feed'); watchDiv.innerHTML = '';
+
         if(data.watchlist) {
+
           let list = Object.values(data.watchlist); list.sort((a,b) => b.addedAt - a.addedAt);
+
           list.slice(0, 6).forEach(item => {
-            watchDiv.innerHTML += `<img src="${IMG_BASE}w185${item.poster_path}" class="w-full aspect-[2/3] object-cover rounded-sm border border-red-900/30 cursor-pointer hover:border-red-500 transition-colors" onclick="closeUserProfile(); searchSelect(${item.id}, '${item.media_type}')" title="${item.title||item.name}">`;
+
+            watchDiv.innerHTML += `<div class="w-full flex-shrink-0"><img src="${IMG_BASE}w185${item.poster_path}" class="w-full aspect-[2/3] object-cover rounded-sm border border-red-900/30 cursor-pointer hover:border-red-500 transition-colors" onclick="closeUserProfile(); searchSelect(${item.id}, '${item.media_type}')" title="${item.title||item.name}"></div>`;
+
           });
+
         }
+
+
 
         loadWall(safeNick, isMe);
 
         const mod = document.getElementById('user-profile-modal'); mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50);
+
       });
+
     }
+
+
 
     function toggleFollow(targetNick) {
+
       const myUser = localStorage.getItem('kadavra_vip_user'); if(!myUser) return;
+
       const mySafeNick = myUser.toLowerCase().replace(/[.#$\[\]]/g, '_');
+
       const targetSafeNick = targetNick.toLowerCase().replace(/[.#$\[\]]/g, '_');
+
       
+
       const targetRef = database.ref(`kullanicilar/${targetSafeNick}/followers/${mySafeNick}`);
+
       const myRef = database.ref(`kullanicilar/${mySafeNick}/following/${targetSafeNick}`);
+
       
+
       targetRef.once('value').then(snap => {
+
         const btn = document.getElementById('follow-btn-ui');
+
         if(snap.exists()) {
+
           targetRef.remove(); myRef.remove(); showToast('Takipten çıkıldı.');
+
           if(btn) { btn.textContent = 'Takip Et'; btn.className = 'border border-red-700 bg-red-900/50 text-white hover:bg-red-600 px-4 py-1.5 rounded-sm font-bold text-xs uppercase tracking-wider transition-colors'; }
+
           document.getElementById('up-stat-followers').textContent = parseInt(document.getElementById('up-stat-followers').textContent) - 1;
+
         } else {
+
           targetRef.set(true); myRef.set(true); showToast('Takip edildi!');
+
           if(btn) { btn.textContent = 'Takipten Çık'; btn.className = 'border border-gray-600 bg-transparent text-gray-400 px-4 py-1.5 rounded-sm font-bold text-xs uppercase tracking-wider transition-colors'; }
+
           document.getElementById('up-stat-followers').textContent = parseInt(document.getElementById('up-stat-followers').textContent) + 1;
+
         }
+
       });
+
     }
+
+
 
     function postToWall() {
+
       const input = document.getElementById('wall-input'); const text = input.value.trim();
+
       if(!text || !currentProfileNick) return;
+
       const loggedUser = localStorage.getItem('kadavra_vip_user') || 'Anonim';
+
       const targetSafeNick = currentProfileNick.toLowerCase().replace(/[.#$\[\]]/g, '_');
+
       database.ref('kullanicilar/' + targetSafeNick + '/duvar').push({ yazar: loggedUser, mesaj: text, tarih: Date.now() });
+
       input.value = ''; showToast('Duvara racon kesildi!');
+
     }
+
+
 
     function loadWall(targetSafeNick, isMe) {
+
       const wallDiv = document.getElementById('up-wall-feed');
+
       const currentUser = localStorage.getItem('kadavra_vip_user') || '';
+
       const isAdmin = adminler.includes(currentUser.toLowerCase());
+
+
 
       database.ref('kullanicilar/' + targetSafeNick + '/duvar').on('value', snap => {
+
         wallDiv.innerHTML = '';
+
         if(!snap.exists()) { wallDiv.innerHTML = '<p class="text-xs text-gray-600 font-mono">Duvar tertemiz. İlk yazan sen ol!</p>'; return; }
+
         let msgs = []; snap.forEach(child => { msgs.push({ key: child.key, ...child.val() }); }); msgs.sort((a,b) => b.tarih - a.tarih); 
+
         
+
         msgs.forEach(msg => {
+
           const dateStr = new Date(msg.tarih).toLocaleDateString('tr-TR', { month:'short', day:'numeric' });
+
           const canDelete = isMe || msg.yazar.toLowerCase() === currentUser.toLowerCase() || isAdmin; 
+
           const delBtn = canDelete ? `<button onclick="deleteWallPost('${targetSafeNick}', '${msg.key}')" class="text-gray-600 hover:text-red-500 text-[10px]" title="Sil">🗑️</button>` : '';
 
+
+
           wallDiv.innerHTML += `
+
             <div class="border-b border-red-900/20 pb-3 mb-3">
+
               <div class="flex justify-between items-center mb-1">
+
                 <span onclick="openUserProfile('${msg.yazar}')" class="text-xs font-bold text-red-500 hover:text-white cursor-pointer uppercase tracking-wider">${msg.yazar}</span>
+
                 <div class="flex items-center gap-2"><span class="text-[9px] text-gray-500">${dateStr}</span>${delBtn}</div>
+
               </div>
+
               <p class="text-xs text-gray-300 break-words">${msg.mesaj}</p>
+
             </div>
+
           `;
+
         });
+
       });
+
     }
+
+
 
     function deleteWallPost(targetSafeNick, postKey) {
+
       if(confirm('Kazıyıp atıyoruz, emin misin?')) { database.ref('kullanicilar/' + targetSafeNick + '/duvar/' + postKey).remove(); showToast('Yazı silindi.'); }
+
     }
+
+
 
     function closeUserProfile() { const mod = document.getElementById('user-profile-modal'); mod.classList.add('opacity-0'); setTimeout(()=> mod.classList.add('hidden'), 300); }
+
     
+
     function openSettings() { 
+
       closeUserProfile(); const user = localStorage.getItem('kadavra_vip_user');
+
       const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+
       database.ref('kullanicilar/' + safeNick).once('value').then(snap => {
+
         const data = snap.val() || {};
-        document.getElementById('pp-input').value = data.pp || '';
-        document.getElementById('bg-input').value = data.bg || '';
-        document.getElementById('bio-input').value = data.bio || '';
-        document.getElementById('loc-input').value = data.loc || '';
+
+        document.getElementById('pp-input').value = data.pp || ''; document.getElementById('bg-input').value = data.bg || '';
+
+        document.getElementById('bio-input').value = data.bio || ''; document.getElementById('loc-input').value = data.loc || '';
+
       });
+
       if(adminler.includes(user.toLowerCase())) document.getElementById('admin-btn-container').classList.remove('hidden');
+
       const mod = document.getElementById('settings-modal'); mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50); 
+
     }
+
     
+
     function closeSettings() { const mod = document.getElementById('settings-modal'); mod.classList.add('opacity-0'); setTimeout(()=> mod.classList.add('hidden'), 300); }
-    function openAdminPanelFromProfile() { closeSettings(); openAdminPanel(); }
+
     
+
     function updateProfileSettings() {
+
       const ppLink = document.getElementById('pp-input').value.trim(); const bgLink = document.getElementById('bg-input').value.trim();
+
       const bio = document.getElementById('bio-input').value.trim(); const loc = document.getElementById('loc-input').value.trim();
+
       const user = localStorage.getItem('kadavra_vip_user'); const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+
       
+
       let updates = {};
-      if(ppLink) updates.pp = ppLink;
-      if(bgLink) updates.bg = bgLink;
-      if(bio) updates.bio = bio;
-      if(loc) updates.loc = loc;
+
+      if(ppLink) updates.pp = ppLink; if(bgLink) updates.bg = bgLink;
+
+      if(bio) updates.bio = bio; if(loc) updates.loc = loc;
+
       
+
       database.ref('kullanicilar/' + safeNick).update(updates).then(() => {
+
         showToast('Profil ayarları jilet gibi oldu!');
+
         setTimeout(() => { closeSettings(); openUserProfile(user); }, 500); 
+
       });
+
     }
+
+
 
     function changePassword() {
+
       const newPass = document.getElementById('new-pass-input').value.trim();
+
       if(!newPass || newPass.length < 3) { showToast('Şifre çok kısa kanki!'); return; }
+
       const user = localStorage.getItem('kadavra_vip_user'); if(!user) return; const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+
       database.ref('kullanicilar/' + safeNick).update({ sifre: newPass }).then(() => { localStorage.setItem('kadavra_vip_pass', newPass); document.getElementById('new-pass-input').value = ''; showToast('Şifren güncellendi!'); closeSettings(); });
+
     }
+
+
 
     // ════════════════════ BULUT GEÇMİŞ VE İZLEME LİSTESİ ════════════════════
+
     function saveToHistory(item, type) {
+
       const user = localStorage.getItem('kadavra_vip_user'); if(!user) return; const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+
       database.ref(`kullanicilar/${safeNick}/history/${item.id}`).set({ ...item, media_type: type, watchedAt: Date.now() });
-      database.ref(`kullanicilar/${safeNick}/karma`).transaction(k => (k || 0) + 10); 
+
     }
+
     
+
     function removeFromHistory(itemId) {
+
       const user = localStorage.getItem('kadavra_vip_user'); if(!user) return; const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+
       database.ref(`kullanicilar/${safeNick}/history/${itemId}`).remove(); showToast('Geçmişten silindi!');
+
     }
+
     
+
     function loadHistory() {
+
       const user = localStorage.getItem('kadavra_vip_user'); if(!user) return; const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+
       database.ref(`kullanicilar/${safeNick}/history`).on('value', snap => {
+
         const section = document.getElementById('continue-watching'); const row = document.getElementById('continue-row');
+
         if(!snap.exists()) { section.classList.add('hidden'); return; }
+
         let hist = []; snap.forEach(c => hist.push(c.val())); hist.sort((a,b) => b.watchedAt - a.watchedAt); 
+
         section.classList.remove('hidden'); row.innerHTML = '';
+
         hist.slice(0, 15).forEach(item => {
-          const title = item.title || item.name || ''; const div = document.createElement('div'); div.className = 'card-wrap relative group';
+
+          const title = item.title || item.name || ''; const div = document.createElement('div'); div.className = 'card-wrap relative group'; 
+
           div.innerHTML = `<img class="card-img opacity-80 group-hover:opacity-100 transition-opacity" src="${IMG_BASE}w342${item.poster_path}" loading="lazy" /><button onclick="event.stopPropagation(); removeFromHistory(${item.id})" class="absolute top-2 right-2 bg-black/80 border border-red-500/50 hover:bg-red-600 text-white w-6 h-6 rounded-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-30 font-bold text-xs" title="Geçmişten Sil">&times;</button><div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"><div class="w-12 h-12 bg-red-600/80 rounded-sm flex items-center justify-center backdrop-blur"><svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><p class="card-title">${title}</p>`;
+
           div.addEventListener('click', () => openModal(item, item.media_type)); row.appendChild(div);
+
         });
+
       });
+
     }
+
+
 
     function toggleWatchlist() {
+
       if (!currentItem) return; const user = localStorage.getItem('kadavra_vip_user'); if(!user) return; const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_'); const ref = database.ref(`kullanicilar/${safeNick}/watchlist/${currentItem.id}`);
+
       ref.once('value').then(snap => { if(snap.exists()) { ref.remove(); showToast('❌ Listenden çıkarıldı.'); } else { ref.set({ ...currentItem, addedAt: Date.now() }); showToast('✅ Listene eklendi.'); } checkWatchlistStatus(currentItem.id); });
+
     }
+
+
 
     function checkWatchlistStatus(id) {
+
       const user = localStorage.getItem('kadavra_vip_user'); if(!user) return; const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+
       database.ref(`kullanicilar/${safeNick}/watchlist/${id}`).once('value').then(snap => {
+
          const btnText = document.getElementById('watchlist-text'); const btnIcon = document.getElementById('watchlist-icon');
+
          if (snap.exists()) { btnText.textContent = 'Listeden Çıkar'; btnIcon.textContent = '✓'; } else { btnText.textContent = 'Listeme Ekle'; btnIcon.textContent = '+'; }
+
       });
+
     }
+
+
 
     function loadWatchlist() {
+
       const user = localStorage.getItem('kadavra_vip_user'); if(!user) return; const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+
       database.ref(`kullanicilar/${safeNick}/watchlist`).on('value', snap => {
+
          const section = document.getElementById('watchlist-section'); const row = document.getElementById('watchlist-row');
+
          if(!snap.exists()) { section.classList.add('hidden'); return; } section.classList.remove('hidden'); row.innerHTML = '';
+
          let list = []; snap.forEach(c => list.push(c.val())); list.sort((a,b) => b.addedAt - a.addedAt);
+
          list.forEach(item => {
+
             const title = item.title || item.name || ''; const div = document.createElement('div'); div.className = 'card-wrap';
+
             div.innerHTML = `<img class="card-img" src="${IMG_BASE}w342${item.poster_path}" loading="lazy" /><p class="card-title">${title}</p>`;
+
             div.addEventListener('click', () => openModal(item, item.media_type)); row.appendChild(div);
+
          });
+
       });
+
     }
+
+
 
     // ════════════════════ TMDB VE SAYFA İŞLEMLERİ ════════════════════
+
     let heroData = null; let currentItem = null; let currentSeasons = []; let searchTimer = null;
+
     window.addEventListener('scroll', () => { document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60); });
-    async function tmdb(path, params = {}) { const q = new URLSearchParams({ api_key: API_KEY, language: LANG, ...params }); const r = await fetch(`${BASE_URL}${path}?${q}`); if (!r.ok) throw new Error(`TMDB ${r.status}`); return r.json(); }
-    async function init() { if (!API_KEY || API_KEY === 'BURAYA_API_KEY_GELECEK') { showToast('⚠️ Lütfen API anahtarınızı girin!'); return; } try { loadHistory(); loadWatchlist(); await Promise.all([loadHero(), loadTrending(), loadMovies(), loadSeries()]); } catch(e) { console.log(e); } }
-    async function loadHero(type = 'all') { let data; let mediaType = 'movie'; if (type === 'movie') { data = await tmdb('/movie/popular'); } else if (type === 'tv') { data = await tmdb('/tv/popular'); mediaType = 'tv'; } else { data = await tmdb('/trending/all/day'); } const items = data.results.filter(m => m.backdrop_path); heroData = items[Math.floor(Math.random() * Math.min(5, items.length))]; renderHero(heroData, heroData.media_type || mediaType); }
-    function renderHero(item, type) { const el = id => document.getElementById(id); const bg = el('hero-bg'); const img = `${IMG_BASE}original${item.backdrop_path}`; bg.style.backgroundImage = `url(${img})`; bg.style.opacity = '0'; const t = new Image(); t.src = img; t.onload = () => { bg.style.opacity = '1'; }; el('hero-title').textContent = item.title || item.name; el('hero-desc').textContent = item.overview || 'Açıklama bulunamadı.'; const year = (item.release_date || item.first_air_date || '').slice(0,4); const rating = item.vote_average ? item.vote_average.toFixed(1) : '–'; el('hero-meta').innerHTML = `<span class="rating-badge">⭐ ${rating}</span><span class="text-red-400 text-sm">${year}</span><span class="text-red-500 text-sm uppercase text-xs">${type === 'tv' ? '● Dizi' : '● Film'}</span>`; ['hero-badge','hero-title','hero-desc','hero-meta','hero-btns'].forEach(id => { const el2 = el(id); el2.style.opacity = '1'; el2.style.transform = 'translateY(0)'; }); el('hero-play').onclick = () => { currentItem = { ...item, media_type: type }; playModal(); }; el('hero-btns').querySelector('button:last-child').onclick = () => openModal(item, type); }
-    function playHero() { if (!heroData) return; openModal(heroData, heroData.media_type || 'movie'); } function infoHero() { if (!heroData) return; openModal(heroData, heroData.media_type || 'movie'); }
-    async function switchView(viewName) { closeAll(); document.getElementById('view-home').classList.add('hidden'); document.getElementById('view-movies').classList.add('hidden'); document.getElementById('view-series').classList.add('hidden'); document.getElementById('view-' + viewName).classList.remove('hidden'); if (viewName === 'home') { loadHero('all'); } else if (viewName === 'movies') { loadHero('movie'); const action = await tmdb('/discover/movie', { with_genres: 28 }); renderRow('action-row', action.results, () => 'movie'); const comedy = await tmdb('/discover/movie', { with_genres: 35 }); renderRow('comedy-row', comedy.results, () => 'movie'); const scifi = await tmdb('/discover/movie', { with_genres: 878 }); renderRow('scifi-row', scifi.results, () => 'movie'); } else if (viewName === 'series') { loadHero('tv'); const action = await tmdb('/discover/tv', { with_genres: 10759 }); renderRow('action-series-row', action.results, () => 'tv'); const scifi = await tmdb('/discover/tv', { with_genres: 10765 }); renderRow('scifi-series-row', scifi.results, () => 'tv'); const anim = await tmdb('/discover/tv', { with_genres: 16 }); renderRow('anim-series-row', anim.results, () => 'tv'); } window.scrollTo({ top: 0, behavior: 'smooth' }); }
-    async function loadTrending() { const data = await tmdb('/trending/all/week'); renderRow('trending-row', data.results, item => item.media_type || 'movie'); } async function loadMovies() { const data = await tmdb('/movie/now_playing'); renderRow('movies-row', data.results, () => 'movie'); } async function loadSeries() { const data = await tmdb('/tv/popular'); renderRow('series-row', data.results, () => 'tv'); }
-    function renderRow(rowId, items, typeGetter) { const row = document.getElementById(rowId); row.innerHTML = ''; items.slice(0, 18).forEach(item => { if (!item.poster_path) return; const type = typeGetter(item); const title = item.title || item.name || ''; const div = document.createElement('div'); div.className = 'card-wrap'; div.innerHTML = `<img class="card-img" src="${IMG_BASE}w342${item.poster_path}" loading="lazy" /><p class="card-title">${title}</p>`; div.addEventListener('click', () => openModal(item, type)); row.appendChild(div); }); }
+
     
-    async function openModal(item, type) {
-      history.pushState({ modalOpen: true }, ''); currentItem = { ...item, media_type: type }; const overlay = document.getElementById('modal-overlay');
-      document.getElementById('modal-title').textContent = item.title || item.name; document.getElementById('modal-desc').textContent = item.overview || 'Konu detayı bulunamadı...';
-      document.getElementById('modal-bg-img').src = item.backdrop_path ? `${IMG_BASE}original${item.backdrop_path}` : ''; document.getElementById('modal-poster').src = item.poster_path ? `${IMG_BASE}w500${item.poster_path}` : '';
-      const year = (item.release_date || item.first_air_date || '').slice(0,4); const rating = item.vote_average ? item.vote_average.toFixed(1) : '–';
-      document.getElementById('modal-meta').innerHTML = `<span class="rating-badge">IMDB ${rating}</span><span class="text-red-300 font-bold">${year}</span><span class="text-xs text-red-400 border border-red-500/30 px-2 py-0.5 rounded-sm font-bold tracking-widest">${type === 'tv' ? 'DİZİ' : 'FİLM'}</span>`;
-      overlay.classList.add('open'); checkWatchlistStatus(item.id); document.body.style.overflow = 'hidden'; 
-      loadComments(item.id);
-      document.getElementById('modal-seasons-wrap').classList.add('hidden'); document.getElementById('modal-cast').textContent = 'Yükleniyor...'; const trailerBtn = document.getElementById('modal-trailer-btn'); trailerBtn.classList.add('hidden');
+
+    async function tmdb(path, params = {}) { 
+
+      const q = new URLSearchParams({ api_key: API_KEY, language: LANG, ...params }); 
+
+      const r = await fetch(`${BASE_URL}${path}?${q}`); 
+
+      if (!r.ok) throw new Error(`TMDB ${r.status}`); 
+
+      return r.json(); 
+
+    }
+
+    
+
+    async function init() { 
+
+      if (!API_KEY || API_KEY === 'BURAYA_API_KEY_GELECEK') { showToast('⚠️ Lütfen API anahtarınızı girin!'); return; } 
+
+      try { 
+
+        loadHistory(); loadWatchlist(); 
+
+        await Promise.all([loadHero(), loadTrending(), loadMovies(), loadSeries()]); 
+
+      } catch(e) { 
+
+        console.error("API Bağlantı Hatası: ", e); 
+
+        showToast('Yeraltı sunucularında dalgalanma var!'); 
+
+      } 
+
+    }
+
+    
+
+    async function loadHero(type = 'all') { 
+
       try {
+
+        let data; let mediaType = 'movie'; 
+
+        if (type === 'movie') { data = await tmdb('/movie/popular'); } 
+
+        else if (type === 'tv') { data = await tmdb('/tv/popular'); mediaType = 'tv'; } 
+
+        else { data = await tmdb('/trending/all/day'); } 
+
+        const items = data.results.filter(m => m.backdrop_path); 
+
+        if(items.length > 0) { 
+
+          heroData = items[Math.floor(Math.random() * Math.min(5, items.length))]; 
+
+          renderHero(heroData, heroData.media_type || mediaType); 
+
+        }
+
+      } catch(e) { console.error("Hero Yükleme Hatası:", e); }
+
+    }
+
+    
+
+    function renderHero(item, type) { const el = id => document.getElementById(id); const bg = el('hero-bg'); const img = `${IMG_BASE}original${item.backdrop_path}`; bg.style.backgroundImage = `url(${img})`; bg.style.opacity = '0'; const t = new Image(); t.src = img; t.onload = () => { bg.style.opacity = '1'; }; el('hero-title').textContent = item.title || item.name; el('hero-desc').textContent = item.overview || 'Açıklama bulunamadı.'; const year = (item.release_date || item.first_air_date || '').slice(0,4); const rating = item.vote_average ? item.vote_average.toFixed(1) : '–'; el('hero-meta').innerHTML = `<span class="rating-badge">⭐ ${rating}</span><span class="text-red-400 text-sm">${year}</span><span class="text-red-500 text-sm uppercase text-xs">${type === 'tv' ? '● Dizi' : '● Film'}</span>`; ['hero-badge','hero-title','hero-desc','hero-meta','hero-btns'].forEach(id => { const el2 = el(id); el2.style.opacity = '1'; el2.style.transform = 'translateY(0)'; }); el('hero-play').onclick = () => { currentItem = { ...item, media_type: type }; playModal(); }; el('hero-btns').querySelector('button:last-child').onclick = () => openModal(item, type); }
+
+    function playHero() { if (!heroData) return; openModal(heroData, heroData.media_type || 'movie'); } function infoHero() { if (!heroData) return; openModal(heroData, heroData.media_type || 'movie'); }
+
+    async function switchView(viewName) { closeAll(); document.getElementById('view-home').classList.add('hidden'); document.getElementById('view-movies').classList.add('hidden'); document.getElementById('view-series').classList.add('hidden'); document.getElementById('view-' + viewName).classList.remove('hidden'); if (viewName === 'home') { loadHero('all'); } else if (viewName === 'movies') { loadHero('movie'); const action = await tmdb('/discover/movie', { with_genres: 28 }); renderRow('action-row', action.results, () => 'movie'); const comedy = await tmdb('/discover/movie', { with_genres: 35 }); renderRow('comedy-row', comedy.results, () => 'movie'); const scifi = await tmdb('/discover/movie', { with_genres: 878 }); renderRow('scifi-row', scifi.results, () => 'movie'); } else if (viewName === 'series') { loadHero('tv'); const action = await tmdb('/discover/tv', { with_genres: 10759 }); renderRow('action-series-row', action.results, () => 'tv'); const scifi = await tmdb('/discover/tv', { with_genres: 10765 }); renderRow('scifi-series-row', scifi.results, () => 'tv'); const anim = await tmdb('/discover/tv', { with_genres: 16 }); renderRow('anim-series-row', anim.results, () => 'tv'); } window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+    async function loadTrending() { const data = await tmdb('/trending/all/week'); renderRow('trending-row', data.results, item => item.media_type || 'movie'); } async function loadMovies() { const data = await tmdb('/movie/now_playing'); renderRow('movies-row', data.results, () => 'movie'); } async function loadSeries() { const data = await tmdb('/tv/popular'); renderRow('series-row', data.results, () => 'tv'); }
+
+    function renderRow(rowId, items, typeGetter) { const row = document.getElementById(rowId); row.innerHTML = ''; items.slice(0, 18).forEach(item => { if (!item.poster_path) return; const type = typeGetter(item); const title = item.title || item.name || ''; const div = document.createElement('div'); div.className = 'card-wrap'; div.innerHTML = `<img class="card-img" src="${IMG_BASE}w342${item.poster_path}" loading="lazy" /><p class="card-title">${title}</p>`; div.addEventListener('click', () => openModal(item, type)); row.appendChild(div); }); }
+
+    
+
+    async function openModal(item, type) {
+
+      history.pushState({ modalOpen: true }, ''); currentItem = { ...item, media_type: type }; const overlay = document.getElementById('modal-overlay');
+
+      document.getElementById('modal-title').textContent = item.title || item.name; document.getElementById('modal-desc').textContent = item.overview || 'Konu detayı bulunamadı...';
+
+      document.getElementById('modal-bg-img').src = item.backdrop_path ? `${IMG_BASE}original${item.backdrop_path}` : ''; document.getElementById('modal-poster').src = item.poster_path ? `${IMG_BASE}w500${item.poster_path}` : '';
+
+      const year = (item.release_date || item.first_air_date || '').slice(0,4); const rating = item.vote_average ? item.vote_average.toFixed(1) : '–';
+
+      document.getElementById('modal-meta').innerHTML = `<span class="rating-badge">IMDB ${rating}</span><span class="text-red-300 font-bold">${year}</span><span class="text-xs text-red-400 border border-red-500/30 px-2 py-0.5 rounded-sm font-bold tracking-widest">${type === 'tv' ? 'DİZİ' : 'FİLM'}</span>`;
+
+      overlay.classList.add('open'); checkWatchlistStatus(item.id); document.body.style.overflow = 'hidden'; 
+
+      loadComments(item.id);
+
+      document.getElementById('modal-seasons-wrap').classList.add('hidden'); document.getElementById('modal-cast').textContent = 'Yükleniyor...'; const trailerBtn = document.getElementById('modal-trailer-btn'); trailerBtn.classList.add('hidden');
+
+      try {
+
         const details = await tmdb(`/${type}/${item.id}`, { append_to_response: 'external_ids,seasons,credits,videos' }); currentItem.imdb_id = details.imdb_id || (details.external_ids && details.external_ids.imdb_id);
+
         if (details.credits && details.credits.cast) { document.getElementById('modal-cast').textContent = details.credits.cast.slice(0, 6).map(c => c.name).join(', ') || 'Bilinmiyor'; }
+
         if (details.videos && details.videos.results) { const trailer = details.videos.results.find(v => v.type === 'Trailer' && v.site === 'YouTube'); if (trailer) { trailerBtn.classList.remove('hidden'); trailerBtn.onclick = () => window.open(`https://www.youtube.com/watch?v=${trailer.key}`, '_blank'); } }
+
         if (type === 'tv' && details.seasons) { currentSeasons = details.seasons.filter(s => s.season_number > 0); document.getElementById('modal-seasons-wrap').classList.remove('hidden'); renderSeasonTabs(item.id); }
+
       } catch(e) { document.getElementById('modal-cast').textContent = 'Bilinmiyor'; }
+
     }
+
     
+
     function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); document.body.style.overflow = ''; document.getElementById('player-frame').src = ''; document.getElementById('modal-poster').parentElement.classList.remove('hidden'); const btnArea = document.getElementById('modal-desc').nextElementSibling; if(btnArea) btnArea.classList.remove('hidden'); const cList = document.getElementById('comments-list'); if(cList) cList.parentElement.classList.remove('hidden'); if (window.history.state && window.history.state.modalOpen) { window.history.back(); } }
+
     window.onpopstate = function(event) { const overlay = document.getElementById('modal-overlay'); if (overlay && overlay.classList.contains('open')) { closeModal(); } };
+
     function renderSeasonTabs(showId) { const tabs = document.getElementById('season-tabs'); tabs.innerHTML = ''; currentSeasons.forEach((s, i) => { const btn = document.createElement('button'); btn.className = 'season-tab' + (i === 0 ? ' active' : ''); btn.textContent = `Sezon ${s.season_number}`; btn.onclick = () => { document.querySelectorAll('.season-tab').forEach(b => b.classList.remove('active')); btn.classList.add('active'); loadEpisodes(showId, s.season_number); }; tabs.appendChild(btn); }); if (currentSeasons.length > 0) loadEpisodes(showId, currentSeasons[0].season_number); }
+
     async function loadEpisodes(showId, seasonNum) { const list = document.getElementById('episode-list'); list.innerHTML = '<div class="text-red-400">Yükleniyor...</div>'; try { const data = await tmdb(`/tv/${showId}/season/${seasonNum}`); list.innerHTML = ''; (data.episodes || []).forEach(ep => { const div = document.createElement('div'); div.className = 'bg-red-950/40 border border-red-800/30 p-4 rounded-sm hover:bg-red-900/50 cursor-pointer transition flex flex-col gap-1 group'; div.innerHTML = `<div class="text-xs text-red-400 mb-1">Bölüm ${ep.episode_number}</div><div class="text-sm font-bold text-red-100 uppercase truncate group-hover:text-white">${ep.name}</div><div class="text-xs text-red-500 flex justify-between mt-2"><span>${ep.runtime ? ep.runtime+' dk' : ''}</span><svg class="w-4 h-4 text-red-600 group-hover:text-red-300 transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>`; div.onclick = () => playEpisode(ep); list.appendChild(div); }); } catch(e) { list.innerHTML = '<p class="text-red-600 text-sm">Bölümler yüklenemedi.</p>'; } }
+
+    
+
+    // ════════════ YENİ VİDSRC PLAYER VE İZLEDİKÇE KATLANAN KARMA SİSTEMİ ════════════
+
+    let karmaTimer = null;
+
     function playEpisode(ep) { openPlayer(currentItem, ep); } function playModal() { if (!currentItem) return; openPlayer(currentItem, null); }
-    function openPlayer(item, episode) {
-      const imdb = item.imdb_id;
-      if (!imdb) { showToast('🎬 IMDB ID bulunamadı.'); return; }
+
+    
+
+    function openPlayer(item, episode) { 
+
+      const imdb = item.imdb_id; if (!imdb) { showToast('🎬 IMDB ID bulunamadı.'); return; } 
+
+      saveToHistory(item, item.media_type); broadcastToTayfa(item, episode); 
+
       
-      saveToHistory(item, item.media_type);
-      broadcastToTayfa(item, episode);
+
+      let url = `https://vidsrc.net/embed/movie?imdb=${imdb}`; 
+
+      if (episode) { url = `https://vidsrc.net/embed/tv?imdb=${imdb}&season=${episode.season_number}&episode=${episode.episode_number}`; } 
+
       
-      // Eski sunucu patlamış, yeraltının en sağlam motoru Vidsrc'ye geçiş yapıldı
-      let url = `https://vidsrc.net/embed/movie?imdb=${imdb}`;
-      if (episode) { 
-        url = `https://vidsrc.net/embed/tv?imdb=${imdb}&season=${episode.season_number}&episode=${episode.episode_number}`; 
+
+      const title = (item.title || item.name || '') + (episode ? ` – Sezon ${episode.season_number} Bölüm ${episode.episode_number}` : ''); 
+
+      document.getElementById('player-title').textContent = title; 
+
+      document.getElementById('player-frame').src = url; 
+
+      document.getElementById('player-overlay').classList.add('open'); 
+
+      document.body.style.overflow = 'hidden'; 
+
+      
+
+      const user = localStorage.getItem('kadavra_vip_user'); 
+
+      if(user) {
+
+        const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+
+        clearInterval(karmaTimer);
+
+        karmaTimer = setInterval(() => {
+
+          database.ref(`kullanicilar/${safeNick}`).once('value').then(snap => {
+
+            if(snap.exists()) {
+
+              let data = snap.val();
+
+              let ticks = data.watchTicks || 0;
+
+              ticks += 1;
+
+              let gain = 10 + (ticks * 2); 
+
+              if(gain > 300) gain = 300; 
+
+              
+
+              database.ref(`kullanicilar/${safeNick}`).update({
+
+                karma: (data.karma || 0) + gain,
+
+                watchTicks: ticks
+
+              });
+
+              showToast(`⚡ +${gain} Karma (Aktif İzleme Bonusu!)`);
+
+            }
+
+          });
+
+        }, 300000); 
+
       }
-      
-      const title = (item.title || item.name || '') + (episode ? ` – Sezon ${episode.season_number} Bölüm ${episode.episode_number}` : '');
-      document.getElementById('player-title').textContent = title;
-      document.getElementById('player-frame').src = url;
-      document.getElementById('player-overlay').classList.add('open');
-      document.body.style.overflow = 'hidden';
+
     }
-    function closePlayer() { document.getElementById('player-overlay').classList.remove('open'); document.getElementById('player-frame').src = ''; document.body.style.overflow = ''; } function closeAll() { closeModal(); closePlayer(); }
+
     
+
+    function closePlayer() { 
+
+      document.getElementById('player-overlay').classList.remove('open'); 
+
+      document.getElementById('player-frame').src = ''; 
+
+      document.body.style.overflow = ''; 
+
+      clearInterval(karmaTimer); 
+
+    } 
+
+    function closeAll() { closeModal(); closePlayer(); }
+
+    
+
     function handleSearch(val) { clearTimeout(searchTimer); const box = document.getElementById('search-results'); if (!val.trim()) { box.classList.add('hidden'); return; } searchTimer = setTimeout(() => doSearch(val), 400); }
+
     
+
     async function doSearch(q) { 
+
       const box = document.getElementById('search-results'); 
+
       if (!q.trim()) { box.classList.add('hidden'); return; } 
+
       let resultsHTML = ''; const safeQ = q.toLowerCase();
 
+
+
       try {
+
         const snap = await database.ref('kullanicilar').once('value');
+
         if(snap.exists()) {
+
           snap.forEach(child => {
+
             const uNick = child.key.replace(/_/g, '.'); 
+
             if(uNick.toLowerCase().includes(safeQ)) {
+
               const pp = child.val().pp || getAvatar(uNick);
+
               resultsHTML += `
+
                 <div class="flex items-center gap-3 p-3 hover:bg-red-900/40 cursor-pointer transition-colors border-b border-red-900/50" onclick="document.getElementById('search-input').value=''; document.getElementById('search-results').classList.add('hidden'); openUserProfile('${uNick}');">
+
                   <img src="${pp}" class="w-10 h-10 object-cover rounded-sm border border-red-500 shadow-[0_0_10px_rgba(229,9,20,0.5)]" />
+
                   <div><p class="text-sm font-bold text-red-400 drop-shadow-md">🕵️ ${uNick}</p><p class="text-[10px] text-gray-500">Lejyoner Profili</p></div>
+
                 </div>`;
+
             }
+
           });
+
         }
+
       } catch(e) { console.log("Kullanıcı arama hatası"); }
 
+
+
       if (API_KEY !== 'BURAYA_API_KEY_GELECEK') { 
+
         try { 
+
           const data = await tmdb('/search/multi', { query: q }); 
+
           const items = data.results.filter(i => i.poster_path && (i.media_type === 'movie' || i.media_type === 'tv')).slice(0, 5); 
+
           items.forEach(i => {
+
             resultsHTML += `<div class="flex items-center gap-3 p-3 hover:bg-black/60 cursor-pointer transition-colors border-b border-red-900/30 last:border-0" onclick="searchSelect(${i.id}, '${i.media_type}')"><img src="${IMG_BASE}w92${i.poster_path}" class="w-8 h-12 object-cover rounded-sm" /><div><p class="text-sm text-red-100">${i.title || i.name}</p><p class="text-xs text-red-500">${i.media_type === 'tv' ? 'Dizi' : 'Film'} · ${(i.release_date || i.first_air_date || '').slice(0,4)}</p></div></div>`;
+
           });
+
         } catch(e) {} 
+
       }
+
+
 
       if(resultsHTML === '') { box.classList.add('hidden'); } else { box.innerHTML = resultsHTML; box.classList.remove('hidden'); }
+
     }
+
+
 
     async function searchSelect(id, type) { document.getElementById('search-results').classList.add('hidden'); document.getElementById('search-input').value = ''; try { const item = await tmdb(`/${type}/${id}`); openModal(item, type); } catch(e) { showToast('İçerik bulunamadı.'); } }
+
     document.addEventListener('click', e => { if (!e.target.closest('#search-input') && !e.target.closest('#search-results')) document.getElementById('search-results').classList.add('hidden'); });
+
     function showToast(msg, long = false) { const t = document.getElementById('toast'); document.getElementById('toast-msg').textContent = msg; t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)'; t.style.pointerEvents = 'all'; setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(16px)'; t.style.pointerEvents = 'none'; }, long ? 4000 : 2500); }
+
     async function playRandom() { showToast('🎲 Rastgele efsane seçiliyor...', false); try { const randomPage = Math.floor(Math.random() * 20) + 1; const data = await tmdb('/movie/popular', { page: randomPage }); const items = data.results.filter(m => m.backdrop_path && m.poster_path); if (items.length > 0) { openModal(items[Math.floor(Math.random() * items.length)], 'movie'); } else { showToast('Tekrar dene.'); } } catch(e) { showToast('Hata.'); } }
 
+
+
     // ════════════════════ TAYFA, YORUM VE ŞUKU MOTORLARI ════════════════════
+
     function broadcastToTayfa(item, episode) {
+
       const user = localStorage.getItem('kadavra_vip_user') || 'Kayıtsız'; const title = (item.title || item.name || ''); const epText = episode ? ` (S${episode.season_number} B${episode.episode_number})` : ''; const safeUser = user.toLowerCase().replace(/[.#$\[\]]/g, '_'); 
+
       const ref = database.ref('tayfa_akis/' + safeUser);
+
       ref.once('value').then(snap => {
+
         const data = snap.val(); let currentLikes = null;
+
         if (data && data.id === item.id) { currentLikes = data.likes || null; }
+
         ref.set({ user: user, title: title + epText, poster: item.poster_path, type: item.media_type || 'movie', id: item.id, timestamp: Date.now(), likes: currentLikes });
+
       });
+
     }
+
+
 
     function listenTayfa() {
+
       database.ref('tayfa_akis').on('value', (snapshot) => {
+
         const row = document.getElementById('tayfa-row'); if (!row) return; row.innerHTML = '';
+
         let rawData = []; snapshot.forEach(child => { let val = child.val(); val._safeUser = child.key; rawData.push(val); }); 
+
         rawData.sort((a, b) => b.timestamp - a.timestamp); 
+
         let uniqueData = []; let seenUsers = new Set();
+
         rawData.forEach(w => { if (!seenUsers.has(w.user)) { seenUsers.add(w.user); uniqueData.push(w); } });
+
         
+
         uniqueData.slice(0, 10).forEach(watch => {
+
           if (!watch.poster) return;
+
           const likersArray = watch.likes ? Object.keys(watch.likes) : []; const likeCount = likersArray.length; const likersText = likeCount > 0 ? likersArray.join(', ') : '';
+
           const div = document.createElement('div'); div.className = 'card-wrap relative group';
+
           div.innerHTML = `
+
             <div class="absolute top-2 left-2 z-20 bg-red-900/90 text-red-100 text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded-sm shadow-lg flex items-center gap-1.5 border border-red-500/50"><span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span> <span onclick="event.stopPropagation(); openUserProfile('${watch.user}')" class="cursor-pointer hover:text-white hover:underline">${watch.user}</span></div>
+
             <button onclick="event.stopPropagation(); giveSuku('${watch._safeUser}', '${watch.user}')" class="absolute top-2 right-2 z-30 bg-black/80 hover:bg-red-600 border border-red-500/50 text-white text-[10px] font-bold px-2 py-1 rounded-sm transition-colors opacity-0 group-hover:opacity-100 flex items-center gap-1 backdrop-blur-sm">👍 ${likeCount > 0 ? likeCount : 'Şukula'}</button>
+
             ${likeCount > 0 ? `<div class="absolute bottom-2 left-2 right-2 text-center text-[9px] text-red-200 bg-black/80 rounded-sm px-1 py-0.5 line-clamp-1 backdrop-blur-sm z-30 opacity-0 group-hover:opacity-100 transition-opacity">Kimler: ${likersText}</div>` : ''}
+
             <img class="card-img" src="${IMG_BASE}w342${watch.poster}" loading="lazy" />
+
             <p class="card-title">${watch.title}</p>
+
           `;
+
           div.addEventListener('click', () => searchSelect(watch.id, watch.type)); row.appendChild(div);
+
         });
+
       });
+
     }
+
+
 
     function giveSuku(targetUserKey, targetUserName) {
+
       const myUser = localStorage.getItem('kadavra_vip_user'); if(!myUser) return;
+
       const safeMe = myUser.replace(/[.#$\[\]]/g, '_');
+
       database.ref(`tayfa_akis/${targetUserKey}/likes/${safeMe}`).once('value').then(snap => {
+
         if(snap.exists()) snap.ref.remove(); else { snap.ref.set(true); showToast(`${targetUserName} pampiğine şukunu verdin!`); }
+
       });
+
     }
+
+
 
     function deleteComment(itemId, commentKey) { if(confirm('Bu yorumu ebediyete uğurlamak istediğine emin misin pampik?')) { database.ref(`comments/${itemId}/${commentKey}`).remove(); showToast('Yorum çöp tenekesini boyladı.'); } }
+
     function deleteChatMessage(msgKey) { if(confirm('Bu mesajı siliyoruz, emin misin?')) database.ref(`yeralti_sohbet/${msgKey}`).remove(); }
 
+
+
     function postComment() {
+
       if(!currentItem) return; const input = document.getElementById('comment-input'); const text = input.value.trim();
+
       const user = localStorage.getItem('kadavra_vip_user') || 'Gizemli Pampik'; if(text === '') return;
+
       database.ref('comments/' + currentItem.id).push({ user: user, text: text, timestamp: Date.now() });
+
       input.value = ''; showToast('Yorumun mekana düştü!');
+
     }
+
+
 
     function likeComment(itemId, commentKey) {
+
       const myUser = localStorage.getItem('kadavra_vip_user'); if(!myUser) return;
+
       database.ref(`comments/${itemId}/${commentKey}/likes/${myUser}`).once('value').then(snap => { if(snap.exists()) snap.ref.remove(); else snap.ref.set(true); });
+
     }
+
+
 
     function loadComments(itemId) {
+
       const list = document.getElementById('comments-list'); const avatarImg = document.getElementById('comment-pp-img');
+
       const avatarDiv = document.getElementById('comment-avatar');
+
       const currentUser = localStorage.getItem('kadavra_vip_user') || '?';
+
       const safeNick = currentUser.toLowerCase().replace(/[.#$\[\]]/g, '_');
+
       const isAdmin = adminler.includes(currentUser.toLowerCase());
+
       
+
       database.ref('kullanicilar/' + safeNick + '/pp').once('value').then(snap => {
+
         if(snap.exists()) { avatarImg.src = snap.val(); avatarImg.classList.remove('hidden'); avatarDiv.textContent = ''; avatarDiv.appendChild(avatarImg); }
+
         else { avatarImg.classList.add('hidden'); avatarDiv.textContent = currentUser.charAt(0).toUpperCase(); }
+
       });
+
       
+
       list.innerHTML = '<p class="text-red-400 text-sm">Yorumlar çekiliyor...</p>';
 
+
+
       database.ref('comments/' + itemId).on('value', (snapshot) => {
+
         if(!snapshot.exists()) { list.innerHTML = '<p class="text-red-400 text-sm font-mono">Henüz kimse yorum yapmamış. İlk raconu sen kes!</p>'; return; }
+
         list.innerHTML = ''; let comments = [];
+
         snapshot.forEach(child => { let val = child.val(); val._key = child.key; comments.push(val); }); 
+
         comments.sort((a,b) => b.timestamp - a.timestamp); 
 
+
+
         comments.forEach(comment => {
+
           const date = new Date(comment.timestamp).toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' });
+
           const likersArray = comment.likes ? Object.keys(comment.likes) : []; const likeCount = likersArray.length; const likersText = likeCount > 0 ? likersArray.join(', ') : '';
+
           const isMine = comment.user === currentUser; const canDelete = isMine || isAdmin;
+
           const deleteBtn = canDelete ? `<button onclick="deleteComment('${itemId}', '${comment._key}')" class="text-gray-500 hover:text-red-500 font-bold ml-3" title="Yorumu Sil">🗑️</button>` : '';
+
           const userIsAdmin = adminler.includes(comment.user.toLowerCase());
+
           const cSafe = comment.user.toLowerCase().replace(/[.#$\[\]]/g, '_');
 
+
+
           const div = document.createElement('div'); div.className = 'bg-black/60 border border-red-900/30 p-3 rounded-sm mb-3 relative group flex gap-3 hover:border-red-900/60 transition-colors';
+
           
+
           let ppHTML = `<div class="w-8 h-8 rounded-sm bg-red-800 flex items-center justify-center font-bold text-white shrink-0 overflow-hidden" id="pp-${comment._key}">${comment.user.charAt(0).toUpperCase()}</div>`;
+
           database.ref('kullanicilar/' + cSafe + '/pp').once('value').then(snap => {
+
              if(snap.exists()) document.getElementById(`pp-${comment._key}`).innerHTML = `<img src="${snap.val()}" class="w-full h-full object-cover">`;
+
           });
 
+
+
           div.innerHTML = `
+
             ${ppHTML}
+
             <div class="flex-1">
+
               <div class="flex items-center justify-between mb-1">
+
                 <span onclick="openUserProfile('${comment.user}')" class="cursor-pointer hover:underline text-sm font-bold tracking-wider ${userIsAdmin ? 'text-red-500 drop-shadow-[0_0_5px_rgba(229,9,20,0.8)]' : 'text-red-200'}">${comment.user} ${userIsAdmin ? '👑' : ''}</span>
+
                 <div><span class="text-gray-500 text-[10px]">${date}</span>${deleteBtn}</div>
+
               </div>
+
               <p class="text-gray-200 text-sm break-words">${comment.text}</p>
+
               <div class="mt-2 flex items-center gap-2">
+
                 <button onclick="likeComment('${itemId}', '${comment._key}')" class="text-[10px] text-red-400 hover:text-white bg-red-900/40 px-2 py-1 rounded-sm transition-colors">👍 ${likeCount > 0 ? likeCount : 'Şukula'}</button>
+
                 ${likeCount > 0 ? `<span class="text-[9px] text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">Kimler: ${likersText}</span>` : ''}
+
               </div>
+
             </div>
+
           `;
+
           list.appendChild(div);
+
         });
+
+      });
+
+    }
+
+
+    function openRanksModal() { const mod = document.getElementById('ranks-modal'); mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50); }
+    function closeRanksModal() { const mod = document.getElementById('ranks-modal'); mod.classList.add('opacity-0'); setTimeout(()=> mod.classList.add('hidden'), 300); }
+
+    function adminSetCustomRole() {
+      let nick = document.getElementById('admin-target-nick').value.trim();
+      let role = document.getElementById('admin-custom-role').value.trim();
+      if(!nick || !role) return; const safeNick = nick.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      database.ref('kullanicilar/' + safeNick).once('value').then(snap => {
+        if(!snap.exists()) { showToast('Kullanıcı bulunamadı!'); return; }
+        database.ref('kullanicilar/' + safeNick).update({ ozelRol: role });
+        showToast(`${nick} adlı kişiye ${role} rolü verildi!`);
+        document.getElementById('admin-custom-role').value = ''; openAdminPanel();
       });
     }
+
+    function adminClearCustomRole() {
+      let nick = document.getElementById('admin-target-nick').value.trim();
+      if(!nick) return; const safeNick = nick.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      database.ref('kullanicilar/' + safeNick).update({ ozelRol: null });
+      showToast(`${nick} adlı kişinin özel rolü silindi.`); openAdminPanel();
+    }
+
+
 
     // ════════════════════ SOHBET (CHAT) MOTORU ════════════════════
+
     let chatOpen = false; let chatFirstLoad = true;
+
     function toggleChat() {
+
       chatOpen = !chatOpen; const sidebar = document.getElementById('chat-sidebar');
+
       if(chatOpen) { sidebar.classList.remove('translate-x-full'); document.getElementById('chat-notif').classList.add('hidden'); document.getElementById('chat-btn').classList.remove('animate-bounce'); const box = document.getElementById('chat-messages'); box.scrollTop = box.scrollHeight; } else { sidebar.classList.add('translate-x-full'); }
+
     }
+
+
 
     function sendChatMessage() {
+
       const input = document.getElementById('chat-input'); const text = input.value.trim(); if(!text) return;
+
       const user = localStorage.getItem('kadavra_vip_user') || 'Gizemli Pampik'; database.ref('yeralti_sohbet').push({ user: user, text: text, timestamp: Date.now() }); input.value = '';
+
     }
+
+
 
     function likeChatMessage(msgKey) {
+
       const myUser = localStorage.getItem('kadavra_vip_user'); if(!myUser) return;
+
       database.ref(`yeralti_sohbet/${msgKey}/likes/${myUser}`).once('value').then(snap => { if(snap.exists()) snap.ref.remove(); else snap.ref.set(true); });
+
     }
+
+
 
     function listenChat() {
+
       document.getElementById('chat-btn').classList.remove('hidden');
+
       const currentUser = localStorage.getItem('kadavra_vip_user') || '?';
+
       const isAdmin = adminler.includes(currentUser.toLowerCase());
 
+
+
       database.ref('yeralti_sohbet').limitToLast(50).on('value', snap => {
+
         const box = document.getElementById('chat-messages'); if(!box) return; box.innerHTML = ''; let messageCount = 0; let msgs = [];
+
         snap.forEach(child => { let msg = child.val(); msg._key = child.key; msgs.push(msg); });
+
         msgs.sort((a,b) => a.timestamp - b.timestamp);
 
+
+
         msgs.forEach(msg => {
+
           messageCount++; const isMe = msg.user === currentUser; const msgIsAdmin = adminler.includes(msg.user.toLowerCase()); const canDelete = isMe || isAdmin;
+
           const date = new Date(msg.timestamp).toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' });
+
           const likersArray = msg.likes ? Object.keys(msg.likes) : []; const likeCount = likersArray.length; const likersText = likeCount > 0 ? likersArray.join(', ') : '';
+
           const deleteBtn = canDelete ? `<button onclick="deleteChatMessage('${msg._key}')" class="text-gray-500 hover:text-red-500 ml-2" title="Mesajı Uçur">🗑️</button>` : '';
 
+
+
           const div = document.createElement('div');
+
           div.className = `max-w-[85%] rounded-sm p-2.5 flex flex-col group relative ${isMe ? 'bg-red-800/80 self-end border border-red-700/50' : 'bg-[#111] self-start border border-red-900/30'}`;
+
           div.innerHTML = `
+
             <div class="flex justify-between items-baseline gap-3 mb-1">
+
               <span onclick="openUserProfile('${msg.user}')" class="cursor-pointer hover:underline text-[10px] ${msgIsAdmin ? 'text-red-400 font-extrabold drop-shadow-[0_0_5px_rgba(229,9,20,0.8)]' : (isMe ? 'text-red-200' : 'text-red-400')} uppercase tracking-wider">${msg.user} ${msgIsAdmin ? '👑' : ''}</span>
+
               <div><span class="text-[9px] opacity-60">${date}</span>${deleteBtn}</div>
+
             </div>
+
             <div class="text-sm text-gray-200 break-words leading-snug">${msg.text}</div>
+
             <div class="mt-1 flex items-center justify-end gap-1">
+
               ${likeCount > 0 ? `<span class="text-[8px] text-red-300 opacity-0 group-hover:opacity-100 transition-opacity mr-1">${likersText}</span>` : ''}
+
               <button onclick="likeChatMessage('${msg._key}')" class="text-[10px] bg-black/40 px-1.5 py-0.5 rounded-sm hover:bg-black/60 transition-colors ${likeCount > 0 ? 'text-red-400' : 'text-gray-500 opacity-0 group-hover:opacity-100'}">👍 ${likeCount > 0 ? likeCount : ''}</button>
+
             </div>
+
           `;
+
           box.appendChild(div);
+
         });
+
         
+
         if(chatOpen) { box.scrollTop = box.scrollHeight; } else if (!chatFirstLoad && messageCount > 0) { const notif = document.getElementById('chat-notif'); const btn = document.getElementById('chat-btn'); if(notif) notif.classList.remove('hidden'); if(btn) { btn.classList.add('animate-bounce'); setTimeout(() => btn.classList.remove('animate-bounce'), 1000); } }
+
         chatFirstLoad = false;
+
       });
+
     }
 
-    // ════════════════════ KAYIT VE GİRİŞ MOTORU ════════════════════
-    const gecerliReferanslar = ['501.lejyon', 'ballibabuska', 'redbullcanavari', 'arap hüseyin', 'aponunanasinisikiyim', 'kastamonayi'];
+
+    
+
+    // ════════════════════ KAYIT VE GİRİŞ MOTORU (GÜVENLİ) ════════════════════
+
     let authMode = 'login'; 
 
+
+
     function toggleAuth(mode) {
+
       authMode = mode; const refInput = document.getElementById('auth-ref'); const btn = document.getElementById('auth-btn'); const tabLogin = document.getElementById('tab-login'); const tabRegister = document.getElementById('tab-register'); document.getElementById('auth-error').classList.add('hidden'); 
+
       if (mode === 'register') { refInput.classList.remove('hidden'); btn.textContent = 'Mekana Kaydol ve Ak'; tabRegister.classList.replace('text-red-500', 'text-red-100'); tabRegister.classList.replace('border-transparent', 'border-red-600'); tabLogin.classList.replace('text-red-100', 'text-red-500'); tabLogin.classList.replace('border-red-600', 'border-transparent'); } 
+
       else { refInput.classList.add('hidden'); btn.textContent = 'İçeri Gir'; tabLogin.classList.replace('text-red-500', 'text-red-100'); tabLogin.classList.replace('border-transparent', 'border-red-600'); tabRegister.classList.replace('text-red-100', 'text-red-500'); tabRegister.classList.replace('border-red-600', 'border-transparent'); }
+
     }
+
+
 
     function handleAuth() {
+
       const nick = document.getElementById('auth-nick').value.trim(); const pass = document.getElementById('auth-pass').value.trim(); const ref = document.getElementById('auth-ref').value.trim(); const error = document.getElementById('auth-error');
+
       if (!nick || !pass) { error.textContent = 'Nick ve Şifre boş olamaz kanki!'; error.classList.remove('hidden'); return; }
+
       const safeNick = nick.toLowerCase().replace(/[.#$\[\]]/g, '_'); 
+
+      
+
       if (authMode === 'register') {
-        if (!gecerliReferanslar.includes(ref)) { error.textContent = 'Referans kodu patlak! Lejyondan değilsin galiba?'; error.classList.remove('hidden'); return; }
-        database.ref('kullanicilar/' + safeNick).once('value').then((snap) => {
-          if (snap.exists()) { error.textContent = 'Bu nick çoktan kapılmış kral, başka bir şey bul.'; error.classList.remove('hidden'); } 
-          else { database.ref('kullanicilar/' + safeNick).set({ sifre: pass, refKodu: ref }); girisBasarili(nick, pass); }
+
+        database.ref('referanslar/' + ref).once('value').then(refSnap => {
+
+          if(!refSnap.exists()) { error.textContent = 'Referans kodu patlak! Lejyondan değilsin galiba?'; error.classList.remove('hidden'); return; }
+
+          
+
+          database.ref('kullanicilar/' + safeNick).once('value').then((snap) => {
+
+            if (snap.exists()) { error.textContent = 'Bu nick çoktan kapılmış kral, başka bir şey bul.'; error.classList.remove('hidden'); } 
+
+            else { 
+
+              database.ref('kullanicilar/' + safeNick).set({ sifre: pass, refKodu: ref }); 
+
+              database.ref('referanslar/' + ref).remove(); 
+
+              girisBasarili(nick, pass); 
+
+            }
+
+          });
+
         });
+
       } else {
+
         database.ref('kullanicilar/' + safeNick).once('value').then((snap) => {
+
           if (!snap.exists()) { error.textContent = 'Böyle bir pampik yok, önce "Kayıt Ol" sekmesine geç!'; error.classList.remove('hidden'); } 
+
           else { if (snap.val().sifre !== pass) { error.textContent = 'Şifre yanlış kanki, zorlama!'; error.classList.remove('hidden'); } else { girisBasarili(nick, pass); } }
+
         });
+
       }
+
     }
+
+
 
     function autoLoginCheck() {
+
       const savedUser = localStorage.getItem('kadavra_vip_user'); const savedPass = localStorage.getItem('kadavra_vip_pass');
+
       if (savedUser && savedPass) {
+
         const safeNick = savedUser.toLowerCase().replace(/[.#$\[\]]/g, '_');
+
         database.ref('kullanicilar/' + safeNick).once('value').then((snap) => {
+
            if(snap.exists() && snap.val().sifre === savedPass) { girisBasarili(savedUser, savedPass, true); }
+
         });
+
       }
+
     }
+
+
 
     function girisBasarili(user, pass, isAuto = false) {
+
       localStorage.setItem('kadavra_vip_user', user); localStorage.setItem('kadavra_vip_pass', pass); 
+
       const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+
       
+
       fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d => { database.ref('kullanicilar/' + safeNick).update({ sonGiris: Date.now(), cihaz: navigator.userAgent, ip: d.ip }); }).catch(e => { database.ref('kullanicilar/' + safeNick).update({ sonGiris: Date.now(), cihaz: navigator.userAgent }); });
 
+
+
       const badge = document.getElementById('profile-badge'); 
+
       if(badge) { badge.textContent = user.charAt(0).toUpperCase(); badge.title = 'Profilim'; badge.onclick = () => openUserProfile(user); }
+
       
+
       const loginScreen = document.getElementById('login-screen');
+
       if (loginScreen) { if(isAuto) { loginScreen.style.display = 'none'; showToast(`Tekrar hoş geldin pampik: ${user} 🍿`); } else { loginScreen.style.opacity = '0'; setTimeout(() => { loginScreen.remove(); showToast(`Hoş geldin V.I.P. Üye: ${user} 👑`); }, 300); } }
+
       listenTayfa(); listenChat(); init(); 
+
     }
 
-    autoLoginCheck();
+    
+
   </script>
+
 </body>
+
 </html>
