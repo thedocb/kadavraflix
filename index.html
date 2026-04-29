@@ -112,12 +112,6 @@
 
     #modal-box button[onclick="closeModal()"] { cursor: pointer; pointer-events: all; z-index: 999; }
 
-    #player-overlay { position: fixed; inset: 0; background: #000; z-index: 200; display: none; flex-direction: column; }
-
-    #player-overlay.open { display: flex; }
-
-    #player-frame { width: 100%; flex: 1; border: none; }
-
     .rating-badge { display: inline-flex; align-items: center; gap: 6px; background: #eab308; color: #000; font-weight: 800; border-radius: 2px; padding: 2px 8px; font-size: 0.75rem; text-transform: uppercase; box-shadow: 0 0 15px rgba(234, 179, 8, 0.3); }
 
     .season-tab { padding: 6px 18px; border-radius: 4px; border: 1px solid rgba(229,9,20,0.4); font-size: .82rem; cursor: pointer; transition: all .2s; }
@@ -230,7 +224,7 @@
 
           <p class="text-[10px] text-gray-400 mb-1 uppercase tracking-wider font-bold">Kültür Değişimi</p>
 
-          <button onclick="changeFactionRequest()" class="w-full bg-red-900/20 border border-red-700/50 hover:bg-red-800 hover:text-white px-4 py-2 rounded-sm text-red-400 font-bold text-xs transition-colors">🔄 Yolunu Değiştir (Karmayı 500'e Sıfırlar)</button>
+          <button onclick="changeFactionRequest()" class="w-full bg-red-900/20 border border-red-700/50 hover:bg-red-800 hover:text-white px-4 py-2 rounded-sm text-red-400 font-bold text-xs transition-colors">🔄 Yolunu Değiştir (Karmayı 0'a Çeker!)</button>
 
         </div>
 
@@ -626,6 +620,18 @@
     </div>
   </div>
 
+  <!-- LEADERBOARD (BARONLAR) MODALI -->
+  <div id="leaderboard-modal" class="fixed inset-0 z-[4500] bg-black/95 backdrop-blur-xl hidden opacity-0 transition-opacity flex items-center justify-center">
+    <div class="bg-[#0a0a0a] border border-orange-900/50 w-full max-w-lg p-8 rounded-sm relative shadow-[0_0_30px_rgba(249,115,22,0.2)] mx-4 max-h-[90vh] flex flex-col">
+      <button onclick="closeLeaderboard()" class="absolute top-4 right-5 text-gray-500 hover:text-white text-3xl leading-none">&times;</button>
+      <h2 class="text-3xl font-display text-orange-500 tracking-widest mb-1 uppercase drop-shadow-[0_0_10px_rgba(249,115,22,0.5)] text-center">🏆 LEJYON BARONLARI</h2>
+      <p class="text-gray-400 text-[10px] text-center uppercase tracking-wider font-bold mb-6 border-b border-orange-900/30 pb-4">Yeraltının En Saygın 10 İsmi</p>
+      <div id="leaderboard-list" class="flex-1 overflow-y-auto pr-2 scrollbar-thin space-y-3">
+        <!-- JS Dolduracak -->
+      </div>
+    </div>
+  </div>
+
   <!-- YERALTI SOHBET ÇEKMECESİ -->
 
   <div id="chat-sidebar" class="fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-[#050505]/95 backdrop-blur-xl border-l border-red-900/50 z-[2000] transform translate-x-full transition-transform duration-300 flex flex-col shadow-[-10px_0_30px_rgba(0,0,0,0.8)]">
@@ -732,6 +738,7 @@
           <button onclick="openSettings()" class="text-left px-4 py-3 text-xs font-bold text-gray-300 hover:bg-red-900/40 hover:text-white border-b border-red-900/30 transition-colors">⚙️ Ayarlar</button>
           <button onclick="openRanksModal()" class="text-left px-4 py-3 text-xs font-bold text-gray-300 hover:bg-red-900/40 hover:text-white border-b border-red-900/30 transition-colors">🎖️ Rütbe Rehberi</button>
           <button onclick="openKarmaInfo()" class="text-left px-4 py-3 text-xs font-bold text-yellow-500 hover:bg-yellow-900/40 hover:text-yellow-400 border-b border-red-900/30 transition-colors">⚡ Karma Geçmişi / Info</button>
+          <button onclick="openLeaderboard()" class="text-left px-4 py-3 text-xs font-bold text-orange-500 hover:bg-orange-900/40 hover:text-orange-400 border-b border-red-900/30 transition-colors">🏆 Lejyon Baronları (Top 10)</button>
           <button id="nav-admin-btn" onclick="openAdminPanel()" class="text-left px-4 py-3 text-xs font-bold text-red-500 hover:bg-red-900/40 hover:text-white border-b border-red-900/30 transition-colors hidden">👑 Lejyon İstihbarat</button>
           <button onclick="logoutUser()" class="text-left px-4 py-3 text-xs font-bold text-gray-500 hover:bg-gray-800 hover:text-red-500 transition-colors">🚪 Çıkış Yap</button>
         </div>
@@ -875,9 +882,20 @@
     </div>
   </div>
 
-  <!-- PLAYER -->
+<!-- KUSURSUZ PLAYER EKRANI -->
+  <div id="player-overlay" class="fixed inset-0 bg-black z-[9999] hidden flex-col items-center justify-center">
+    <!-- Her zaman görünecek acil çıkış butonu -->
+    <button onclick="closePlayer()" class="absolute top-6 right-6 z-[10000] w-12 h-12 bg-red-900/60 hover:bg-red-600 text-white rounded-full font-display text-xl flex items-center justify-center shadow-[0_0_15px_rgba(229,9,20,0.8)] transition-all cursor-pointer backdrop-blur-md">✖</button>
+    
+    <!-- Yükleme Ekranı (Arkaplanda) -->
+    <div id="player-loader" class="absolute inset-0 flex flex-col items-center justify-center z-10 pointer-events-none">
+       <div class="w-12 h-12 border-4 border-red-900 border-t-red-500 rounded-full animate-spin mb-4 shadow-[0_0_20px_rgba(229,9,20,0.5)]"></div>
+       <p class="text-red-400 font-display tracking-widest animate-pulse">Yeraltı Sunucularına Bağlanılıyor...</p>
+    </div>
 
-  <div id="player-overlay"><div class="flex items-center justify-between bg-black px-5 py-3 border-b border-red-900/60"><span id="player-title" class="text-red-200 text-sm font-semibold truncate"></span><button onclick="closePlayer()" class="flex items-center gap-2 text-red-500 hover:text-white text-sm transition-colors">Kapat</button></div><iframe id="player-frame" src="" allowfullscreen allow="autoplay; fullscreen"></iframe></div>
+    <!-- İframe (Video) -->
+    <iframe id="player-frame" src="" class="w-full h-full max-w-full max-h-full border-none relative z-20" allowfullscreen allow="autoplay; fullscreen" onload="document.getElementById('player-loader').style.display='none'"></iframe>
+  </div>
 
   <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] transition-all duration-300 opacity-0 translate-y-4 pointer-events-none"><div class="bg-red-900/90 backdrop-blur border border-red-600/50 text-red-100 text-sm px-5 py-3 rounded-sm shadow-xl flex items-center gap-2"><span id="toast-icon">ℹ️</span><span id="toast-msg"></span></div></div>
 
@@ -1028,25 +1046,14 @@
 
 
     function changeFactionRequest() {
-
-      if(confirm("Tüm saygınlığını yitirip yeni bir yola girmek üzeresin. Karman 500'e düşecek. Emin misin lejyoner?")) {
-
+      if(confirm("Tüm saygınlığını yitirip yeni bir yola girmek üzeresin. Karman SIFIRLANACAK! Emin misin lejyoner?")) {
         const user = localStorage.getItem('kadavra_vip_user'); if(!user) return; 
-
         const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
-
-        database.ref('kullanicilar/' + safeNick).update({ yol: null, karma: 500, infiniteKarma: false }).then(() => {
-
+        database.ref('kullanicilar/' + safeNick).update({ yol: null, karma: 0, infiniteKarma: false }).then(() => {
           closeSettings();
-
-          checkFactionEligibility(500, null);
-
-          showToast("Yeniden doğdun. Seçimini yap!");
-
+          showToast("Her şeye sıfırdan başlıyorsun pampik. Yolun açık olsun!");
         });
-
       }
-
     }
 
 
@@ -1776,90 +1783,45 @@ function openMyProfile() {
     
 
     function openPlayer(item, episode) { 
-
       const imdb = item.imdb_id; if (!imdb) { showToast('🎬 IMDB ID bulunamadı.'); return; } 
-
       saveToHistory(item, item.media_type); broadcastToTayfa(item, episode); 
-
       
-
       let url = `https://vidsrc.net/embed/movie?imdb=${imdb}`; 
-
       if (episode) { url = `https://vidsrc.net/embed/tv?imdb=${imdb}&season=${episode.season_number}&episode=${episode.episode_number}`; } 
-
       
-
-      const title = (item.title || item.name || '') + (episode ? ` – Sezon ${episode.season_number} Bölüm ${episode.episode_number}` : ''); 
-
-      document.getElementById('player-title').textContent = title; 
-
+      // Iframe'i yükle
       document.getElementById('player-frame').src = url; 
-
-      document.getElementById('player-overlay').classList.add('open'); 
-
-      document.body.style.overflow = 'hidden'; 
-
       
-
+      // Player'ı görünür yap
+      const overlay = document.getElementById('player-overlay');
+      overlay.classList.remove('hidden');
+      overlay.classList.add('flex');
+      document.body.style.overflow = 'hidden'; 
+      
       const user = localStorage.getItem('kadavra_vip_user'); 
-
       if(user) {
-
         const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
-
         clearInterval(karmaTimer);
-
         karmaTimer = setInterval(() => {
-
           database.ref(`kullanicilar/${safeNick}`).once('value').then(snap => {
-
             if(snap.exists()) {
-
-              let data = snap.val();
-
-              let ticks = data.watchTicks || 0;
-
-              ticks += 1;
-
-              let gain = 10 + (ticks * 2); 
-
+              let gain = 10 + ((snap.val().watchTicks || 0) * 2); 
               if(gain > 300) gain = 300; 
-
-              
-
-              database.ref(`kullanicilar/${safeNick}`).update({
-
-                karma: (data.karma || 0) + gain,
-
-                watchTicks: ticks
-
-              });
-
-              showToast(`⚡ +${gain} Karma (Aktif İzleme Bonusu!)`);
-              logKarmaEvent('izleme', gain, 'Aktif İzleme Bonusu');
+              database.ref(`kullanicilar/${safeNick}`).update({ karma: (snap.val().karma || 0) + gain, watchTicks: (snap.val().watchTicks || 0) + 1 });
             }
-
           });
-
         }, 300000); 
-
       }
-
     }
-
     
-
     function closePlayer() { 
-
-      document.getElementById('player-overlay').classList.remove('open'); 
-
+      const overlay = document.getElementById('player-overlay');
+      overlay.classList.add('hidden'); 
+      overlay.classList.remove('flex');
       document.getElementById('player-frame').src = ''; 
-
       document.body.style.overflow = ''; 
-
       clearInterval(karmaTimer); 
-
-    } 
+    }
 
     function closeAll() { closeModal(); closePlayer(); }
 
@@ -2201,6 +2163,68 @@ function openMyProfile() {
       showToast(`${nick} adlı kişinin özel rolü silindi.`); openAdminPanel();
     }
 
+
+    // ════════════ LEJYON BARONLARI (LEADERBOARD) MOTORU ════════════
+    function openLeaderboard() {
+      const mod = document.getElementById('leaderboard-modal');
+      const list = document.getElementById('leaderboard-list');
+      list.innerHTML = '<p class="text-center text-gray-500 font-mono text-xs">Yeraltı kayıtları taranıyor...</p>';
+
+      database.ref('kullanicilar').once('value').then(snap => {
+         if(!snap.exists()) return;
+         let users = [];
+         snap.forEach(child => {
+            const u = child.val();
+            // Sonsuz karma varsa sıralamada en üste atmak için hileli devasa bir sayı veriyoruz
+            let sortKarma = u.infiniteKarma ? 999999999 : (u.karma || 0);
+            users.push({ 
+                nick: child.key.replace(/_/g, '.'), 
+                karma: sortKarma, 
+                displayKarma: u.infiniteKarma ? '∞' : (u.karma || 0), 
+                pp: u.pp || getAvatar(child.key) 
+            });
+         });
+
+         // Karmaya göre büyükten küçüğe sırala ve ilk 10'u al
+         users.sort((a,b) => b.karma - a.karma);
+         const top10 = users.slice(0, 10);
+         
+         // Sadece bu listede gözükecek Efsanevi Rütbeler
+         const specialTitles = {
+            1: "THE ONE-EYED KING",
+            2: "THE HONORABLE ONE",
+            3: "PRINCE OF DARKNESS",
+            4: "LORD OF THE ABYSS",
+            5: "GRAND ARCHITECT"
+         };
+
+         list.innerHTML = '';
+         top10.forEach((u, index) => {
+            const rank = index + 1;
+            const title = specialTitles[rank] || "ELİT LEJYONER";
+            let rankColor = "text-gray-400";
+            if(rank === 1) rankColor = "text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.8)]";
+            else if(rank === 2) rankColor = "text-gray-300 drop-shadow-[0_0_5px_rgba(209,213,219,0.8)]";
+            else if(rank === 3) rankColor = "text-orange-600 drop-shadow-[0_0_5px_rgba(234,88,12,0.8)]";
+
+            list.innerHTML += `
+              <div class="bg-black border border-orange-900/20 p-3 rounded-sm flex items-center justify-between hover:border-orange-500/50 transition-colors cursor-pointer" onclick="closeLeaderboard(); openUserProfile('${u.nick}')">
+                <div class="flex items-center gap-3">
+                   <span class="text-lg font-display ${rankColor}">#${rank}</span>
+                   <img src="${u.pp}" class="w-10 h-10 rounded-sm object-cover border border-orange-900/50">
+                   <div class="flex flex-col">
+                      <span class="text-sm font-bold text-white uppercase tracking-wider">${u.nick}</span>
+                      <span class="text-[9px] ${rankColor} font-bold tracking-widest">${title}</span>
+                   </div>
+                </div>
+                <span class="text-orange-500 font-display text-xl tracking-wider">${u.displayKarma}</span>
+              </div>
+            `;
+         });
+         mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50);
+      });
+    }
+    function closeLeaderboard() { const mod = document.getElementById('leaderboard-modal'); mod.classList.add('opacity-0'); setTimeout(()=> mod.classList.add('hidden'), 300); }
 
     // ════════════ ORTAK KOLEKSİYONLAR MOTORU ════════════
     function loadUserCollections(targetSafeNick) {
@@ -2581,6 +2605,28 @@ function openMyProfile() {
           listDiv.innerHTML += `<div>👑 ${a}</div>`;
        });
     }
+
+    // ════════════ QoL: ESC TUŞUYLA MENÜLERİ KAPATMA ════════════
+    document.addEventListener('keydown', function(event) {
+      if (event.key === "Escape") {
+        closeAll(); 
+        closeSettings();
+        if(typeof closeAdminPanel === 'function') closeAdminPanel();
+        if(typeof closeUserProfile === 'function') closeUserProfile();
+        if(typeof closeRanksModal === 'function') closeRanksModal();
+        if(typeof closeKarmaInfo === 'function') closeKarmaInfo();
+        if(typeof closeFollowList === 'function') closeFollowList();
+        if(typeof closeAddToCollectionModal === 'function') closeAddToCollectionModal();
+        if(typeof closeCollectionView === 'function') closeCollectionView();
+        const pOverlay = document.getElementById('player-overlay');
+        if(pOverlay && !pOverlay.classList.contains('hidden')) {
+           closePlayer();
+        }
+        if(typeof closeLeaderboard === 'function') closeLeaderboard();
+        if(chatOpen) toggleChat();
+        if(notifOpen) toggleNotif();
+      }
+    });
 
     // ════════════ KARMA GEÇMİŞİ MOTORU ════════════
     function logKarmaEvent(type, amount, detail) {
