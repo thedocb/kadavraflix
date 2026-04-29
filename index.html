@@ -504,26 +504,12 @@
         
 
         <div class="bg-[#0a0a0a] border border-red-900/30 p-5 rounded-sm">
-
           <h3 class="text-sm font-bold text-red-500 mb-3 border-b border-red-900/50 pb-2 uppercase tracking-wider">📁 Özel Koleksiyonlar</h3>
-
           <div id="up-custom-playlists" class="space-y-2">
-
-            <div class="border border-red-900/30 p-3 rounded-sm bg-black hover:border-red-500 cursor-pointer transition-colors">
-
-              <p class="text-xs font-bold text-white">🔥 Kadavra'nın Başyapıtları</p>
-
-              <p class="text-[10px] text-gray-500 mt-1">Yakında Eklenecek</p>
-
-            </div>
-
+            <!-- JS Dolduracak -->
           </div>
-
         </div>
-
       </div>
-
-      
 
       <div class="lg:col-span-5 space-y-6">
 
@@ -742,7 +728,7 @@
         <div id="profile-badge" class="w-8 h-8 rounded-sm bg-gradient-to-br from-red-600 to-red-900 border border-red-500/50 flex items-center justify-center text-xs font-bold cursor-pointer hover:shadow-[0_0_16px_rgba(229,9,20,0.5)] transition-all select-none">K</div>
         
         <div class="absolute right-0 mt-2 w-52 bg-[#0a0a0a] border border-red-900/50 rounded-sm shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[5000] flex flex-col overflow-hidden">
-          <button onclick="openUserProfile(localStorage.getItem('kadavra_vip_user'))" class="text-left px-4 py-3 text-xs font-bold text-white hover:bg-red-900/40 border-b border-red-900/30 transition-colors">👤 Profilim</button>
+          <button onclick="openMyProfile()" class="text-left px-4 py-3 text-xs font-bold text-white hover:bg-red-900/40 border-b border-red-900/30 transition-colors">👤 Profilim</button>
           <button onclick="openSettings()" class="text-left px-4 py-3 text-xs font-bold text-gray-300 hover:bg-red-900/40 hover:text-white border-b border-red-900/30 transition-colors">⚙️ Ayarlar</button>
           <button onclick="openRanksModal()" class="text-left px-4 py-3 text-xs font-bold text-gray-300 hover:bg-red-900/40 hover:text-white border-b border-red-900/30 transition-colors">🎖️ Rütbe Rehberi</button>
           <button onclick="openKarmaInfo()" class="text-left px-4 py-3 text-xs font-bold text-yellow-500 hover:bg-yellow-900/40 hover:text-yellow-400 border-b border-red-900/30 transition-colors">⚡ Karma Geçmişi / Info</button>
@@ -816,6 +802,7 @@
           <p id="modal-desc" class="text-red-100/80 text-sm md:text-base leading-relaxed mb-8 max-w-3xl"></p>
 
           <div class="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-8"><button onclick="playModal()" class="bg-white text-black hover:bg-red-100 transition-colors flex items-center gap-2 px-10 py-3 rounded-sm text-sm font-bold uppercase tracking-wider"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Oynat</button><button id="modal-trailer-btn" class="bg-red-900/40 border border-red-500/50 hover:bg-red-800/80 transition-colors flex items-center gap-2 px-8 py-3 rounded-sm text-white text-sm font-bold uppercase tracking-wider hidden">Fragman</button><button id="modal-watchlist-btn" onclick="toggleWatchlist()" class="bg-transparent border border-red-500/50 hover:bg-red-900/40 transition-colors flex items-center gap-2 px-6 py-3 rounded-sm text-white text-sm font-bold uppercase tracking-wider"><span id="watchlist-icon" class="text-xl leading-none">+</span><span id="watchlist-text">Listeme Ekle</span></button></div>
+          <button onclick="openAddToCollectionModal()" class="bg-transparent border border-yellow-500/50 hover:bg-yellow-900/40 transition-colors flex items-center gap-2 px-6 py-3 rounded-sm text-white text-sm font-bold uppercase tracking-wider"><span class="text-xl leading-none">📁</span>Koleksiyona Ekle</button>
 
           <div class="mb-10 text-sm md:text-base"><span class="text-red-400 font-semibold">Oyuncular:</span> <span id="modal-cast" class="text-red-100"></span></div>
 
@@ -853,11 +840,46 @@
 
   </div>
 
+  <!-- KOLEKSİYONA EKLE / OLUŞTUR MODALI -->
+  <div id="add-collection-modal" class="fixed inset-0 z-[5000] bg-black/90 backdrop-blur-md hidden opacity-0 transition-opacity flex items-center justify-center">
+    <div class="bg-[#0a0a0a] border border-red-900/50 w-full max-w-md p-6 rounded-sm relative shadow-2xl text-center">
+      <button onclick="closeAddToCollectionModal()" class="absolute top-4 right-5 text-gray-500 hover:text-white text-2xl leading-none">&times;</button>
+      <h2 class="text-xl font-bold text-red-500 tracking-widest mb-4 border-b border-red-900/50 pb-2 uppercase">📁 Koleksiyona Ekle</h2>
+      
+      <div id="existing-collections" class="mb-4 space-y-2 max-h-40 overflow-y-auto scrollbar-thin text-left">
+         <!-- JS Dolduracak -->
+      </div>
+
+      <div class="border-t border-red-900/50 pt-4 text-left">
+        <p class="text-[10px] text-gray-400 mb-1 uppercase tracking-wider font-bold">Yeni Ortak Koleksiyon Oluştur</p>
+        <input type="text" id="new-coll-name" placeholder="Koleksiyon Adı (Örn: Yeraltı Klasikleri)" class="w-full bg-black border border-red-900/50 rounded-sm px-3 py-2 text-white text-xs focus:outline-none focus:border-red-500 mb-2">
+        <input type="text" id="new-coll-partners" placeholder="Ortaklar (Virgülle ayır, Örn: kadavra, fraude)" class="w-full bg-black border border-red-900/50 rounded-sm px-3 py-2 text-white text-xs focus:outline-none focus:border-red-500 mb-3">
+        <button onclick="createNewCollectionAndAdd()" class="w-full bg-red-900/50 hover:bg-red-600 border border-red-700 py-2 rounded-sm text-white font-bold text-xs uppercase tracking-wider transition-colors">Oluştur ve Ekle</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- KOLEKSİYON GÖSTERİM MODALI -->
+  <div id="collection-view-modal" class="fixed inset-0 z-[4500] bg-black/95 backdrop-blur-xl hidden opacity-0 transition-opacity flex items-center justify-center">
+    <div class="bg-[#0a0a0a] border border-red-900/50 w-full max-w-5xl p-8 rounded-sm relative shadow-2xl mx-4 max-h-[90vh] flex flex-col">
+      <button onclick="closeCollectionView()" class="absolute top-4 right-5 text-gray-500 hover:text-white text-3xl leading-none">&times;</button>
+      <h2 id="cv-title" class="text-3xl font-display text-white tracking-widest mb-1 uppercase drop-shadow-[0_0_15px_rgba(229,9,20,0.8)]">Koleksiyon Adı</h2>
+      <div class="flex justify-between items-center mb-6 border-b border-red-900/50 pb-4">
+        <p id="cv-partners" class="text-xs text-yellow-500 font-bold uppercase tracking-wider">Ortaklar: ...</p>
+        <div id="cv-actions"></div>
+      </div>
+      
+      <div id="cv-movies" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 overflow-y-auto scrollbar-thin pr-2 flex-1">
+        <!-- Filmler Buraya Gelecek -->
+      </div>
+    </div>
+  </div>
+
   <!-- PLAYER -->
 
   <div id="player-overlay"><div class="flex items-center justify-between bg-black px-5 py-3 border-b border-red-900/60"><span id="player-title" class="text-red-200 text-sm font-semibold truncate"></span><button onclick="closePlayer()" class="flex items-center gap-2 text-red-500 hover:text-white text-sm transition-colors">Kapat</button></div><iframe id="player-frame" src="" allowfullscreen allow="autoplay; fullscreen"></iframe></div>
 
-  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[300] transition-all duration-300 opacity-0 translate-y-4 pointer-events-none"><div class="bg-red-900/90 backdrop-blur border border-red-600/50 text-red-100 text-sm px-5 py-3 rounded-sm shadow-xl flex items-center gap-2"><span id="toast-icon">ℹ️</span><span id="toast-msg"></span></div></div>
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] transition-all duration-300 opacity-0 translate-y-4 pointer-events-none"><div class="bg-red-900/90 backdrop-blur border border-red-600/50 text-red-100 text-sm px-5 py-3 rounded-sm shadow-xl flex items-center gap-2"><span id="toast-icon">ℹ️</span><span id="toast-msg"></span></div></div>
 
 
   <!-- ⚡ KARMA GEÇMİŞİ VE BİLGİ EKRANI -->
@@ -1159,6 +1181,10 @@
     let currentProfileNick = ''; 
 
 
+function openMyProfile() {
+      const user = localStorage.getItem('kadavra_vip_user');
+      if (user) { openUserProfile(user); } else { showToast('Giriş yapmamışsın pampik!'); }
+    }
 
     function openUserProfile(targetNick) {
 
@@ -1279,9 +1305,12 @@
 
 
 
-        loadWall(safeNick, isMe);
-
-        const mod = document.getElementById('user-profile-modal'); mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50);
+     loadWall(safeNick, isMe);
+        loadUserCollections(safeNick); 
+        
+        const mod = document.getElementById('user-profile-modal');
+        mod.classList.remove('hidden'); 
+        setTimeout(()=> mod.classList.remove('opacity-0'), 50);
 
       });
 
@@ -2172,6 +2201,186 @@
       showToast(`${nick} adlı kişinin özel rolü silindi.`); openAdminPanel();
     }
 
+
+    // ════════════ ORTAK KOLEKSİYONLAR MOTORU ════════════
+    function loadUserCollections(targetSafeNick) {
+      const playlistsDiv = document.getElementById('up-custom-playlists');
+      database.ref('koleksiyonlar').on('value', snap => {
+        playlistsDiv.innerHTML = ''; let hasCollection = false;
+        if(snap.exists()) {
+          snap.forEach(child => {
+            const col = child.val();
+            // Ortakların içinde bu profilin sahibi varsa göster
+            if(col.ortaklar && col.ortaklar[targetSafeNick]) {
+              hasCollection = true;
+              const count = col.filmler ? Object.keys(col.filmler).length : 0;
+              playlistsDiv.innerHTML += `
+                <div onclick="viewCollection('${child.key}')" class="border border-red-900/30 p-3 rounded-sm bg-black hover:border-yellow-500 cursor-pointer transition-colors mb-2">
+                  <p class="text-xs font-bold text-white">🔥 ${col.ad}</p>
+                  <p class="text-[10px] text-gray-500 mt-1">${count} İçerik • Ortaklar: <span class="text-yellow-500">${Object.keys(col.ortaklar).join(', ').replace(/_/g, '.')}</span></p>
+                </div>
+              `;
+            }
+          });
+        }
+        if(!hasCollection) playlistsDiv.innerHTML = '<p class="text-[10px] text-gray-500 mt-1 font-mono">Henüz bir arşivi yok.</p>';
+      });
+    }
+
+    function openAddToCollectionModal() {
+      if(!currentItem) return;
+      const user = localStorage.getItem('kadavra_vip_user'); if(!user) { showToast('Giriş yap kral!'); return; }
+      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      
+      const listDiv = document.getElementById('existing-collections');
+      listDiv.innerHTML = '<p class="text-xs text-gray-500 font-mono">Arşivlerin aranıyor...</p>';
+      
+      database.ref('koleksiyonlar').once('value').then(snap => {
+        listDiv.innerHTML = ''; let hasCollection = false;
+        if(snap.exists()) {
+          snap.forEach(child => {
+            const col = child.val();
+            if(col.ortaklar && col.ortaklar[safeNick]) {
+              hasCollection = true;
+              listDiv.innerHTML += `
+                <button onclick="addToCollection('${child.key}')" class="w-full text-left bg-[#111] hover:bg-red-900/40 border border-red-900/30 p-2 rounded-sm text-xs text-white transition-colors">
+                  ➕ ${col.ad}
+                </button>
+              `;
+            }
+          });
+        }
+        if(!hasCollection) listDiv.innerHTML = '<p class="text-xs text-gray-500 font-mono">Mevcut bir koleksiyonun yok.</p>';
+      });
+
+      const mod = document.getElementById('add-collection-modal');
+      mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50);
+    }
+
+    function closeAddToCollectionModal() { const mod = document.getElementById('add-collection-modal'); mod.classList.add('opacity-0'); setTimeout(()=> mod.classList.add('hidden'), 300); }
+
+    function createNewCollectionAndAdd() {
+      const name = document.getElementById('new-coll-name').value.trim();
+      const partnersStr = document.getElementById('new-coll-partners').value.trim();
+      const user = localStorage.getItem('kadavra_vip_user'); if(!user || !name) { showToast('İsim girmedin!'); return; }
+      
+      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      let ortaklar = {};
+      ortaklar[safeNick] = true; // Kuran kişi banko ortak
+      
+      // Rızasız eklemeyi önlemek için sadece Takipçiler eklenebilsin kontrolü yapıyoruz
+      database.ref(`kullanicilar/${safeNick}/followers`).once('value').then(snap => {
+         const followers = snap.exists() ? snap.val() : {};
+         let reddedildi = []; let eklendi = [];
+
+         if(partnersStr) {
+            partnersStr.split(',').forEach(p => {
+               let pClean = p.trim().toLowerCase().replace(/[.#$\[\]]/g, '_');
+               if(pClean && pClean !== safeNick) {
+                  if(followers[pClean]) {
+                     ortaklar[pClean] = true; eklendi.push(pClean);
+                  } else {
+                     reddedildi.push(pClean);
+                  }
+               }
+            });
+         }
+
+         if(reddedildi.length > 0) {
+            showToast(`HATA: ${reddedildi.join(', ')} seni takip etmiyor, rızasız ekleyemezsin!`, true);
+            return; // Rızasız ekleme varsa işlemi toptan iptal et, pampik!
+         }
+
+         const newColRef = database.ref('koleksiyonlar').push();
+         newColRef.set({ ad: name, olusturan: user, ortaklar: ortaklar, tarih: Date.now(), filmler: {} }).then(() => {
+            addToCollection(newColRef.key);
+            document.getElementById('new-coll-name').value = ''; document.getElementById('new-coll-partners').value = '';
+            // Eklenen ortaklara bildirim fırlat
+            eklendi.forEach(p => sendNotification(p, 'like', `<span class="font-bold text-red-400">${user}</span> seni '${name}' arşivine ortak yaptı!`));
+         });
+      });
+    }
+
+    function addToCollection(colId) {
+       if(!currentItem) return;
+       
+       // TMDB'nin devasa verisi Firebase'i çökertmesin diye sadece gerekenleri temizce paketliyoruz:
+       const temizFilmVerisi = {
+          id: currentItem.id,
+          title: currentItem.title || currentItem.name || 'İsimsiz Yapım',
+          poster_path: currentItem.poster_path || '',
+          media_type: currentItem.media_type || 'movie',
+          eklenmeTarihi: Date.now()
+       };
+
+       database.ref(`koleksiyonlar/${colId}/filmler/${currentItem.id}`).set(temizFilmVerisi).then(() => {
+          showToast('Film arşive zımbalandı!'); 
+          closeAddToCollectionModal();
+       }).catch(err => {
+          showToast('Eklerken bir sorun çıktı pampik!');
+       });
+    }
+
+    function viewCollection(colId) {
+       const user = localStorage.getItem('kadavra_vip_user');
+       const safeNick = user ? user.toLowerCase().replace(/[.#$\[\]]/g, '_') : '';
+
+       database.ref(`koleksiyonlar/${colId}`).once('value').then(snap => {
+          if(!snap.exists()) { closeCollectionView(); return; }
+          const col = snap.val();
+          document.getElementById('cv-title').textContent = col.ad;
+          document.getElementById('cv-partners').textContent = 'Ortaklar: ' + Object.keys(col.ortaklar || {}).join(', ').replace(/_/g, '.').toUpperCase();
+          
+          const isCreator = (col.olusturan.toLowerCase().replace(/[.#$\[\]]/g, '_') === safeNick);
+          const actionsDiv = document.getElementById('cv-actions');
+          if(actionsDiv) {
+             if(isCreator) {
+                actionsDiv.innerHTML = `<button onclick="deleteCollection('${colId}')" class="bg-red-900/50 hover:bg-red-600 border border-red-700 px-3 py-1 rounded-sm text-white font-bold text-[10px] uppercase tracking-wider transition-colors">Koleksiyonu Sil</button>`;
+             } else {
+                actionsDiv.innerHTML = `<button onclick="leaveCollection('${colId}')" class="bg-gray-800 hover:bg-red-600 border border-gray-600 hover:border-red-700 px-3 py-1 rounded-sm text-white font-bold text-[10px] uppercase tracking-wider transition-colors">Ortaklıktan Çık</button>`;
+             }
+          }
+
+          const moviesDiv = document.getElementById('cv-movies'); moviesDiv.innerHTML = '';
+          if(col.filmler) {
+             let movies = Object.values(col.filmler); movies.sort((a,b) => b.eklenmeTarihi - a.eklenmeTarihi);
+             movies.forEach(m => {
+                moviesDiv.innerHTML += `
+                  <div class="card-wrap relative !w-full group" style="width:100%;">
+                    <img src="${IMG_BASE}w342${m.poster_path}" class="w-full aspect-[2/3] object-cover rounded-sm border border-transparent hover:border-red-500 cursor-pointer shadow-lg hover:shadow-[0_0_20px_rgba(229,9,20,0.5)] transition-all" onclick="closeCollectionView(); searchSelect(${m.id}, '${m.media_type}')" title="${m.title||m.name}" />
+                    <button onclick="event.stopPropagation(); removeMovieFromCollection('${colId}', '${m.id}')" class="absolute top-2 right-2 bg-black/90 border border-red-500/50 hover:bg-red-600 text-white w-6 h-6 rounded-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-30 font-bold text-xs" title="Filmi Kaldır">&times;</button>
+                  </div>
+                `;
+             });
+          } else { moviesDiv.innerHTML = '<p class="text-white text-sm col-span-full font-mono">Bu koleksiyon henüz boş.</p>'; }
+          
+          const mod = document.getElementById('collection-view-modal'); mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50);
+       });
+    }
+
+    function closeCollectionView() { const mod = document.getElementById('collection-view-modal'); mod.classList.add('opacity-0'); setTimeout(()=> mod.classList.add('hidden'), 300); }
+
+    function deleteCollection(colId) {
+      if(confirm('Koleksiyonu ebediyete uğurluyoruz, emin misin pampik?')) {
+        database.ref(`koleksiyonlar/${colId}`).remove(); showToast('Koleksiyon imha edildi!'); closeCollectionView();
+      }
+    }
+
+    function leaveCollection(colId) {
+      const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
+      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      if(confirm('Bu arşivden ayrılıyorsun, emin misin?')) {
+        database.ref(`koleksiyonlar/${colId}/ortaklar/${safeNick}`).remove(); showToast('Ortaklıktan çıkıldı.'); closeCollectionView();
+      }
+    }
+
+    function removeMovieFromCollection(colId, movieId) {
+      if(confirm('Bu filmi arşivden şutluyoruz, emin misin?')) {
+        database.ref(`koleksiyonlar/${colId}/filmler/${movieId}`).remove().then(() => {
+           showToast('Film şutlandı!'); viewCollection(colId); 
+        });
+      }
+    }
 
 
     // ════════════════════ SOHBET (CHAT) MOTORU ════════════════════
