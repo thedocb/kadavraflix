@@ -126,12 +126,32 @@
       50% { transform: scale(1.2); filter: drop-shadow(0 0 15px #eab308) brightness(1.5); }
     }
 
+    /* ════ MEKANA GİRİŞ GLITCH / SARSINTI EFEKTİ ════ */
+    @keyframes entranceGlitch {
+      0% { filter: invert(0) hue-rotate(0deg); transform: translate(2px, 1px); }
+      20% { filter: invert(0.2) hue-rotate(-10deg); transform: translate(-3px, 0px); }
+      40% { filter: invert(0.8) hue-rotate(90deg); transform: translate(1px, -1px); }
+      60% { filter: invert(0.1) hue-rotate(20deg); transform: translate(-3px, 1px); }
+      80% { filter: invert(1) hue-rotate(180deg); transform: translate(-1px, -1px); }
+      100% { filter: invert(0) hue-rotate(0deg); transform: translate(0px, 0px); }
+    }
+    .entrance-active { animation: entranceGlitch 0.4s ease-in-out; }
+
+    /* V.I.P GİRİŞ ANİMASYONLARI */
+    @keyframes batFlap {
+       0%, 100% { transform: scaleY(1); }
+       50% { transform: scaleY(-0.5); }
+    }
+
   </style>
 </head>
 <body>
 
   <!-- BODY TEMA KATMANI -->
   <div id="body-theme-overlay" class="fixed inset-0 pointer-events-none" style="z-index:0; transition:opacity 0.2s ease;"></div>
+
+  <!-- KİŞİSELLEŞTİRİLMİŞ TAM EKRAN GİRİŞ SAHNESİ -->
+  <div id="custom-entrance-overlay" class="fixed inset-0 z-[9999] pointer-events-none hidden flex items-center justify-center overflow-hidden transition-opacity duration-500"></div>
 
   <!-- PROFESYONEL LEJYON GİRİŞ EKRANI -->
   <div id="login-screen" class="fixed inset-0 z-[1000] bg-black flex items-center justify-center p-6 transition-opacity duration-300">
@@ -148,6 +168,7 @@
       <p id="auth-error" class="text-red-500 font-mono text-xs mt-4 hidden bg-red-900/20 border border-red-500 p-2"></p>
     </div>
   </div>
+
 
   <!-- AYARLAR MENÜSÜ -->
   <div id="settings-modal" class="fixed inset-0 z-[3500] bg-black/95 backdrop-blur-sm hidden opacity-0 transition-opacity flex items-center justify-center">
@@ -701,18 +722,17 @@
 
   <!-- PLAYER EKRANI -->
   <div id="player-overlay" class="fixed inset-0 bg-black z-[9999] hidden flex-col items-center justify-center">
-    <button onclick="closePlayer()" class="absolute top-6 right-8 z-[10000] bg-red-600 border-2 border-red-600 px-4 py-2 font-display text-xl transition-all hover:bg-black hover:text-red-500 rounded-none brutalist-shadow shadow-black text-white uppercase tracking-widest">SİSTEMDEN ÇIK</button>
+    
+    <!-- Üst Görünmez Hover Alanı (Farenin üst kısma gelmesiyle butonu gösterir) -->
+    <div class="absolute top-0 left-0 w-full h-32 z-[10000] opacity-0 hover:opacity-100 transition-opacity duration-500 flex justify-end p-6" style="pointer-events: none;">
+      <button onclick="closePlayer()" style="pointer-events: auto;" class="bg-red-600 border-2 border-red-600 px-4 py-2 font-display text-xl transition-all hover:bg-black hover:text-red-500 rounded-none brutalist-shadow shadow-black text-white uppercase tracking-widest h-fit">SİSTEMDEN ÇIK</button>
+    </div>
+
     <div id="player-loader" class="absolute inset-0 flex flex-col items-center justify-center z-10 pointer-events-none bg-black">
        <div class="w-16 h-16 border-4 border-gray-900 border-t-red-600 rounded-none animate-spin mb-6"></div>
        <p class="text-white font-display text-3xl tracking-widest animate-pulse drop-shadow-[2px_2px_0_#e50914]">BAĞLANTI KURULUYOR...</p>
     </div>
     <iframe id="player-frame" src="" class="w-full h-full max-w-full max-h-full border-none relative z-20" allowfullscreen allow="autoplay; fullscreen" onload="document.getElementById('player-loader').style.display='none'"></iframe>
-  </div>
-
-  <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-[9999] transition-all duration-200 opacity-0 translate-y-4 pointer-events-none">
-      <div class="bg-black border-2 border-red-600 text-white font-mono text-xs px-6 py-4 rounded-none brutalist-shadow flex items-center gap-3">
-          <span id="toast-icon" class="text-lg">!</span><span id="toast-msg" class="uppercase font-bold tracking-wider"></span>
-      </div>
   </div>
 
   <!-- KARMA BİLGİ -->
@@ -2428,11 +2448,111 @@
       const loginScreen = document.getElementById('login-screen');
       if (loginScreen) { if(isAuto) { loginScreen.style.display = 'none'; showToast(`SİSTEME BAĞLANILDI: ${user}`); } else { loginScreen.style.opacity = '0'; setTimeout(() => { loginScreen.remove(); showToast(`SİSTEME BAĞLANILDI: ${user}`); }, 300); } }
       listenTayfa(); listenChat(); init(); listenNotifications();
+      database.ref('yeralti_girisler').push({ user: user, timestamp: Date.now() });
+      listenEntrances();
 
       const _safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
       database.ref(`kullanicilar/${_safeNick}/marketAktif/themes`).once('value').then(s => {
         if(s.exists()) applyBodyTheme(s.val());
       });
+    }
+
+    // // ════════════ V.I.P MEKAN GİRİŞ ANONSU (MATRIX & BATMAN ŞOVU) ════════════
+    let isInitialEntranceLoad = true;
+
+    function playBatEffect(container) {
+        container.innerHTML = '<div id="bat-swarm" class="absolute inset-0 flex items-center justify-center"></div><h1 class="relative z-10 text-[12vw] font-display text-gray-300 font-bold tracking-widest uppercase opacity-0 transition-opacity duration-1000 [text-shadow:0_0_30px_#fff]" id="bat-text">FRAUDE</h1>';
+        const swarm = document.getElementById('bat-swarm');
+        for(let i=0; i<45; i++) {
+            let bat = document.createElement('div');
+            bat.innerHTML = '<span style="display:inline-block; animation: batFlap 0.15s infinite alternate;">🦇</span>';
+            bat.className = 'absolute text-4xl';
+            let startX = Math.random() * window.innerWidth;
+            let startY = window.innerHeight + 50;
+            let destX = startX + (Math.random() - 0.5) * 800;
+            let destY = -100;
+            let duration = 1 + Math.random() * 1.5;
+            
+            bat.style.left = startX + 'px';
+            bat.style.top = startY + 'px';
+            bat.style.transition = `transform ${duration}s ease-in, opacity ${duration}s`;
+            swarm.appendChild(bat);
+            
+            setTimeout(() => {
+                bat.style.transform = `translate(${destX - startX}px, ${destY - startY}px) scale(${0.5 + Math.random()})`;
+                bat.style.opacity = '0';
+            }, 50);
+        }
+        setTimeout(() => document.getElementById('bat-text').style.opacity = '1', 1000);
+    }
+
+    function playMatrixEffect(container) {
+        container.innerHTML = '<canvas id="matrix-canvas" class="absolute inset-0 w-full h-full opacity-60"></canvas><h1 class="relative z-10 text-[12vw] font-display text-green-500 tracking-widest uppercase opacity-0 transition-opacity duration-1000 drop-shadow-[4px_4px_0_#000] [text-shadow:0_0_30px_#22c55e]" id="matrix-text">KADAVRA</h1>';
+        const c = document.getElementById('matrix-canvas');
+        const ctx = c.getContext('2d');
+        c.width = window.innerWidth; c.height = window.innerHeight;
+        const letters = '01KADAVRA'.split('');
+        const fontSize = 18;
+        const columns = c.width / fontSize;
+        const drops = [];
+        for(let x = 0; x < columns; x++) drops[x] = 1;
+        const interval = setInterval(() => {
+            ctx.fillStyle = 'rgba(5, 5, 5, 0.15)';
+            ctx.fillRect(0, 0, c.width, c.height);
+            ctx.fillStyle = '#22c55e';
+            ctx.font = fontSize + 'px monospace';
+            for(let i = 0; i < drops.length; i++) {
+                const text = letters[Math.floor(Math.random() * letters.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if(drops[i] * fontSize > c.height && Math.random() > 0.95) drops[i] = 0;
+                drops[i]++;
+            }
+        }, 33);
+        setTimeout(() => document.getElementById('matrix-text').style.opacity = '1', 800);
+        return interval;
+    }
+    
+    function listenEntrances() {
+       database.ref('yeralti_girisler').limitToLast(1).on('child_added', snap => {
+          if(isInitialEntranceLoad) { isInitialEntranceLoad = false; return; }
+          const data = snap.val();
+          const isPlayerOpen = !document.getElementById('player-overlay').classList.contains('hidden');
+          
+          // FİLM İZLEYEN ADAMI RAHATSIZ ETMEZ!
+          if(Date.now() - data.timestamp < 10000 && !isPlayerOpen) {
+             const safeName = data.user.toLowerCase();
+             
+             // 🚨 GÜVENLİK DUVARI: EĞER GİREN KİŞİ FRAUDE VEYA KADAVRA DEĞİLSE HİÇBİR ŞEY YAPMA! 🚨
+             if(safeName !== 'fraude' && safeName !== 'kadavra' && safeName !== 'doc b' && safeName !== 'arda') {
+                 return; // Şovu iptal et, normal kullanıcılar sessizce girsin.
+             }
+
+             const overlay = document.getElementById('custom-entrance-overlay');
+             overlay.innerHTML = '';
+             overlay.classList.remove('hidden');
+             overlay.style.opacity = '1';
+             overlay.style.background = 'rgba(5,5,5,0.95)'; 
+             
+             let interval = null;
+             
+             // İSME GÖRE ÖZEL ANİMASYON TETİKLEYİCİSİ
+             if(safeName === 'fraude') {
+                 playBatEffect(overlay);
+             } else if (safeName === 'kadavra' || safeName === 'doc b' || safeName === 'arda') {
+                 interval = playMatrixEffect(overlay);
+             } 
+             
+             // 4 Saniye sonra şovu bitir ve ekranı temizle
+             setTimeout(() => {
+                 overlay.style.opacity = '0';
+                 setTimeout(() => {
+                     overlay.classList.add('hidden');
+                     overlay.innerHTML = '';
+                     if(interval) clearInterval(interval);
+                 }, 500);
+             }, 4000);
+          }
+       });
     }
     
     function logoutUser() { localStorage.removeItem('kadavra_vip_user'); localStorage.removeItem('kadavra_vip_pass'); location.reload(); }
