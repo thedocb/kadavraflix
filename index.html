@@ -331,6 +331,7 @@
       <img id="up-bg" src="" class="w-full h-full object-cover opacity-40 hidden" />
       <div class="absolute inset-0 bg-gradient-to-t from-[#000] to-transparent"></div>
       <button onclick="closeUserProfile()" class="absolute top-6 right-8 text-white bg-red-600 border-2 border-red-600 px-4 py-2 font-display text-xl transition-all hover:bg-black hover:text-red-500 z-50 rounded-none brutalist-shadow shadow-black">KAPAT</button>
+      <button id="profile-mute-btn" onclick="toggleProfileMute()" class="absolute top-6 right-32 text-gray-400 border-2 border-gray-800 bg-black px-4 py-2 font-display text-xl transition-all hover:bg-gray-800 hover:text-white z-50 rounded-none brutalist-shadow hidden">🔊 SES</button>
     </div>
     
     <div class="max-w-7xl mx-auto px-4 sm:px-8 relative -mt-20 md:-mt-32 flex flex-col md:flex-row gap-8 items-end border-b-2 border-gray-800 pb-6 z-10">
@@ -577,6 +578,30 @@
     
     <div class="flex items-center gap-4">
       <button onclick="playRandom()" class="hidden sm:flex items-center gap-2 text-white bg-transparent border-2 border-red-800 px-4 py-2 font-display text-lg tracking-wider hover:bg-red-600 hover:border-red-600 hover:text-black transition-all">🎲 ZAR AT</button>
+      
+      <!-- GÜNLÜK RACON BUTONU -->
+      <button onclick="openDailyModal()" class="hidden sm:flex items-center gap-2 text-blue-500 bg-transparent border-2 border-blue-900 px-4 py-2 font-display text-lg tracking-wider hover:bg-blue-900 hover:text-white transition-all">📅 GÜNLÜK RACON</button>
+
+      <!-- GÜNLÜK RACON & STREAK MODALI -->
+  <div id="daily-modal" class="fixed inset-0 z-[5000] bg-black/95 backdrop-blur-none hidden opacity-0 transition-opacity flex items-center justify-center">
+    <div class="bg-[#050505] border-2 border-blue-800 w-full max-w-2xl p-10 rounded-none relative brutalist-shadow mx-4">
+      <button onclick="closeDailyModal()" class="absolute top-4 right-5 text-blue-700 hover:text-white text-3xl font-mono leading-none font-bold">X</button>
+      <h2 class="text-4xl font-display text-blue-500 tracking-widest mb-2 uppercase drop-shadow-[2px_2px_0_#1e3a8a]">📅 GÜNLÜK RACONLAR</h2>
+      
+      <!-- STREAK BAR -->
+      <div class="bg-black border border-blue-900 p-4 mb-6">
+         <p class="text-xs text-gray-400 font-mono mb-2">GİRİŞ SERİSİ (7. GÜN ZULA BEDAVA)</p>
+         <div class="flex gap-2 justify-between" id="streak-days-container">
+            <!-- JS ile doldurulacak -->
+         </div>
+      </div>
+
+      <!-- GÖREVLER -->
+      <div id="daily-tasks-container" class="space-y-3">
+         <p class="text-center text-gray-600 font-mono text-sm">Veriler çekiliyor...</p>
+      </div>
+    </div>
+  </div>
       
       <div class="relative block">
         <input id="search-input" type="text" placeholder="SORGULA..." class="brutalist-input px-3 py-2 w-32 focus:w-56 text-sm transition-all" oninput="handleSearch(this.value)" />
@@ -983,11 +1008,16 @@
         if (aktifSes) {
             const soundData = karmaMarketItems.sounds.find(s => s.id === aktifSes);
             if (soundData && soundData.audioUrl) {
-            profileAudio = new Audio(soundData.audioUrl);
-            // Eğer market listesinde özel bir volume belirlediysen onu kullan, belirlemediysen standart 0.4 yap:
-            profileAudio.volume = soundData.volume || 0.4; 
-            profileAudio.play().catch(e => console.log('Tarayıcı otomatik sesi engelledi.'));
-        } }
+                profileAudio = new Audio(soundData.audioUrl);
+                profileAudio.volume = soundData.volume || 0.4; 
+                profileAudio.play().catch(e => console.log('Tarayıcı otomatik sesi engelledi.'));
+                // Müzik çalmaya başladığı an butonu göster
+                document.getElementById('profile-mute-btn').classList.remove('hidden');
+            } 
+        } else {
+            // Müzik yoksa butonu gizle
+            document.getElementById('profile-mute-btn').classList.add('hidden');
+        }
         // ── ROLA ÖZEL ALT KISIM BOKEH ARKAPLANI ──
         const profileModal = document.getElementById('user-profile-modal');
         const aktifRol = (data.marketAktif && data.marketAktif.roles) ? data.marketAktif.roles : null;
@@ -1133,6 +1163,7 @@
     function closeUserProfile() { 
         const mod = document.getElementById('user-profile-modal'); mod.classList.add('opacity-0'); setTimeout(()=> mod.classList.add('hidden'), 300); 
         if (profileAudio) { profileAudio.pause(); profileAudio.currentTime = 0; }
+        document.getElementById('profile-mute-btn').classList.add('hidden'); // Modalı kapatırken butonu da gizle
     }
     
     function openSettings() { 
@@ -2456,6 +2487,8 @@
       database.ref(`kullanicilar/${_safeNick}/marketAktif/themes`).once('value').then(s => {
         if(s.exists()) applyBodyTheme(s.val());
       });
+      
+      checkDailyStatus(); // GÜNLÜK SİSTEM MOTORUNU BURADA ATEŞLİYORUZ
     }
 
     // // ════════════ V.I.P MEKAN GİRİŞ ANONSU (MATRIX & BATMAN ŞOVU) ════════════
@@ -2598,6 +2631,144 @@
         window.addEventListener('resize', toggleBtns);
         setTimeout(toggleBtns, 500); 
       });
+    }
+
+    function toggleProfileMute() {
+        if (!profileAudio) return;
+        const btn = document.getElementById('profile-mute-btn');
+        if (profileAudio.muted) {
+            profileAudio.muted = false;
+            btn.textContent = '🔊 SES';
+            btn.classList.replace('text-red-500', 'text-gray-400');
+        } else {
+            profileAudio.muted = true;
+            btn.textContent = '🔇 SESSİZ';
+            btn.classList.replace('text-gray-400', 'text-red-500');
+        }
+    }
+
+    // ════════════ GÜNLÜK SİSTEM MOTORU (STREAK & TASKS) ════════════
+    const dailyTaskPool = [
+        { id: 't1', desc: 'Duvara 1 racon kes.', karma: 15 },
+        { id: 't2', desc: 'Kulüp sohbetine 3 mesaj at.', karma: 15 },
+        { id: 't3', desc: 'Herhangi bir kayda yorum at.', karma: 20 },
+        { id: 't4', desc: 'Tayfa akışından 3 farklı kişiyi şukula.', karma: 10 },
+        { id: 't5', desc: 'Zar atarak rastgele bir film aç.', karma: 10 },
+        { id: 't6', desc: 'Hedef (Watchlist) listene yeni bir dosya ekle.', karma: 10 }
+    ];
+
+    function checkDailyStatus() {
+        const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
+        const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+        const todayStr = new Date().toLocaleDateString('tr-TR'); 
+        
+        database.ref(`kullanicilar/${safeNick}/dailyData`).once('value').then(snap => {
+            let data = snap.exists() ? snap.val() : { streak: 0, lastLoginDate: '', tasks: null };
+            let updates = {};
+            
+            // BUG KIRICI: Yeni gün mü? VEYA görevleri hiç oluşmamış mı?
+            let isNewDay = data.lastLoginDate !== todayStr;
+            let needsTasks = !data.tasks || data.tasks.length === 0;
+
+            if (isNewDay || needsTasks) {
+                if (isNewDay) {
+                    const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+                    if (data.lastLoginDate === yesterday.toLocaleDateString('tr-TR')) {
+                        data.streak += 1;
+                        if (data.streak > 7) data.streak = 1; 
+                    } else {
+                        data.streak = 1; 
+                    }
+                    updates['dailyData/streak'] = data.streak;
+                    updates['dailyData/lastLoginDate'] = todayStr;
+
+                    let loginBonus = data.streak * 50; 
+                    updates['karma'] = firebase.database.ServerValue.increment(loginBonus);
+                    logKarmaEvent('admin', loginBonus, `${data.streak}. Gün Giriş Bonusu`);
+                    showToast(`GÜNLÜK GİRİŞ: +${loginBonus} KARMA (Seri: ${data.streak}/7)`);
+
+                    if (data.streak === 7) {
+                        updates['lastKasaTime'] = 0; 
+                        showToast('7 GÜNLÜK SERİ! ZULA KİLİDİ AÇILDI.', true);
+                    }
+                }
+
+                // Rastgele 3 yeni görev seç ve zorla ata
+                let shuffled = dailyTaskPool.sort(() => 0.5 - Math.random());
+                let selectedTasks = shuffled.slice(0, 3).map(t => ({ id: t.id, desc: t.desc, karma: t.karma, done: false }));
+                updates['dailyData/tasks'] = selectedTasks;
+                
+                database.ref(`kullanicilar/${safeNick}`).update(updates);
+            }
+        });
+    }
+
+    // Modal İşlemleri (Canlı Takip Motorlu)
+    function openDailyModal() {
+        const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
+        const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+        
+        const mod = document.getElementById('daily-modal');
+        mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50);
+
+        // .on('value') ile canlı dinliyoruz. Görev yoksa arka planda oluşturulup anında buraya düşecek!
+        database.ref(`kullanicilar/${safeNick}/dailyData`).on('value', snap => {
+            if(!snap.exists() || !snap.val().tasks) {
+                checkDailyStatus(); // Görev yoksa motoru zorla çalıştır
+                document.getElementById('daily-tasks-container').innerHTML = '<p class="text-center text-gray-500 font-mono text-sm">Görevler hazırlanıyor, bekle...</p>';
+                return;
+            }
+            const data = snap.val();
+            
+            // Streak UI
+            const streakBox = document.getElementById('streak-days-container');
+            streakBox.innerHTML = '';
+            for(let i=1; i<=7; i++) {
+                let isCompleted = i <= data.streak;
+                let bg = isCompleted ? 'bg-blue-600 text-black' : 'bg-gray-900 text-gray-500 border border-gray-700';
+                streakBox.innerHTML += `<div class="w-8 h-8 flex items-center justify-center font-bold font-mono text-sm ${bg} ${i===7 ? 'border-2 border-yellow-500' : ''}">${i===7 && !isCompleted ? '🎁' : i}</div>`;
+            }
+
+            // Tasks UI
+            const tasksBox = document.getElementById('daily-tasks-container');
+            tasksBox.innerHTML = '';
+            (data.tasks || []).forEach((t, index) => {
+                let btn = t.done 
+                    ? `<button disabled class="bg-gray-800 text-gray-500 px-4 py-2 font-mono text-xs uppercase cursor-not-allowed">TAMAMLANDI</button>`
+                    : `<button onclick="claimTask(${index})" class="bg-blue-800 hover:bg-white text-white hover:text-black px-4 py-2 font-mono text-xs uppercase transition-colors">ÖDÜLÜ AL (+${t.karma})</button>`; 
+                
+                tasksBox.innerHTML += `
+                    <div class="bg-black border border-gray-800 p-3 flex justify-between items-center hover:border-blue-900 transition-colors">
+                        <span class="text-gray-300 font-mono text-sm">${t.desc}</span>
+                        ${btn}
+                    </div>
+                `;
+            });
+        });
+    }
+    
+    function closeDailyModal() { 
+        const mod = document.getElementById('daily-modal'); 
+        mod.classList.add('opacity-0'); 
+        setTimeout(()=> mod.classList.add('hidden'), 300); 
+    }
+
+    function claimTask(taskIndex) {
+        const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
+        const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+        
+        database.ref(`kullanicilar/${safeNick}/dailyData/tasks/${taskIndex}`).once('value').then(snap => {
+            let task = snap.val();
+            if(!task || task.done) return;
+            
+            database.ref(`kullanicilar/${safeNick}`).update({
+                [`dailyData/tasks/${taskIndex}/done`]: true,
+                'karma': firebase.database.ServerValue.increment(task.karma)
+            }).then(() => {
+                logKarmaEvent('admin', task.karma, `Görev: ${task.desc}`);
+                showToast(`GÖREV TAMAMLANDI: +${task.karma} KARMA`);
+            });
+        });
     }
 
   </script>
