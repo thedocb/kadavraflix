@@ -161,9 +161,9 @@
         <button id="tab-register" onclick="toggleAuth('register')" class="flex-1 text-gray-600 font-display text-2xl tracking-widest pb-3 border-b-4 border-transparent hover:text-red-400 transition-colors">KAYIT OL</button>
       </div>
       <h1 class="font-display text-6xl mb-8 text-white tracking-widest drop-shadow-[4px_4px_0_rgba(229,9,20,1)]">KADAVRAFLIX</h1>
-      <input type="text" id="auth-nick" placeholder="KOD ADI (Örn: Fraude)" class="w-full brutalist-input px-4 py-4 text-center mb-4 text-lg">
-      <input type="password" id="auth-pass" placeholder="ŞİFRE" class="w-full brutalist-input px-4 py-4 text-center mb-6 text-lg">
-      <input type="text" id="auth-ref" placeholder="REFERANS KODU" class="w-full brutalist-input px-4 py-4 text-center mb-6 text-lg hidden">
+      <input type="text" id="auth-nick" placeholder="KOD ADI (Örn: Fraude)" class="w-full brutalist-input px-4 py-4 text-center mb-4 text-lg" onkeypress="if(event.key === 'Enter') handleAuth()">
+      <input type="password" id="auth-pass" placeholder="ŞİFRE" class="w-full brutalist-input px-4 py-4 text-center mb-6 text-lg" onkeypress="if(event.key === 'Enter') handleAuth()">
+      <input type="text" id="auth-ref" placeholder="REFERANS KODU" class="w-full brutalist-input px-4 py-4 text-center mb-6 text-lg hidden" onkeypress="if(event.key === 'Enter') handleAuth()">
       <button onclick="handleAuth()" id="auth-btn" class="w-full bg-red-600 border-2 border-red-600 py-4 text-black font-display text-2xl tracking-widest transition-all hover:bg-transparent hover:text-red-500 hover:translate-x-1 hover:-translate-y-1 hover:shadow-[4px_4px_0_#ef4444]">MEKANA GİR</button>
       <p id="auth-error" class="text-red-500 font-mono text-xs mt-4 hidden bg-red-900/20 border border-red-500 p-2"></p>
     </div>
@@ -1258,6 +1258,7 @@
       try { 
         loadHistory(); loadWatchlist(); 
         await Promise.all([loadHero(), loadTrending(), loadMovies(), loadSeries()]); 
+        setupSliders(); // OKLARI BURADA ATEŞLİYORUZ
       } catch(e) { console.error(e); showToast('Sistem Hatası.'); } 
     }
     
@@ -2556,6 +2557,49 @@
     }
     
     function logoutUser() { localStorage.removeItem('kadavra_vip_user'); localStorage.removeItem('kadavra_vip_pass'); location.reload(); }
+
+    // ════════════ SLIDER OKLARI (AKILLI NAVİGASYON) ════════════
+    function setupSliders() {
+      document.querySelectorAll('.slider-track').forEach(track => {
+        // Zaten sarmaladıysak ikinci kez eklemesin
+        if(track.parentElement.classList.contains('slider-wrap')) return;
+
+        // Listeyi brutal bir çerçevenin içine alıyoruz
+        const wrap = document.createElement('div');
+        wrap.className = 'slider-wrap relative group w-full';
+        track.parentNode.insertBefore(wrap, track);
+        wrap.appendChild(track);
+
+        // SOL OK 
+        const btnLeft = document.createElement('button');
+        btnLeft.innerHTML = '&#10094;'; 
+        btnLeft.className = 'absolute left-0 top-0 bottom-5 z-20 w-12 bg-black/80 border-r-2 border-red-700 text-red-500 font-bold text-3xl opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 hover:text-black brutalist-shadow flex items-center justify-center';
+        btnLeft.onclick = () => track.scrollBy({left: -600, behavior: 'smooth'});
+
+        // SAĞ OK
+        const btnRight = document.createElement('button');
+        btnRight.innerHTML = '&#10095;'; 
+        btnRight.className = 'absolute right-0 top-0 bottom-5 z-20 w-12 bg-black/80 border-l-2 border-red-700 text-red-500 font-bold text-3xl opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 hover:text-black brutalist-shadow flex items-center justify-center';
+        btnRight.onclick = () => track.scrollBy({left: 600, behavior: 'smooth'});
+
+        wrap.appendChild(btnLeft);
+        wrap.appendChild(btnRight);
+
+        // KÖŞELERE DAYANINCA OKLARI GİZLEYEN YAPAY ZEKA
+        const toggleBtns = () => {
+          btnLeft.style.display = track.scrollLeft > 10 ? 'flex' : 'none';
+          const maxScroll = track.scrollWidth - track.clientWidth;
+          btnRight.style.display = track.scrollLeft < maxScroll - 10 ? 'flex' : 'none';
+        };
+
+        // Hareket ettikçe ve yeni film eklendikçe algıla
+        track.addEventListener('scroll', toggleBtns);
+        new MutationObserver(toggleBtns).observe(track, {childList: true});
+        window.addEventListener('resize', toggleBtns);
+        setTimeout(toggleBtns, 500); 
+      });
+    }
+
   </script>
 </body>
 </html>
