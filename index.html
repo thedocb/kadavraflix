@@ -115,6 +115,17 @@
       #modal-title { font-size: 3rem !important; }
       #modal-box { padding-top: 1rem; }
     }
+
+    /* ════ HAREKETLİ V.I.P İKON ANİMASYONLARI ════ */
+    @keyframes butcherChop {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-4px) rotate(-15deg); filter: drop-shadow(0 4px 0 #8b0000); }
+    }
+    @keyframes ringPulse {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px #eab308); }
+      50% { transform: scale(1.2); filter: drop-shadow(0 0 15px #eab308) brightness(1.5); }
+    }
+
   </style>
 </head>
 <body>
@@ -1711,9 +1722,14 @@
           div.innerHTML = `
             <div class="flex justify-between items-baseline gap-2 mb-2 border-b border-gray-900 pb-1">
               ${(function(){
+                  let p = msg.vipPrefix || msg.themePrefix || '';
+                  if(p.includes('🔪')) p = `<span style="display:inline-block; animation: butcherChop 0.6s infinite ease-in-out; margin-right:4px;">🔪</span>`;
+                  else if(p.includes('💍')) p = `<span style="display:inline-block; animation: ringPulse 1.5s infinite; margin-right:4px;">💍</span>`;
+                  else if(p) p = p + ' ';
+                  
                   if (msgIsAdmin) return `<span onclick="openUserProfile('${msg.user}')" class="cursor-pointer hover:underline text-xs font-display tracking-widest text-red-600 [text-shadow:0_0_8px_currentColor]">👑 ${msg.user}</span>`;
-                  if (msg.themeColor) return `<span onclick="openUserProfile('${msg.user}')" class="cursor-pointer hover:underline text-xs font-display tracking-widest" style="color:${msg.themeColor}; text-shadow:0 0 8px ${msg.themeColor};">${msg.themePrefix ? msg.themePrefix+' ' : ''}${msg.user}</span>`;
-                  if (msg.isVip) return `<span onclick="openUserProfile('${msg.user}')" class="cursor-pointer hover:underline text-xs font-display tracking-widest ${msg.vipColor || 'text-yellow-500'} [text-shadow:0_0_8px_currentColor]">${msg.vipPrefix ? msg.vipPrefix+' ' : ''}${msg.user}</span>`;
+                  if (msg.themeColor) return `<span onclick="openUserProfile('${msg.user}')" class="cursor-pointer hover:underline text-xs font-display tracking-widest" style="color:${msg.themeColor}; text-shadow:0 0 8px ${msg.themeColor};">${p}${msg.user}</span>`;
+                  if (msg.isVip) return `<span onclick="openUserProfile('${msg.user}')" class="cursor-pointer hover:underline text-xs font-display tracking-widest ${msg.vipColor || 'text-yellow-500'} [text-shadow:0_0_8px_currentColor]">${p}${msg.user}</span>`;
                   return `<span onclick="openUserProfile('${msg.user}')" class="cursor-pointer hover:underline text-xs font-display tracking-widest ${isMe ? 'text-gray-300 hover:text-red-500 hover:[text-shadow:0_0_8px_currentColor]' : 'text-gray-500 hover:text-red-500 hover:[text-shadow:0_0_8px_currentColor]'}">${msg.user}</span>`;
               })()}
               <div><span class="text-[9px] font-mono text-gray-700">${date}</span>${deleteBtn}</div>
