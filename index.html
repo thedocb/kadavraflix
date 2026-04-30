@@ -152,6 +152,9 @@
 
 <body>
 
+  <!-- BODY TEMA KATMANI — pointer-events:none, içeriğe dokunmaz -->
+  <div id="body-theme-overlay" class="fixed inset-0 pointer-events-none" style="z-index:0; transition:opacity 0.6s ease;"></div>
+
 
 
   <!-- PROFESYONEL LEJYON GİRİŞ EKRANI -->
@@ -190,7 +193,7 @@
 
   <div id="settings-modal" class="fixed inset-0 z-[3500] bg-black/90 backdrop-blur-md hidden opacity-0 transition-opacity flex items-center justify-center">
 
-    <div class="bg-[#0a0a0a] border border-red-900/50 w-full max-w-md p-6 rounded-sm relative shadow-2xl text-center max-h-[90vh] overflow-y-auto">
+    <div class="bg-[#0a0a0a]/80 border border-red-900/50 w-full max-w-md p-6 rounded-sm relative shadow-2xl text-center max-h-[90vh] overflow-y-auto">
 
       <button onclick="closeSettings()" class="absolute top-4 right-5 text-gray-500 hover:text-white text-2xl leading-none">&times;</button>
 
@@ -244,6 +247,10 @@
 
         </div>
 
+        <div class="w-full mt-2">
+          <button onclick="closeSettings(); openKarmaMarket();" class="w-full bg-purple-900/20 border border-purple-500/50 text-purple-400 hover:bg-purple-700 hover:text-white py-2 rounded-sm font-bold uppercase tracking-wider text-xs transition-colors">🛒 Karma Marketi</button>
+        </div>
+
       </div>
 
     </div>
@@ -256,7 +263,7 @@
 
   <div id="admin-modal" class="fixed inset-0 z-[3500] bg-black/90 backdrop-blur-md hidden opacity-0 transition-opacity flex items-center justify-center">
 
-    <div class="bg-[#0a0a0a] border border-red-900/50 w-full max-w-4xl p-8 rounded-sm relative shadow-2xl text-center max-h-[90vh] overflow-y-auto">
+    <div class="bg-[#0a0a0a]/80 border border-red-900/50 w-full max-w-4xl p-8 rounded-sm relative shadow-2xl text-center max-h-[90vh] overflow-y-auto">
 
       <button onclick="closeAdminPanel()" class="absolute top-4 right-5 text-gray-500 hover:text-white text-3xl leading-none">&times;</button>
 
@@ -412,7 +419,10 @@
 
   <div id="user-profile-modal" class="fixed inset-0 z-[3000] bg-[#050505] hidden opacity-0 transition-opacity overflow-y-auto pb-20 font-sans">
 
-    <div class="relative w-full h-[45vh] md:h-[50vh] border-b-2 border-red-900 bg-black">
+    <!-- IL PADRINO ROLÜ İÇİN SABİT ARKA PLAN OVERLAY'I -->
+    <div id="profile-role-bg" class="fixed inset-0 pointer-events-none z-0 opacity-0 transition-opacity duration-700 bg-no-repeat" style="background-position: bottom right; background-size: min(400px, 45vw);"></div>
+
+    <div class="relative w-full h-[45vh] md:h-[50vh] border-b-2 border-red-900 bg-black z-10">
 
       <img id="up-bg" src="" class="w-full h-full object-cover opacity-50 hidden" />
 
@@ -424,9 +434,12 @@
 
     
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-8 relative -mt-16 md:-mt-24 flex flex-col md:flex-row gap-6 items-end border-b border-red-900/50 pb-4">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 relative -mt-16 md:-mt-24 flex flex-col md:flex-row gap-6 items-end border-b border-red-900/50 pb-4 z-10">
 
-      <img id="up-pp" src="" class="w-32 h-32 md:w-48 md:h-48 rounded-sm border-2 border-red-800 object-cover shadow-[0_0_15px_rgba(229,9,20,0.3)] z-10 bg-[#111]" />
+      <div id="up-pp-wrapper" class="relative w-32 h-32 md:w-48 md:h-48 z-10 flex-shrink-0" style="overflow:visible;">
+        <img id="up-pp" src="" class="w-full h-full rounded-sm border-2 border-red-800 object-cover bg-[#111]" />
+        <div id="up-pp-frame-overlay" class="absolute inset-0 pointer-events-none" style="overflow:visible;"></div>
+      </div>
 
       <div class="flex-1 text-left z-10 w-full flex flex-col md:flex-row md:items-end justify-between gap-4 mb-2">
 
@@ -454,7 +467,7 @@
 
 
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-8 py-4 flex flex-wrap gap-8 justify-start text-left border-b border-red-900/30 bg-[#0a0a0a]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 py-4 flex flex-wrap gap-8 justify-start text-left border-b border-red-900/30 bg-[#0a0a0a]/80 relative z-10">
 
 
 <div><p class="text-2xl font-display text-yellow-500" id="up-stat-karma">0</p><p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mt-1">Karma</p></div>
@@ -475,7 +488,7 @@
 
     <!-- TAKİPÇİ / TAKİP EDİLEN LİSTESİ MODALI -->
   <div id="follow-list-modal" class="fixed inset-0 z-[4000] bg-black/90 backdrop-blur-sm hidden opacity-0 transition-opacity flex items-center justify-center">
-    <div class="bg-[#0a0a0a] border border-red-900/50 w-full max-w-sm p-6 rounded-sm relative shadow-2xl mx-4 max-h-[80vh] flex flex-col">
+    <div class="bg-[#0a0a0a]/80 border border-red-900/50 w-full max-w-sm p-6 rounded-sm relative shadow-2xl mx-4 max-h-[80vh] flex flex-col">
       <button onclick="closeFollowList()" class="absolute top-4 right-5 text-gray-500 hover:text-white text-2xl leading-none">&times;</button>
       <h2 id="follow-list-title" class="text-xl font-bold text-red-500 tracking-widest mb-4 border-b border-red-900/50 pb-2 uppercase">Liste</h2>
       <div id="follow-list-content" class="flex-1 overflow-y-auto pr-2 scrollbar-thin space-y-2">
@@ -483,11 +496,11 @@
     </div>
   </div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-8 mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6 relative z-10">
 
       <div class="lg:col-span-4 space-y-6">
 
-        <div class="bg-[#0a0a0a] border border-red-900/30 p-5 rounded-sm">
+        <div class="bg-[#0a0a0a]/80 border border-red-900/30 p-5 rounded-sm">
 
           <h3 class="text-sm font-bold text-red-500 mb-3 border-b border-red-900/50 pb-2 uppercase tracking-wider">📜 Biyografi</h3>
 
@@ -497,7 +510,7 @@
 
         
 
-        <div class="bg-[#0a0a0a] border border-red-900/30 p-5 rounded-sm">
+        <div class="bg-[#0a0a0a]/80 border border-red-900/30 p-5 rounded-sm">
           <h3 class="text-sm font-bold text-red-500 mb-3 border-b border-red-900/50 pb-2 uppercase tracking-wider">📁 Özel Koleksiyonlar</h3>
           <div id="up-custom-playlists" class="space-y-2">
             <!-- JS Dolduracak -->
@@ -507,7 +520,7 @@
 
       <div class="lg:col-span-5 space-y-6">
 
-        <div class="bg-[#0a0a0a] border border-red-900/30 p-5 rounded-sm">
+        <div class="bg-[#0a0a0a]/80 border border-red-900/30 p-5 rounded-sm">
 
           <div class="flex justify-between items-end border-b border-red-900/50 pb-2 mb-4">
 
@@ -533,7 +546,7 @@
 
       <div class="lg:col-span-3 space-y-6">
 
-        <div class="bg-[#0a0a0a] border border-red-900/30 p-4 rounded-sm">
+        <div class="bg-[#0a0a0a]/80/80 border border-red-900/30 p-4 rounded-sm">
 
           <h3 class="text-sm font-bold text-red-500 mb-3 border-b border-red-900/50 pb-2 uppercase tracking-wider">🎬 Son İzledikleri</h3>
 
@@ -541,7 +554,7 @@
 
         </div>
 
-        <div class="bg-[#0a0a0a] border border-red-900/30 p-4 rounded-sm">
+        <div class="bg-[#0a0a0a]/80/80 border border-red-900/30 p-4 rounded-sm">
 
           <h3 class="text-sm font-bold text-red-500 mb-3 border-b border-red-900/50 pb-2 uppercase tracking-wider">📌 İzleme Listesi</h3>
 
@@ -560,7 +573,7 @@
 
   <!-- RÜTBE REHBERİ EKRANI -->
   <div id="ranks-modal" class="fixed inset-0 z-[4500] bg-black/95 backdrop-blur-xl hidden opacity-0 transition-opacity flex items-center justify-center">
-    <div class="bg-[#0a0a0a] border border-red-900/50 w-full max-w-6xl p-8 rounded-sm relative shadow-2xl max-h-[90vh] overflow-y-auto text-center font-sans mx-4">
+    <div class="bg-[#0a0a0a]/80/80 border border-red-900/50 w-full max-w-6xl p-8 rounded-sm relative shadow-2xl max-h-[90vh] overflow-y-auto text-center font-sans mx-4">
       <button onclick="closeRanksModal()" class="absolute top-4 right-5 text-gray-500 hover:text-white text-3xl leading-none">&times;</button>
       <h2 class="text-3xl font-display text-white tracking-widest mb-2 uppercase drop-shadow-[0_0_15px_rgba(229,9,20,0.8)]">🎖️ Yeraltı Rütbe Rehberi</h2>
       <p class="text-xs text-gray-400 mb-8 uppercase tracking-widest font-bold">Lejyon içerisinde yükselebileceğin tüm basamaklar.</p>
@@ -620,9 +633,27 @@
     </div>
   </div>
 
+  <!-- KARMA MARKETİ MODALI -->
+  <div id="karma-market-modal" class="fixed inset-0 z-[4500] bg-black/95 backdrop-blur-xl hidden opacity-0 transition-opacity flex items-center justify-center">
+    <div class="bg-[#0a0a0a]/80/80 border border-purple-900/50 w-full max-w-5xl p-6 rounded-sm relative shadow-[0_0_40px_rgba(168,85,247,0.15)] mx-4 max-h-[90vh] flex flex-col">
+      <button onclick="closeKarmaMarket()" class="absolute top-4 right-5 text-gray-500 hover:text-white text-3xl leading-none">&times;</button>
+      <h2 class="text-3xl font-display text-purple-400 tracking-widest mb-1 text-center uppercase drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]">🛒 KARMA MARKETİ</h2>
+      <p class="text-center text-gray-500 text-[10px] uppercase tracking-widest font-bold mb-1">Karmanı harca, profilini güçlendir</p>
+      <div class="text-center mb-4">
+        <span class="text-yellow-500 font-bold text-sm">⚡ Mevcut Karma: <span id="market-karma-display">0</span></span>
+      </div>
+      <div class="flex gap-2 mb-5 border-b border-purple-900/30 pb-3 overflow-x-auto">
+        <button onclick="switchMarketTab('themes')" id="market-tab-themes" class="market-tab flex-1 px-3 py-2 rounded-sm text-xs font-bold uppercase tracking-wider transition-all border border-purple-500 text-purple-300 bg-purple-900/30 whitespace-nowrap">🎨 Profil Temaları</button>
+        <button onclick="switchMarketTab('frames')" id="market-tab-frames" class="market-tab flex-1 px-3 py-2 rounded-sm text-xs font-bold uppercase tracking-wider transition-all border border-gray-700 text-gray-400 bg-transparent hover:border-purple-500 hover:text-purple-300 whitespace-nowrap">🖼️ Profil Çerçeveleri</button>
+        <button onclick="switchMarketTab('roles')" id="market-tab-roles" class="market-tab flex-1 px-3 py-2 rounded-sm text-xs font-bold uppercase tracking-wider transition-all border border-gray-700 text-gray-400 bg-transparent hover:border-purple-500 hover:text-purple-300 whitespace-nowrap">🎭 Özel Roller</button>
+      </div>
+      <div id="market-content" class="flex-1 overflow-y-auto pr-1 scrollbar-thin"></div>
+    </div>
+  </div>
+
   <!-- LEADERBOARD (BARONLAR) MODALI -->
   <div id="leaderboard-modal" class="fixed inset-0 z-[4500] bg-black/95 backdrop-blur-xl hidden opacity-0 transition-opacity flex items-center justify-center">
-    <div class="bg-[#0a0a0a] border border-orange-900/50 w-full max-w-lg p-8 rounded-sm relative shadow-[0_0_30px_rgba(249,115,22,0.2)] mx-4 max-h-[90vh] flex flex-col">
+    <div class="bg-[#0a0a0a]/80 border border-orange-900/50 w-full max-w-lg p-8 rounded-sm relative shadow-[0_0_30px_rgba(249,115,22,0.2)] mx-4 max-h-[90vh] flex flex-col">
       <button onclick="closeLeaderboard()" class="absolute top-4 right-5 text-gray-500 hover:text-white text-3xl leading-none">&times;</button>
       <h2 class="text-3xl font-display text-orange-500 tracking-widest mb-1 uppercase drop-shadow-[0_0_10px_rgba(249,115,22,0.5)] text-center">🏆 LEJYON BARONLARI</h2>
       <p class="text-gray-400 text-[10px] text-center uppercase tracking-wider font-bold mb-6 border-b border-orange-900/30 pb-4">Yeraltının En Saygın 10 İsmi</p>
@@ -733,11 +764,12 @@
       <div class="relative group">
         <div id="profile-badge" class="w-8 h-8 rounded-sm bg-gradient-to-br from-red-600 to-red-900 border border-red-500/50 flex items-center justify-center text-xs font-bold cursor-pointer hover:shadow-[0_0_16px_rgba(229,9,20,0.5)] transition-all select-none">K</div>
         
-        <div class="absolute right-0 mt-2 w-52 bg-[#0a0a0a] border border-red-900/50 rounded-sm shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[5000] flex flex-col overflow-hidden">
+        <div class="absolute right-0 mt-2 w-52 bg-[#0a0a0a]/80 border border-red-900/50 rounded-sm shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[5000] flex flex-col overflow-hidden">
           <button onclick="openMyProfile()" class="text-left px-4 py-3 text-xs font-bold text-white hover:bg-red-900/40 border-b border-red-900/30 transition-colors">👤 Profilim</button>
           <button onclick="openSettings()" class="text-left px-4 py-3 text-xs font-bold text-gray-300 hover:bg-red-900/40 hover:text-white border-b border-red-900/30 transition-colors">⚙️ Ayarlar</button>
           <button onclick="openRanksModal()" class="text-left px-4 py-3 text-xs font-bold text-gray-300 hover:bg-red-900/40 hover:text-white border-b border-red-900/30 transition-colors">🎖️ Rütbe Rehberi</button>
           <button onclick="openKarmaInfo()" class="text-left px-4 py-3 text-xs font-bold text-yellow-500 hover:bg-yellow-900/40 hover:text-yellow-400 border-b border-red-900/30 transition-colors">⚡ Karma Geçmişi / Info</button>
+          <button onclick="openKarmaMarket()" class="text-left px-4 py-3 text-xs font-bold text-purple-400 hover:bg-purple-900/40 hover:text-purple-300 border-b border-red-900/30 transition-colors">🛒 Karma Marketi</button>
           <button onclick="openLeaderboard()" class="text-left px-4 py-3 text-xs font-bold text-orange-500 hover:bg-orange-900/40 hover:text-orange-400 border-b border-red-900/30 transition-colors">🏆 Lejyon Baronları (Top 10)</button>
           <button id="nav-admin-btn" onclick="openAdminPanel()" class="text-left px-4 py-3 text-xs font-bold text-red-500 hover:bg-red-900/40 hover:text-white border-b border-red-900/30 transition-colors hidden">👑 Lejyon İstihbarat</button>
           <button onclick="logoutUser()" class="text-left px-4 py-3 text-xs font-bold text-gray-500 hover:bg-gray-800 hover:text-red-500 transition-colors">🚪 Çıkış Yap</button>
@@ -849,7 +881,7 @@
 
   <!-- KOLEKSİYONA EKLE / OLUŞTUR MODALI -->
   <div id="add-collection-modal" class="fixed inset-0 z-[5000] bg-black/90 backdrop-blur-md hidden opacity-0 transition-opacity flex items-center justify-center">
-    <div class="bg-[#0a0a0a] border border-red-900/50 w-full max-w-md p-6 rounded-sm relative shadow-2xl text-center">
+    <div class="bg-[#0a0a0a]/80 border border-red-900/50 w-full max-w-md p-6 rounded-sm relative shadow-2xl text-center">
       <button onclick="closeAddToCollectionModal()" class="absolute top-4 right-5 text-gray-500 hover:text-white text-2xl leading-none">&times;</button>
       <h2 class="text-xl font-bold text-red-500 tracking-widest mb-4 border-b border-red-900/50 pb-2 uppercase">📁 Koleksiyona Ekle</h2>
       
@@ -868,7 +900,7 @@
 
   <!-- KOLEKSİYON GÖSTERİM MODALI -->
   <div id="collection-view-modal" class="fixed inset-0 z-[4500] bg-black/95 backdrop-blur-xl hidden opacity-0 transition-opacity flex items-center justify-center">
-    <div class="bg-[#0a0a0a] border border-red-900/50 w-full max-w-5xl p-8 rounded-sm relative shadow-2xl mx-4 max-h-[90vh] flex flex-col">
+    <div class="bg-[#0a0a0a]/80 border border-red-900/50 w-full max-w-5xl p-8 rounded-sm relative shadow-2xl mx-4 max-h-[90vh] flex flex-col">
       <button onclick="closeCollectionView()" class="absolute top-4 right-5 text-gray-500 hover:text-white text-3xl leading-none">&times;</button>
       <h2 id="cv-title" class="text-3xl font-display text-white tracking-widest mb-1 uppercase drop-shadow-[0_0_15px_rgba(229,9,20,0.8)]">Koleksiyon Adı</h2>
       <div class="flex justify-between items-center mb-6 border-b border-red-900/50 pb-4">
@@ -902,7 +934,7 @@
 
   <!-- ⚡ KARMA GEÇMİŞİ VE BİLGİ EKRANI -->
   <div id="karma-info-modal" class="fixed inset-0 z-[6000] bg-black/95 backdrop-blur-xl hidden opacity-0 transition-opacity flex items-center justify-center">
-    <div class="bg-[#0a0a0a] border border-red-900/50 w-full max-w-lg p-8 rounded-sm relative shadow-2xl mx-4 max-h-[90vh] flex flex-col">
+    <div class="bg-[#0a0a0a]/80 border border-red-900/50 w-full max-w-lg p-8 rounded-sm relative shadow-2xl mx-4 max-h-[90vh] flex flex-col">
       <button onclick="closeKarmaInfo()" class="absolute top-4 right-5 text-gray-500 hover:text-white text-3xl leading-none">&times;</button>
       <h2 class="text-2xl font-display text-yellow-500 tracking-widest mb-1 uppercase drop-shadow-[0_0_10px_rgba(234,179,8,0.5)]">⚡ Karma Dökümü</h2>
       <p class="text-white font-bold text-sm mb-4 border-b border-red-900/50 pb-4">Mevcut İtibarın: <span id="karma-total-display" class="text-green-400 font-display text-xl tracking-wider">0</span></p>
@@ -998,7 +1030,7 @@
 
 
       function calculateRank(karma, yol, infiniteKarma, ozelRol) {
-      if(ozelRol) return `🎭 ${ozelRol.toUpperCase()}`; // ÖZEL ROL ÖNCELİĞİ!
+      if(ozelRol) return ozelRol.toUpperCase(); // ÖZEL ROL ÖNCELİĞİ!
       if(infiniteKarma) return '∞ YERALTI İLAHI';
       if(!yol || !Ranks[yol]) yol = 'none';
       let currentRank = Ranks[yol][0];
@@ -1248,6 +1280,79 @@ function openMyProfile() {
         const bgImg = document.getElementById('up-bg');
 
         if(data.bg) { bgImg.src = data.bg; bgImg.classList.remove('hidden'); } else { bgImg.classList.add('hidden'); bgImg.src = ''; }
+
+        // Özel Rol Arkaplanı Kontrolü (Il Padrino vs)
+        const roleBg = document.getElementById('profile-role-bg');
+        if(roleBg) {
+          if (data.marketAktif && data.marketAktif.roles === 'il-padrino') {
+            roleBg.style.backgroundImage = "url('https://pngimg.com/uploads/marlon_brando/marlon_brando_PNG5.png')";
+            roleBg.classList.remove('opacity-0');
+            roleBg.classList.add('opacity-30'); 
+          } else {
+            roleBg.classList.remove('opacity-30');
+            roleBg.classList.add('opacity-0');
+            setTimeout(() => { if(roleBg.classList.contains('opacity-0')) roleBg.style.backgroundImage = ''; }, 700);
+          }
+        }
+
+        // Market kozmetiklerini uygula
+        applyMarketCosmetics(data);
+        
+        // ── ROLA ÖZEL ALT KISIM (PROFİL MODALI) BOKEH ARKAPLANI ──
+        const profileModal = document.getElementById('user-profile-modal');
+        const aktifRol = (data.marketAktif && data.marketAktif.roles) ? data.marketAktif.roles : null;
+
+        // Bokeh için arkaya sinematik bir cam katmanı atıyoruz
+        let bokehDiv = document.getElementById('role-bokeh-layer');
+        if (!bokehDiv) {
+          bokehDiv = document.createElement('div');
+          bokehDiv.id = 'role-bokeh-layer';
+          // z-[-1] yapıyoruz ki modalın siyah arkaplanı üstünde dursun ama bütün yazıların ve kutuların ARKASINDA kalsın!
+          bokehDiv.className = 'fixed inset-0 pointer-events-none transition-opacity duration-1000 z-[-1]';
+          profileModal.appendChild(bokehDiv);
+        }
+
+        if (aktifRol === 'godfather') {
+          // BABA TEMASI: Parlaklığı kıs (brightness 0.3), 10px blur (Odak dışı sinematik bokeh)
+          bokehDiv.style.background = "url('https://c4.wallpaperflare.com/wallpaper/143/596/26/the-godfather-vito-corleone-movies-wallpaper-preview.jpg') center / cover fixed no-repeat";
+          bokehDiv.style.filter = "brightness(0.3) blur(2.5px)";
+          bokehDiv.style.transform = "scale(1.05)"; // Blur kenarlardan beyazlık sızdırmasın diye hafif zoom
+          bokehDiv.style.opacity = "1";
+        } 
+        else if (aktifRol === 'halka-tasiyici') {
+          // LOTR TEMASI: Altın/Sarımsı mistik bir hava için hafif sepia eklendi
+          bokehDiv.style.background = "url('https://4kwallpapers.com/images/wallpapers/lord-of-the-rings-3840x2160-11941.jpg') center / cover fixed no-repeat";
+          bokehDiv.style.filter = "brightness(0.3) sepia(0.4) blur(2.5px)"; 
+          bokehDiv.style.transform = "scale(1.05)";
+          bokehDiv.style.opacity = "1";
+        }
+        else if (aktifRol === 'yedinci-gunah') {
+          // SE7EN TEMASI: Soğuk ve karanlık bir atmosfer
+          bokehDiv.style.background = "url('https://wallpaper.forfun.com/fetch/3b/3b357660a73f7129b6786e8fa5c67a38.jpeg') center / cover fixed no-repeat";
+          bokehDiv.style.filter = "brightness(0.3) blur(2.5px)";
+          bokehDiv.style.transform = "scale(1.05)";
+          bokehDiv.style.opacity = "1";
+        }
+        else if (aktifRol === 'lejyon-golgesi') {
+          // SE7EN TEMASI: Soğuk ve karanlık bir atmosfer
+          bokehDiv.style.background = "url('https://images2.alphacoders.com/133/1338859.png') center / cover fixed no-repeat";
+          bokehDiv.style.filter = "brightness(0.3) blur(2.5px)";
+          bokehDiv.style.transform = "scale(1.05)";
+          bokehDiv.style.opacity = "1";
+        }
+        else if (aktifRol === 'derin-cukur-sefi') {
+          // SE7EN TEMASI: Soğuk ve karanlık bir atmosfer
+          bokehDiv.style.background = "url('https://ca-times.brightspotcdn.com/dims4/default/8e0373b/2147483647/strip/false/crop/5537x3691+0+0/resize/1486x991!/quality/75/?url=https%3A%2F%2Fcalifornia-times-brightspot.s3.amazonaws.com%2F6c%2F8c%2F99be8f38487388baab470402f69a%2F1528012-et-the-alchemist-7494.jpg') center / cover fixed no-repeat";
+          bokehDiv.style.filter = "brightness(0.3) blur(2.5px)";
+          bokehDiv.style.transform = "scale(1.05)";
+          bokehDiv.style.opacity = "1";
+        }
+        
+        else {
+          // ADAMIN ROLÜ YOKSA KADAVRA GİBİ SİYAH KALSIN VE ARKADAKİ SİTEYİ GİZLESİN
+          bokehDiv.style.opacity = "0";
+          profileModal.style.background = "#050505"; 
+        }
 
 
 
@@ -2426,9 +2531,9 @@ function openMyProfile() {
       const user = localStorage.getItem('kadavra_vip_user') || 'Gizemli Pampik'; 
       const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
       
-      // Anlık VIP verisini çekip mesaja damgalıyoruz
       database.ref('kullanicilar/' + safeNick).once('value').then(snap => {
          let vipPrefix = ''; let vipColor = ''; let isVip = false;
+         let themeId = null; let themeColor = null; let themePrefix = null;
          if(snap.exists()) {
              const d = snap.val();
              if(d.infiniteKarma) {
@@ -2436,10 +2541,17 @@ function openMyProfile() {
                  vipPrefix = d.vipPrefix || '💎';
                  vipColor = d.vipColor || 'text-yellow-400';
              }
+             // Aktif tema chat rengi
+             const aktifTema = (d.marketAktif || {}).themes || null;
+             if(aktifTema) {
+               const tData = karmaMarketItems.themes.find(t => t.id === aktifTema);
+               if(tData) { themeId = aktifTema; themeColor = tData.chatColor; themePrefix = tData.chatPrefix; }
+             }
          }
          database.ref('yeralti_sohbet').push({ 
              user: user, text: text, timestamp: Date.now(), 
-             isVip: isVip, vipPrefix: vipPrefix, vipColor: vipColor 
+             isVip: isVip, vipPrefix: vipPrefix, vipColor: vipColor,
+             themeId: themeId, themeColor: themeColor, themePrefix: themePrefix
          }); 
          input.value = '';
       });
@@ -2499,6 +2611,7 @@ function openMyProfile() {
 
               ${(function(){
                   if (msgIsAdmin) return `<span onclick="openUserProfile('${msg.user}')" class="cursor-pointer hover:underline text-[10px] text-red-400 font-extrabold drop-shadow-[0_0_5px_rgba(229,9,20,0.8)] uppercase tracking-wider">${msg.user} 👑</span>`;
+                  if (msg.themeColor) return `<span onclick="openUserProfile('${msg.user}')" class="cursor-pointer hover:underline text-[10px] font-bold uppercase tracking-wider" style="color:${msg.themeColor}; text-shadow: 0 0 8px ${msg.themeColor}80;">${msg.themePrefix ? msg.themePrefix+' ' : ''}${msg.user}</span>`;
                   if (msg.isVip) return `<span onclick="openUserProfile('${msg.user}')" class="cursor-pointer hover:underline text-[10px] ${msg.vipColor || 'text-yellow-400'} font-extrabold drop-shadow-[0_0_5px_rgba(234,179,8,0.5)] uppercase tracking-wider">${msg.vipPrefix ? msg.vipPrefix+' ' : ''}${msg.user}</span>`;
                   return `<span onclick="openUserProfile('${msg.user}')" class="cursor-pointer hover:underline text-[10px] ${isMe ? 'text-red-200' : 'text-red-400'} uppercase tracking-wider">${msg.user}</span>`;
               })()}
@@ -2623,6 +2736,7 @@ function openMyProfile() {
            closePlayer();
         }
         if(typeof closeLeaderboard === 'function') closeLeaderboard();
+        if(typeof closeKarmaMarket === 'function') closeKarmaMarket();
         if(chatOpen) toggleChat();
         if(notifOpen) toggleNotif();
       }
@@ -2696,6 +2810,318 @@ function openMyProfile() {
     function logoutUser() { localStorage.removeItem('kadavra_vip_user'); localStorage.removeItem('kadavra_vip_pass'); location.reload(); }
 
 
+    // ════════════════════════════════════════════════════════════════
+    // ════════════ KARMA MARKETİ MOTORU — v2 Kült Film Edisyonu ════════════
+    // ════════════════════════════════════════════════════════════════
+
+    const karmaMarketItems = {
+      themes: [
+        {
+          id: 'yeraltı-kızılı', name: 'Yeraltı Kızılı', icon: '🔴', price: 25000,
+          desc: 'Mekanın kurucu rengi. Kırmızı, her zaman kırmızı. Lejyona bağlılığın simgesi.',
+          chatColor: '#f87171', chatPrefix: '🔴',
+          bodyPattern: `linear-gradient(rgba(5,5,5,0.85), rgba(5,5,5,0.95)), url('https://external-preview.redd.it/dark-crowned-king-red-aesthetic-live-wallpaper-v0-dDhvOXNqYnFwMWpnMU-GbyJJ8Dc5-e-OInSvc74eR6NWeQm-LLewq_plzNdH.png?format=pjpg&auto=webp&s=b4de35609a1bbd855267b5fa28e37fe63e5ac2ac')`,
+          bgPos: 'center, center', // Resmin konumu
+          bgRep: 'no-repeat, no-repeat', // Resim kendini tekrar etsin mi?
+          bgAtt: 'fixed, fixed', // Sayfayı kaydırınca resim sabit mi kalsın?
+          bodySize: 'auto, cover' // cover yaparsan tüm ekranı kaplar
+        },
+        {
+          id: 'godfather', name: 'The Godfather', icon: '🌹', price: 150000,
+          desc: '"Bir teklif yapacağım, reddedemeyeceksin." Karanlığın babası — siyah gül ve ipek kravat.',
+          chatColor: '#c9a76e', chatPrefix: '🌹',
+          bodyPattern: `linear-gradient(rgba(5,5,5,0.85), rgba(5,5,5,0.95)), url('https://images7.alphacoders.com/461/thumb-1920-461499.jpg')`,
+          bgPos: 'center, center', // Resmin konumu
+          bgRep: 'no-repeat, no-repeat', // Resim kendini tekrar etsin mi?
+          bgAtt: 'fixed, fixed', // Sayfayı kaydırınca resim sabit mi kalsın?
+          bodySize: 'auto, cover' // cover yaparsan tüm ekranı kaplar
+        },
+        {
+          id: 'se7en', name: 'Se7en', icon: '🔪', price: 150000,
+          desc: 'Yedi ölümcül günah. Şehrin yağmuru, sarı lambanın altında soruşturma dosyaları. Suç hattı senin.',
+          chatColor: '#d97706', chatPrefix: '🔪',
+          bodyPattern: `linear-gradient(rgba(5,5,5,0.85), rgba(5,5,5,0.95)), url('https://wallpapercave.com/wp/wp2180119.jpg')`,
+          bgPos: 'center, center', // Resmin konumu
+          bgRep: 'no-repeat, no-repeat', // Resim kendini tekrar etsin mi?
+          bgAtt: 'fixed, fixed', // Sayfayı kaydırınca resim sabit mi kalsın?
+          bodySize: 'auto, cover' // cover yaparsan tüm ekranı kaplar
+        },
+        {
+          id: 'yuzuk-efendisi', name: 'Yüzük Efendisi', icon: '💍', price: 250000,
+          desc: 'Hepsini yönetmek için tek yüzük. Orta Dünya\'nın altın çağı ve elvish ızgarası.',
+          chatColor: '#eab308', chatPrefix: '💍',
+          bodyPattern: `linear-gradient(rgba(5,5,5,0.85), rgba(5,5,5,0.95)), url('https://wallpaperaccess.com/full/92750.jpg')`,
+          bgPos: 'center, center',
+          bgRep: 'no-repeat, no-repeat',
+          bgAtt: 'fixed, fixed',
+          bodySize: 'auto, cover'
+        },
+        {
+          id: 'kara-sovalye', name: 'Kara Şövalye', icon: '🦇', price: 500000,
+          desc: 'Neden bu kadar ciddiyim? Gotham\'ın karanlık kenti. Mor sis. En nadir tema.',
+          chatColor: '#a78bfa', chatPrefix: '🦇',
+          bodyPattern: `linear-gradient(rgba(5,5,5,0.85), rgba(5,5,5,0.95)), url('https://wallpapers-clan.com/wp-content/uploads/2025/07/dc-comics-batman-stylized-art-desktop-wallpaper-preview.jpg')`,
+          bgPos: 'center, center', // Resmin konumu
+          bgRep: 'no-repeat, no-repeat', // Resim kendini tekrar etsin mi?
+          bgAtt: 'fixed, fixed', // Sayfayı kaydırınca resim sabit mi kalsın?
+          bodySize: 'auto, cover' // cover yaparsan tüm ekranı kaplar
+        }
+      ],
+      frames: [
+        {
+          id: 'yangin-cercevesi', name: 'Yangın Çerçevesi', icon: '🔥', price: 50000,
+          desc: 'Alev alev. Yeraltının ateşi profiline yansıdı. Kırmızı neon sınırla birlikte üç alev.',
+          apply: () => {
+            const pp = document.getElementById('up-pp'); const ov = document.getElementById('up-pp-frame-overlay');
+            if(pp){ pp.style.border='3px solid #ef4444'; pp.style.boxShadow='0 0 20px rgba(239,68,68,0.7), 0 0 40px rgba(185,28,28,0.4)'; pp.style.filter=''; }
+            if(ov) ov.innerHTML = `<div style="position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:26px;filter:drop-shadow(0 0 8px rgba(255,100,0,0.9));pointer-events:none;white-space:nowrap;line-height:1;">🔥🔥🔥</div>`;
+          }
+        },
+        {
+          id: 'altin-tac', name: 'Altın Taç', icon: '👑', price: 100000,
+          desc: 'Lejyonun tacı senin kafanda. Altın parıltısı profiline indi.',
+          apply: () => {
+            const pp = document.getElementById('up-pp'); const ov = document.getElementById('up-pp-frame-overlay');
+            if(pp){ pp.style.border='3px solid #eab308'; pp.style.boxShadow='0 0 25px rgba(234,179,8,0.8), 0 0 50px rgba(161,98,7,0.4)'; pp.style.filter=''; }
+            if(ov) ov.innerHTML = `<div style="position:absolute;top:-36px;left:50%;transform:translateX(-50%);font-size:44px;filter:drop-shadow(0 0 12px rgba(234,179,8,0.95));pointer-events:none;line-height:1;">👑</div>`;
+          }
+        },
+        {
+          id: 'yeraltı-sigarası', name: 'Yeraltı Sigarası', icon: '🚬', price: 75000,
+          desc: 'Bir sigara, bin hikaye. Noir ruhu. Sağ alt köşede duman.',
+          apply: () => {
+            const pp = document.getElementById('up-pp'); const ov = document.getElementById('up-pp-frame-overlay');
+            if(pp){ pp.style.border='2px solid #4b5563'; pp.style.boxShadow='0 0 18px rgba(75,85,99,0.5)'; pp.style.filter='sepia(0.3) contrast(1.08)'; }
+            if(ov) ov.innerHTML = `<div style="position:absolute;bottom:-14px;right:-14px;font-size:40px;transform:rotate(-20deg);filter:drop-shadow(0 0 5px rgba(255,200,0,0.5));pointer-events:none;">🚬</div>`;
+          }
+        },
+        {
+          id: 'godfather-gulu', name: 'Godfather Gülü', icon: '🌹', price: 150000,
+          desc: 'Don\'un imzası. Amber çerçeve, sol altta kırmızı gül.',
+          apply: () => {
+            const pp = document.getElementById('up-pp'); const ov = document.getElementById('up-pp-frame-overlay');
+            if(pp){ pp.style.border='3px solid #92400e'; pp.style.boxShadow='0 0 25px rgba(146,64,14,0.7), 0 0 50px rgba(120,53,15,0.35)'; pp.style.filter='grayscale(0.55) sepia(0.35) contrast(1.1)'; }
+            if(ov) ov.innerHTML = `<div style="position:absolute;bottom:-12px;left:-12px;font-size:46px;transform:rotate(18deg);filter:drop-shadow(0 2px 6px rgba(0,0,0,0.95));pointer-events:none;">🌹</div>`;
+          }
+        },
+        {
+          id: 'olum-maskesi', name: 'Ölüm Maskesi', icon: '💀', price: 250000,
+          desc: 'Ölümle dans edenlerin çerçevesi. Üstte kuru kafa, alt gradient vinjeti.',
+          apply: () => {
+            const pp = document.getElementById('up-pp'); const ov = document.getElementById('up-pp-frame-overlay');
+            if(pp){ pp.style.border='3px solid #7c3aed'; pp.style.boxShadow='0 0 25px rgba(124,58,237,0.9), 0 0 60px rgba(109,40,217,0.5)'; pp.style.filter='contrast(1.1) brightness(0.92)'; }
+            if(ov) ov.innerHTML = `
+              <div style="position:absolute;top:-32px;left:50%;transform:translateX(-50%);font-size:40px;filter:drop-shadow(0 0 14px rgba(124,58,237,0.95));pointer-events:none;line-height:1;">💀</div>
+              <div style="position:absolute;inset:0;background:linear-gradient(transparent 60%, rgba(88,28,135,0.35) 100%);pointer-events:none;border-radius:2px;"></div>`;
+          }
+        }
+      ],
+      roles: [
+        {
+          id: 'godfather', name: 'The Godfather', icon: '🎩', price: 150000,
+          desc: '"Reddedilemeyecek bir teklif yapacağım sana." Suç dünyasının babası. Koca New York\'ta koca New York\'un sahibi.',
+          displayColor: '#c9a76e'
+        },
+        {
+          id: 'yedinci-gunah', name: 'Yedinci Günah', icon: '🔪', price: 200000,
+          desc: 'Günahların avcısı. Se7en karanlığından fırlamış yorgun bir dedektif. Ne istediğini bil.',
+          displayColor: '#d97706'
+        },
+        {
+          id: 'halka-tasiyici', name: 'Yüzük Taşıyıcı', icon: '💍', price: 300000,
+          desc: 'Kader omuzlarında. Orta Dünya\'nın en ağır yükü sırtında. Yüzüğü Kadere Fırlatanlar Derneği.',
+          displayColor: '#eab308'
+        },
+        {
+          id: 'lejyon-golgesi', name: 'Lejyon Gölgesi', icon: '🌑', price: 500000,
+          desc: 'Kimse görmez ama herkes hisseder. Mekanın karanlık koruyucusu. Adın listede bile değil.',
+          displayColor: '#9ca3af'
+        },
+        {
+          id: 'derin-cukur-sefi', name: 'Derin Çukur Şefi', icon: '💀', price: 1000000,
+          desc: 'Yeraltının en derinindeki oda senin. Buraya sadece seçilmişler iner. Efsane budur.',
+          displayColor: '#f97316'
+        }
+      ]
+    };
+
+    let currentMarketTab = 'themes';
+    let marketUserData = {};
+
+    function applyBodyTheme(themeId) {
+      const overlay = document.getElementById('body-theme-overlay');
+      if (!overlay) return;
+      if (!themeId) { overlay.style.backgroundImage = ''; overlay.style.backgroundSize = ''; overlay.style.backgroundPosition = ''; overlay.style.backgroundRepeat = ''; overlay.style.backgroundAttachment = ''; return; }
+      const theme = karmaMarketItems.themes.find(t => t.id === themeId);
+      if (!theme) { overlay.style.backgroundImage = ''; return; }
+      overlay.style.backgroundImage = theme.bodyPattern;
+      overlay.style.backgroundSize = theme.bodySize || 'auto';
+      overlay.style.backgroundPosition = theme.bgPos || 'center';
+      overlay.style.backgroundRepeat = theme.bgRep || 'repeat';
+      overlay.style.backgroundAttachment = theme.bgAtt || 'scroll';
+    }
+
+    function openKarmaMarket() {
+      const user = localStorage.getItem('kadavra_vip_user');
+      if (!user) { showToast('Giriş yapmadan market olmaz pampik!'); return; }
+      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      database.ref('kullanicilar/' + safeNick).once('value').then(snap => {
+        marketUserData = snap.exists() ? snap.val() : {};
+        const karma = marketUserData.infiniteKarma ? '∞' : (marketUserData.karma || 0);
+        document.getElementById('market-karma-display').textContent = typeof karma === 'number' ? karma.toLocaleString('tr-TR') : karma;
+        currentMarketTab = 'themes';
+        _resetMarketTabs();
+        const first = document.getElementById('market-tab-themes');
+        if (first) { first.style.borderColor='rgb(168,85,247)'; first.style.color='rgb(216,180,254)'; first.style.background='rgba(109,40,217,0.2)'; }
+        renderMarketItems('themes');
+        const mod = document.getElementById('karma-market-modal');
+        mod.classList.remove('hidden');
+        setTimeout(() => mod.classList.remove('opacity-0'), 50);
+      });
+    }
+
+    function closeKarmaMarket() {
+      const mod = document.getElementById('karma-market-modal');
+      mod.classList.add('opacity-0');
+      setTimeout(() => mod.classList.add('hidden'), 300);
+    }
+
+    function _resetMarketTabs() {
+      document.querySelectorAll('.market-tab').forEach(b => {
+        b.style.borderColor='rgb(55,65,81)'; b.style.color='rgb(156,163,175)'; b.style.background='';
+      });
+    }
+
+    function switchMarketTab(tab) {
+      currentMarketTab = tab;
+      _resetMarketTabs();
+      const activeBtn = document.getElementById('market-tab-' + tab);
+      if (activeBtn) { activeBtn.style.borderColor='rgb(168,85,247)'; activeBtn.style.color='rgb(216,180,254)'; activeBtn.style.background='rgba(109,40,217,0.2)'; }
+      renderMarketItems(tab);
+    }
+
+    function renderMarketItems(tab) {
+      const content = document.getElementById('market-content');
+      const items = karmaMarketItems[tab];
+      const purchases = (marketUserData.marketSatinAlimlar || {})[tab] || {};
+      const activeItem = (marketUserData.marketAktif || {})[tab] || null;
+
+      let html = '<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-1">';
+      items.forEach(item => {
+        const owned = !!purchases[item.id];
+        const isActive = activeItem === item.id;
+        const canAfford = marketUserData.infiniteKarma || (marketUserData.karma || 0) >= item.price;
+
+        let previewHTML = '';
+        if (tab === 'themes') {
+          const chatSample = `<span style="color:${item.chatColor};text-shadow:0 0 7px ${item.chatColor}90;font-size:9px;font-weight:900;letter-spacing:0.1em;">${item.chatPrefix} KULLANICI_ADI</span>`;
+          previewHTML = `
+            <div class="w-full h-16 rounded-sm mb-3 flex flex-col items-center justify-center relative overflow-hidden" style="background-image:${item.bodyPattern};background-size:${item.bodySize||'auto'};background-position:${item.bgPos||'center'};background-repeat:${item.bgRep||'repeat'};background-color:#050505;border:1px solid rgba(168,85,247,0.25);">
+              <span class="text-xl mb-1 drop-shadow-lg">${item.icon}</span>
+              <div class="bg-black/70 px-2 py-0.5 rounded-sm border border-white/5">${chatSample}</div>
+            </div>`;
+        } else if (tab === 'frames') {
+          previewHTML = `<div class="mb-3 flex justify-center items-end h-16 gap-2">
+            <div class="text-5xl leading-none" style="filter:drop-shadow(0 0 8px rgba(255,255,255,0.15));">${item.icon}</div>
+          </div>`;
+        } else {
+          previewHTML = `<div class="mb-3 text-center py-2">
+            <span class="text-4xl">${item.icon}</span>
+            <p class="text-[11px] mt-2 font-bold tracking-widest uppercase" style="color:${item.displayColor};text-shadow:0 0 10px ${item.displayColor}70;">${item.icon} ${item.name}</p>
+          </div>`;
+        }
+
+        let btnHTML = '';
+        if (owned) {
+          if (isActive) {
+            btnHTML = `<button onclick="unequipMarketItem('${tab}')" class="w-full py-2 rounded-sm text-xs font-bold uppercase tracking-wider bg-red-900/40 border border-red-600 text-red-400 hover:bg-red-800 hover:text-white transition-colors">❌ Üstünden Çıkar</button>`;
+          } else {
+            btnHTML = `<button onclick="activateMarketItem('${tab}','${item.id}')" class="w-full py-2 rounded-sm text-xs font-bold uppercase tracking-wider border transition-colors hover:opacity-80" style="background:rgba(109,40,217,0.25);border-color:rgb(168,85,247);color:rgb(216,180,254);">▶ Kullan</button>`;
+          }
+        } else {
+          const affStyle = canAfford
+            ? 'background:rgba(127,29,29,0.6);border-color:rgb(185,28,28);color:white;cursor:pointer;'
+            : 'background:rgba(15,15,15,0.7);border-color:rgb(55,65,81);color:rgb(75,85,99);cursor:not-allowed;';
+          const clickAttr = canAfford ? `onclick="buyMarketItem('${tab}','${item.id}',${item.price})"` : '';
+          btnHTML = `<button ${clickAttr} class="w-full py-2 rounded-sm text-xs font-bold uppercase tracking-wider border transition-all hover:opacity-90" style="${affStyle}">⚡ ${item.price.toLocaleString('tr-TR')} Karma</button>`;
+        }
+
+        const cardStyle = isActive ? 'border-color:rgba(34,197,94,0.5);box-shadow:0 0 14px rgba(34,197,94,0.12);'
+                        : owned   ? 'border-color:rgba(109,40,217,0.4);'
+                        : 'border-color:rgba(185,28,28,0.15);';
+        const badge = owned
+          ? `<span class="absolute top-2 right-2 text-[8px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full" style="${isActive ? 'background:rgba(20,83,45,0.6);color:#4ade80;border:1px solid #15803d;' : 'background:rgba(76,29,149,0.6);color:#c084fc;border:1px solid #6b21a8;'}">${isActive ? '✓ Aktif' : 'Sahipsin'}</span>`
+          : '';
+
+        html += `
+          <div class="bg-[#0a0a0a]/80 border p-4 rounded-sm relative" style="${cardStyle}">
+            ${badge}
+            ${previewHTML}
+            <h3 class="text-sm font-bold text-white mb-1 uppercase tracking-wider">${item.name}</h3>
+            <p class="text-[10px] text-gray-500 mb-3 leading-relaxed font-mono" style="min-height:2.8rem;">${item.desc}</p>
+            ${btnHTML}
+          </div>`;
+      });
+      html += '</div>';
+      content.innerHTML = html;
+    }
+
+    function buyMarketItem(tab, itemId, price) {
+      const user = localStorage.getItem('kadavra_vip_user'); if (!user) return;
+      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      const item = karmaMarketItems[tab].find(i => i.id === itemId); if (!item) return;
+      if (!marketUserData.infiniteKarma && (marketUserData.karma || 0) < price) {
+        showToast(`⚡ Yetersiz karma! ${price.toLocaleString('tr-TR')} karma gerekiyor.`, true); return;
+      }
+      if (!confirm(`"${item.icon} ${item.name}" — ${price.toLocaleString('tr-TR')} karma karşılığında satın alıyor musun?`)) return;
+      const updates = {};
+      updates[`marketSatinAlimlar/${tab}/${itemId}`] = true;
+      if (!marketUserData.infiniteKarma) {
+        const newKarma = Math.max(0, (marketUserData.karma || 0) - price);
+        updates['karma'] = newKarma;
+        marketUserData.karma = newKarma;
+        document.getElementById('market-karma-display').textContent = newKarma.toLocaleString('tr-TR');
+        logKarmaEvent('market', -price, `Karma Marketi: ${item.icon} ${item.name}`);
+      }
+      database.ref('kullanicilar/' + safeNick).update(updates).then(() => {
+        if (!marketUserData.marketSatinAlimlar) marketUserData.marketSatinAlimlar = {};
+        if (!marketUserData.marketSatinAlimlar[tab]) marketUserData.marketSatinAlimlar[tab] = {};
+        marketUserData.marketSatinAlimlar[tab][itemId] = true;
+        showToast(`✅ "${item.name}" satın alındı!`);
+        activateMarketItem(tab, itemId);
+      });
+    }
+
+    function activateMarketItem(tab, itemId) {
+      const user = localStorage.getItem('kadavra_vip_user'); if (!user) return;
+      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      const item = karmaMarketItems[tab].find(i => i.id === itemId); if (!item) return;
+      const updates = {};
+      updates[`marketAktif/${tab}`] = itemId;
+      if (tab === 'roles') updates['ozelRol'] = `${item.icon} ${item.name}`;
+      database.ref('kullanicilar/' + safeNick).update(updates).then(() => {
+        if (!marketUserData.marketAktif) marketUserData.marketAktif = {};
+        marketUserData.marketAktif[tab] = itemId;
+        if (tab === 'roles') marketUserData.ozelRol = `${item.icon} ${item.name}`;
+        if (tab === 'themes') applyBodyTheme(itemId);
+        showToast('✨ Aktif edildi!');
+        renderMarketItems(currentMarketTab);
+      });
+    }
+
+    function applyMarketCosmetics(data) {
+      const aktifCerceve = (data.marketAktif || {}).frames || null;
+
+      const ppEl = document.getElementById('up-pp');
+      const frameOverlay = document.getElementById('up-pp-frame-overlay');
+      if (ppEl) { ppEl.style.border='2px solid #991b1b'; ppEl.style.boxShadow=''; ppEl.style.filter=''; }
+      if (frameOverlay) frameOverlay.innerHTML = '';
+
+      if (aktifCerceve) {
+        const frameData = karmaMarketItems.frames.find(f => f.id === aktifCerceve);
+        if (frameData && frameData.apply) frameData.apply();
+      }
+    }
     // ════════════ BİLDİRİM (NOTIFICATION) MOTORU VE SES ════════════
     let notifOpen = false;
     let lastUnreadCount = 0;
@@ -2792,7 +3218,35 @@ function openMyProfile() {
       });
     }
 
-    
+    function unequipMarketItem(tab) {
+      const user = localStorage.getItem('kadavra_vip_user'); if (!user) return;
+      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      
+      const updates = {};
+      updates[`marketAktif/${tab}`] = null; // Veritabanından aktif eşyayı sil
+      if (tab === 'roles') updates['ozelRol'] = null; // Rolü silerse orijinal faction rütbesine (Wastelander vb.) düşsün
+
+      database.ref('kullanicilar/' + safeNick).update(updates).then(() => {
+        if (marketUserData.marketAktif) marketUserData.marketAktif[tab] = null;
+        
+        if (tab === 'roles') {
+            marketUserData.ozelRol = null;
+        }
+        if (tab === 'themes') {
+            applyBodyTheme(null); // Arkaplanı anında normale (Kadavra siyahına) döndür
+        }
+        if (tab === 'frames') {
+            // Çerçeveyi anında sök at, orijinal kırmızı bordere döndür
+            const ppEl = document.getElementById('up-pp');
+            const frameOverlay = document.getElementById('up-pp-frame-overlay');
+            if (ppEl) { ppEl.style.border='2px solid #991b1b'; ppEl.style.boxShadow=''; ppEl.style.filter=''; }
+            if (frameOverlay) frameOverlay.innerHTML = '';
+        }
+        
+        showToast('✨ Üstünden çıkarıldı!');
+        renderMarketItems(currentMarketTab);
+      });
+    }
 
     // ════════════════════ KAYIT VE GİRİŞ MOTORU (GÜVENLİ) ════════════════════
 
@@ -2911,6 +3365,11 @@ function openMyProfile() {
 
       listenTayfa(); listenChat(); init(); listenNotifications();
 
+      // Login anında aktif temayı body'e uygula
+      const _safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      database.ref(`kullanicilar/${_safeNick}/marketAktif/themes`).once('value').then(s => {
+        if(s.exists()) applyBodyTheme(s.val());
+      });
     }
     
     
