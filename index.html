@@ -2655,41 +2655,49 @@
         const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
         const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
         
-        const snap = await database.ref(`kullanicilar/${safeNick}`).once('value');
-        if(!snap.exists()) return;
-        const userData = snap.val();
-        
-        let dailyData = userData.dailyData || { streak: 0, lastLoginDate: '', tasks: [] };
-        const todayStr = new Date().toLocaleDateString('tr-TR');
-        let isNewDay = dailyData.lastLoginDate !== todayStr;
-        let needsTasks = !dailyData.tasks || dailyData.tasks.length === 0;
-
-        let updates = {};
-        if (isNewDay) {
-            const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
-            if (dailyData.lastLoginDate === yesterday.toLocaleDateString('tr-TR')) {
-                dailyData.streak += 1;
-                if (dailyData.streak > 7) dailyData.streak = 1;
-            } else {
-                dailyData.streak = 1;
-            }
-            updates['dailyData/streak'] = dailyData.streak;
-            updates['dailyData/lastLoginDate'] = todayStr;
+        try {
+            const snap = await database.ref(`kullanicilar/${safeNick}`).once('value');
+            if(!snap.exists()) return;
+            const userData = snap.val();
             
-            let loginBonus = dailyData.streak * 50;
-            updates['karma'] = firebase.database.ServerValue.increment(loginBonus);
-            logKarmaEvent('admin', loginBonus, `${dailyData.streak}. Gün Giriş Bonusu`);
-            showToast(`GÜNLÜK GİRİŞ: +${loginBonus} KARMA (Seri: ${dailyData.streak}/7)`);
-            if (dailyData.streak === 7) { updates['lastKasaTime'] = 0; showToast('7 GÜNLÜK SERİ! ZULA KİLİDİ AÇILDI.', true); }
-        }
+            let dailyData = userData.dailyData || { streak: 0, lastLoginDate: '', tasks: [] };
+            const todayStr = new Date().toLocaleDateString('tr-TR');
+            let isNewDay = dailyData.lastLoginDate !== todayStr;
+            let needsTasks = !dailyData.tasks || dailyData.tasks.length === 0;
 
-        if (isNewDay || needsTasks) {
-            let shuffled = dailyTaskPool.sort(() => 0.5 - Math.random());
-            updates['dailyData/tasks'] = shuffled.slice(0, 3).map(t => ({ id: t.id, desc: t.desc, karma: t.karma, done: false }));
-        }
+            let updates = {};
+            if (isNewDay) {
+                const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+                if (dailyData.lastLoginDate === yesterday.toLocaleDateString('tr-TR')) {
+                    dailyData.streak += 1;
+                    if (dailyData.streak > 7) dailyData.streak = 1;
+                } else {
+                    dailyData.streak = 1;
+                }
+                updates['dailyData/streak'] = dailyData.streak;
+                updates['dailyData/lastLoginDate'] = todayStr;
+                
+                let loginBonus = dailyData.streak * 50;
+                
+                // BUG BURADAYDI: Çöken kodu sildik, yerine manuel matematik ekledik.
+                let currentKarma = userData.karma || 0;
+                updates['karma'] = currentKarma + loginBonus;
+                
+                logKarmaEvent('admin', loginBonus, `${dailyData.streak}. Gün Giriş Bonusu`);
+                showToast(`GÜNLÜK GİRİŞ: +${loginBonus} KARMA (Seri: ${dailyData.streak}/7)`);
+                if (dailyData.streak === 7) { updates['lastKasaTime'] = 0; showToast('7 GÜNLÜK SERİ! ZULA KİLİDİ AÇILDI.', true); }
+            }
 
-        if (Object.keys(updates).length > 0) {
-            await database.ref(`kullanicilar/${safeNick}`).update(updates);
+            if (isNewDay || needsTasks) {
+                let shuffled = dailyTaskPool.sort(() => 0.5 - Math.random());
+                updates['dailyData/tasks'] = shuffled.slice(0, 3).map(t => ({ id: t.id, desc: t.desc, karma: t.karma, done: false }));
+            }
+
+            if (Object.keys(updates).length > 0) {
+                await database.ref(`kullanicilar/${safeNick}`).update(updates);
+            }
+        } catch (error) {
+            console.log("Motor hatası:", error);
         }
     }
 
@@ -2699,16 +2707,19 @@
 
         document.getElementById('daily-tasks-container').innerHTML = '<p class="text-center text-gray-500 font-mono text-sm animate-pulse">Veriler derleniyor...</p>';
         
-        // İlk olarak eksik veri varsa zorla oluşturt (Yapay Zeka ile bekleniyor)
+        // Önce eksik varsa zorla oluşturt
         await checkDailyStatus();
 
         const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
         const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
         
-        // Veriyi çekip ekrana bas
+        // Sonra güncel veriyi ekrana şak diye bas
         database.ref(`kullanicilar/${safeNick}/dailyData`).once('value').then(snap => {
             const data = snap.val();
-            if(!data) return;
+            if(!data) {
+                document.getElementById('daily-tasks-container').innerHTML = '<p class="text-center text-red-500 font-mono text-sm">Hata: Veri oluşturulamadı!</p>';
+                return;
+            }
 
             const streakBox = document.getElementById('streak-days-container');
             streakBox.innerHTML = '';
@@ -2745,21 +2756,24 @@
         const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
         const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
         
-        database.ref(`kullanicilar/${safeNick}/dailyData/tasks/${taskIndex}`).once('value').then(snap => {
-            let task = snap.val();
+        database.ref(`kullanicilar/${safeNick}`).once('value').then(snap => {
+            const userData = snap.val();
+            let task = userData.dailyData.tasks[taskIndex];
             if(!task || task.done) return;
+            
+            // "Ödülü Al" tuşundaki çöken kodu da düzelttik
+            let currentKarma = userData.karma || 0;
             
             database.ref(`kullanicilar/${safeNick}`).update({
                 [`dailyData/tasks/${taskIndex}/done`]: true,
-                'karma': firebase.database.ServerValue.increment(task.karma)
+                'karma': currentKarma + task.karma
             }).then(() => {
                 logKarmaEvent('admin', task.karma, `Görev: ${task.desc}`);
                 showToast(`GÖREV TAMAMLANDI: +${task.karma} KARMA`);
-                openDailyModal(); // UI Yenile
+                openDailyModal(); 
             });
         });
     }
-
   </script>
 </body>
 </html>
