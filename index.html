@@ -467,6 +467,7 @@
         <button onclick="switchMarketTab('themes')" id="market-tab-themes" class="market-tab px-6 py-3 border-b-4 border-transparent text-sm font-display text-gray-500 tracking-widest uppercase transition-all hover:text-white">🎨 PROFİL TEMALARI</button>
         <button onclick="switchMarketTab('frames')" id="market-tab-frames" class="market-tab px-6 py-3 border-b-4 border-transparent text-sm font-display text-gray-500 tracking-widest uppercase transition-all hover:text-white">🖼️ ÇERÇEVELER</button>
         <button onclick="switchMarketTab('roles')" id="market-tab-roles" class="market-tab px-6 py-3 border-b-4 border-transparent text-sm font-display text-gray-500 tracking-widest uppercase transition-all hover:text-white">🎭 ÖZEL UNVANLAR</button>
+        <button onclick="switchMarketTab('sounds')" id="market-tab-sounds" class="market-tab px-6 py-3 border-b-4 border-transparent text-sm font-display text-gray-500 tracking-widest uppercase transition-all hover:text-white">🎵 SES EFEKTLERİ</button>
       </div>
       <div id="market-content" class="flex-1 overflow-y-auto pr-2 scrollbar-thin"></div>
     </div>
@@ -874,6 +875,7 @@
 
     // ════════════ ZQWQZ TARZI PROFİL VE STALK MOTORU ════════════
     let currentProfileNick = ''; 
+    let profileAudio = null;
 
     function openMyProfile() {
       const user = localStorage.getItem('kadavra_vip_user');
@@ -945,7 +947,16 @@
 
         // Market kozmetiklerini uygula
         applyMarketCosmetics(data);
-        
+        if (profileAudio) { profileAudio.pause(); profileAudio.currentTime = 0; }
+        const aktifSes = (data.marketAktif && data.marketAktif.sounds) ? data.marketAktif.sounds : null;
+        if (aktifSes) {
+            const soundData = karmaMarketItems.sounds.find(s => s.id === aktifSes);
+            if (soundData && soundData.audioUrl) {
+            profileAudio = new Audio(soundData.audioUrl);
+            // Eğer market listesinde özel bir volume belirlediysen onu kullan, belirlemediysen standart 0.4 yap:
+            profileAudio.volume = soundData.volume || 0.4; 
+            profileAudio.play().catch(e => console.log('Tarayıcı otomatik sesi engelledi.'));
+        } }
         // ── ROLA ÖZEL ALT KISIM BOKEH ARKAPLANI ──
         const profileModal = document.getElementById('user-profile-modal');
         const aktifRol = (data.marketAktif && data.marketAktif.roles) ? data.marketAktif.roles : null;
@@ -1088,7 +1099,10 @@
       if(confirm('Kazıyıp atıyoruz, emin misin?')) { database.ref('kullanicilar/' + targetSafeNick + '/duvar/' + postKey).remove(); showToast('Yazı silindi.'); }
     }
 
-    function closeUserProfile() { const mod = document.getElementById('user-profile-modal'); mod.classList.add('opacity-0'); setTimeout(()=> mod.classList.add('hidden'), 300); }
+    function closeUserProfile() { 
+        const mod = document.getElementById('user-profile-modal'); mod.classList.add('opacity-0'); setTimeout(()=> mod.classList.add('hidden'), 300); 
+        if (profileAudio) { profileAudio.pause(); profileAudio.currentTime = 0; }
+    }
     
     function openSettings() { 
       closeUserProfile(); const user = localStorage.getItem('kadavra_vip_user');
@@ -1897,6 +1911,37 @@
         { id: 'halka-tasiyici', name: 'Yüzük Taşıyıcı', icon: '💍', price: 300000, desc: 'Kader omuzlarında.', displayColor: '#eab308' },
         { id: 'lejyon-golgesi', name: 'Lejyon Gölgesi', icon: '🌑', price: 500000, desc: 'Mekanın karanlık koruyucusu.', displayColor: '#9ca3af' },
         { id: 'derin-cukur-sefi', name: 'Derin Çukur Şefi', icon: '💀', price: 1000000, desc: 'Efsane budur.', displayColor: '#f97316' }
+      ],
+      sounds: [
+        { 
+          id: 'doc-b-beat', 
+          name: 'Doc B - Ana Altyapı', 
+          icon: '🎤', 
+          price: 100000, 
+          desc: 'Sisteme giriş yaptığında kendi ağır altyapılarından biri çalsın. Saf hip-hop.', 
+          displayColor: '#ef4444', 
+          audioUrl: 'https://cdn.discordapp.com/attachments/1499504072657469585/1499506203728810156/Griselda_-_DR_BIRDS_instrumental.mp3?ex=69f50b7a&is=69f3b9fa&hm=da13065dbf6492e03eb6250a6240f808f79c8578c576ca5184594c47cca38e02&',
+          volume: 0.10
+        },
+        { 
+          id: 'sauronun-baskisi', 
+          name: 'Sauron\'un Konuşması', 
+          icon: '👁️', 
+          price: 75000, 
+          desc: 'Kara lisanı duymaya hazır ol. "Ash nazg durbatulûk, ash nazg gimbatul..."', 
+          displayColor: '#eab308', 
+          audioUrl: 'https://cdn.discordapp.com/attachments/1499504072657469585/1499505555973079140/Sauron_Black_Speech.mp3?ex=69f50ae0&is=69f3b960&hm=e75cdda7b4fd98b7d3101be42f1154dc24791492e541b6c66508759e2081febc&'
+        },
+        { 
+          id: 'ncr-radyo', 
+          name: 'Mojave Radyosu', 
+          icon: '📻', 
+          price: 50000, 
+          desc: 'Rangerlar için özel frekans. Çorak toprakların statik radyo cızırtısı.', 
+          displayColor: '#22c55e', 
+          audioUrl: 'https://cdn.discordapp.com/attachments/1499504072657469585/1499506043011469333/Marty_Robbins_-_Big_Iron_Audio.mp3?ex=69f50b54&is=69f3b9d4&hm=bc091218e6e0045161f62bd08b63b6fb01b6dee47711fd9ae8d8f9e82077e278&',
+          volume: 0.10
+        }
       ]
     };
 
