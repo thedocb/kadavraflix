@@ -581,27 +581,6 @@
       
       <!-- GÜNLÜK RACON BUTONU -->
       <button onclick="openDailyModal()" class="hidden sm:flex items-center gap-2 text-blue-500 bg-transparent border-2 border-blue-900 px-4 py-2 font-display text-lg tracking-wider hover:bg-blue-900 hover:text-white transition-all">📅 GÜNLÜK RACON</button>
-
-      <!-- GÜNLÜK RACON & STREAK MODALI -->
-  <div id="daily-modal" class="fixed inset-0 z-[5000] bg-black/95 backdrop-blur-none hidden opacity-0 transition-opacity flex items-center justify-center">
-    <div class="bg-[#050505] border-2 border-blue-800 w-full max-w-2xl p-10 rounded-none relative brutalist-shadow mx-4">
-      <button onclick="closeDailyModal()" class="absolute top-4 right-5 text-blue-700 hover:text-white text-3xl font-mono leading-none font-bold">X</button>
-      <h2 class="text-4xl font-display text-blue-500 tracking-widest mb-2 uppercase drop-shadow-[2px_2px_0_#1e3a8a]">📅 GÜNLÜK RACONLAR</h2>
-      
-      <!-- STREAK BAR -->
-      <div class="bg-black border border-blue-900 p-4 mb-6">
-         <p class="text-xs text-gray-400 font-mono mb-2">GİRİŞ SERİSİ (7. GÜN ZULA BEDAVA)</p>
-         <div class="flex gap-2 justify-between" id="streak-days-container">
-            <!-- JS ile doldurulacak -->
-         </div>
-      </div>
-
-      <!-- GÖREVLER -->
-      <div id="daily-tasks-container" class="space-y-3">
-         <p class="text-center text-gray-600 font-mono text-sm">Veriler çekiliyor...</p>
-      </div>
-    </div>
-  </div>
       
       <div class="relative block">
         <input id="search-input" type="text" placeholder="SORGULA..." class="brutalist-input px-3 py-2 w-32 focus:w-56 text-sm transition-all" oninput="handleSearch(this.value)" />
@@ -635,6 +614,21 @@
       </div>
     </div>
   </nav>
+
+  <!-- GÜNLÜK RACON & STREAK MODALI (SİSTEM DIŞI, TERTEMİZ) -->
+  <div id="daily-modal" class="fixed inset-0 z-[5000] bg-black/95 backdrop-blur-none hidden opacity-0 transition-opacity flex items-center justify-center">
+    <div class="bg-[#050505] border-2 border-blue-800 w-full max-w-2xl p-10 rounded-none relative brutalist-shadow mx-4">
+      <button onclick="closeDailyModal()" class="absolute top-4 right-5 text-blue-700 hover:text-white text-3xl font-mono leading-none font-bold">X</button>
+      <h2 class="text-4xl font-display text-blue-500 tracking-widest mb-2 uppercase drop-shadow-[2px_2px_0_#1e3a8a]">📅 GÜNLÜK RACONLAR</h2>
+      <div class="bg-black border border-blue-900 p-4 mb-6">
+         <p class="text-xs text-gray-400 font-mono mb-2">GİRİŞ SERİSİ (7. GÜN ZULA BEDAVA)</p>
+         <div class="flex gap-2 justify-between" id="streak-days-container"></div>
+      </div>
+      <div id="daily-tasks-container" class="space-y-3">
+         <p class="text-center text-gray-600 font-mono text-sm">Veriler çekiliyor...</p>
+      </div>
+    </div>
+  </div>
 
   <!-- HERO -->
   <section id="hero">
@@ -2657,70 +2651,65 @@
         { id: 't6', desc: 'Hedef (Watchlist) listene yeni bir dosya ekle.', karma: 10 }
     ];
 
-    function checkDailyStatus() {
+    async function checkDailyStatus() {
         const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
         const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
-        const todayStr = new Date().toLocaleDateString('tr-TR'); 
         
-        database.ref(`kullanicilar/${safeNick}/dailyData`).once('value').then(snap => {
-            let data = snap.exists() ? snap.val() : { streak: 0, lastLoginDate: '', tasks: null };
-            let updates = {};
-            
-            // BUG KIRICI: Yeni gün mü? VEYA görevleri hiç oluşmamış mı?
-            let isNewDay = data.lastLoginDate !== todayStr;
-            let needsTasks = !data.tasks || data.tasks.length === 0;
+        const snap = await database.ref(`kullanicilar/${safeNick}`).once('value');
+        if(!snap.exists()) return;
+        const userData = snap.val();
+        
+        let dailyData = userData.dailyData || { streak: 0, lastLoginDate: '', tasks: [] };
+        const todayStr = new Date().toLocaleDateString('tr-TR');
+        let isNewDay = dailyData.lastLoginDate !== todayStr;
+        let needsTasks = !dailyData.tasks || dailyData.tasks.length === 0;
 
-            if (isNewDay || needsTasks) {
-                if (isNewDay) {
-                    const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
-                    if (data.lastLoginDate === yesterday.toLocaleDateString('tr-TR')) {
-                        data.streak += 1;
-                        if (data.streak > 7) data.streak = 1; 
-                    } else {
-                        data.streak = 1; 
-                    }
-                    updates['dailyData/streak'] = data.streak;
-                    updates['dailyData/lastLoginDate'] = todayStr;
-
-                    let loginBonus = data.streak * 50; 
-                    updates['karma'] = firebase.database.ServerValue.increment(loginBonus);
-                    logKarmaEvent('admin', loginBonus, `${data.streak}. Gün Giriş Bonusu`);
-                    showToast(`GÜNLÜK GİRİŞ: +${loginBonus} KARMA (Seri: ${data.streak}/7)`);
-
-                    if (data.streak === 7) {
-                        updates['lastKasaTime'] = 0; 
-                        showToast('7 GÜNLÜK SERİ! ZULA KİLİDİ AÇILDI.', true);
-                    }
-                }
-
-                // Rastgele 3 yeni görev seç ve zorla ata
-                let shuffled = dailyTaskPool.sort(() => 0.5 - Math.random());
-                let selectedTasks = shuffled.slice(0, 3).map(t => ({ id: t.id, desc: t.desc, karma: t.karma, done: false }));
-                updates['dailyData/tasks'] = selectedTasks;
-                
-                database.ref(`kullanicilar/${safeNick}`).update(updates);
+        let updates = {};
+        if (isNewDay) {
+            const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+            if (dailyData.lastLoginDate === yesterday.toLocaleDateString('tr-TR')) {
+                dailyData.streak += 1;
+                if (dailyData.streak > 7) dailyData.streak = 1;
+            } else {
+                dailyData.streak = 1;
             }
-        });
+            updates['dailyData/streak'] = dailyData.streak;
+            updates['dailyData/lastLoginDate'] = todayStr;
+            
+            let loginBonus = dailyData.streak * 50;
+            updates['karma'] = firebase.database.ServerValue.increment(loginBonus);
+            logKarmaEvent('admin', loginBonus, `${dailyData.streak}. Gün Giriş Bonusu`);
+            showToast(`GÜNLÜK GİRİŞ: +${loginBonus} KARMA (Seri: ${dailyData.streak}/7)`);
+            if (dailyData.streak === 7) { updates['lastKasaTime'] = 0; showToast('7 GÜNLÜK SERİ! ZULA KİLİDİ AÇILDI.', true); }
+        }
+
+        if (isNewDay || needsTasks) {
+            let shuffled = dailyTaskPool.sort(() => 0.5 - Math.random());
+            updates['dailyData/tasks'] = shuffled.slice(0, 3).map(t => ({ id: t.id, desc: t.desc, karma: t.karma, done: false }));
+        }
+
+        if (Object.keys(updates).length > 0) {
+            await database.ref(`kullanicilar/${safeNick}`).update(updates);
+        }
     }
 
-    // Modal İşlemleri (Canlı Takip Motorlu)
-    function openDailyModal() {
-        const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
-        const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
-        
+    async function openDailyModal() {
         const mod = document.getElementById('daily-modal');
         mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50);
 
-        // .on('value') ile canlı dinliyoruz. Görev yoksa arka planda oluşturulup anında buraya düşecek!
-        database.ref(`kullanicilar/${safeNick}/dailyData`).on('value', snap => {
-            if(!snap.exists() || !snap.val().tasks) {
-                checkDailyStatus(); // Görev yoksa motoru zorla çalıştır
-                document.getElementById('daily-tasks-container').innerHTML = '<p class="text-center text-gray-500 font-mono text-sm">Görevler hazırlanıyor, bekle...</p>';
-                return;
-            }
+        document.getElementById('daily-tasks-container').innerHTML = '<p class="text-center text-gray-500 font-mono text-sm animate-pulse">Veriler derleniyor...</p>';
+        
+        // İlk olarak eksik veri varsa zorla oluşturt (Yapay Zeka ile bekleniyor)
+        await checkDailyStatus();
+
+        const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
+        const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+        
+        // Veriyi çekip ekrana bas
+        database.ref(`kullanicilar/${safeNick}/dailyData`).once('value').then(snap => {
             const data = snap.val();
-            
-            // Streak UI
+            if(!data) return;
+
             const streakBox = document.getElementById('streak-days-container');
             streakBox.innerHTML = '';
             for(let i=1; i<=7; i++) {
@@ -2729,7 +2718,6 @@
                 streakBox.innerHTML += `<div class="w-8 h-8 flex items-center justify-center font-bold font-mono text-sm ${bg} ${i===7 ? 'border-2 border-yellow-500' : ''}">${i===7 && !isCompleted ? '🎁' : i}</div>`;
             }
 
-            // Tasks UI
             const tasksBox = document.getElementById('daily-tasks-container');
             tasksBox.innerHTML = '';
             (data.tasks || []).forEach((t, index) => {
@@ -2746,7 +2734,7 @@
             });
         });
     }
-    
+
     function closeDailyModal() { 
         const mod = document.getElementById('daily-modal'); 
         mod.classList.add('opacity-0'); 
@@ -2767,6 +2755,7 @@
             }).then(() => {
                 logKarmaEvent('admin', task.karma, `Görev: ${task.desc}`);
                 showToast(`GÖREV TAMAMLANDI: +${task.karma} KARMA`);
+                openDailyModal(); // UI Yenile
             });
         });
     }
