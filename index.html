@@ -77,6 +77,25 @@
     }
     #hero-content { position: relative; z-index: 2; padding: 0 5vw 8vh; max-width: 800px; }
 
+    /* ════ MARIO COIN (FLOAT TEXT) EFEKTİ ════ */
+    @keyframes floatUpFade {
+        0% { opacity: 1; transform: translate(-50%, 0) scale(0.5); }
+        20% { transform: translate(-50%, -20px) scale(1.2); }
+        100% { opacity: 0; transform: translate(-50%, -80px) scale(1); }
+    }
+    .mario-coin {
+        animation: floatUpFade 1.2s ease-out forwards;
+        pointer-events: none;
+        position: fixed;
+        z-index: 99999;
+        font-family: 'JetBrains Mono', monospace;
+        font-weight: 900;
+        color: #eab308; /* Altın Sarısı */
+        text-shadow: 2px 2px 0px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+        font-size: 1.8rem;
+        white-space: nowrap;
+    }
+
     /* Slider / Kart Tasarımları - Sıfır Ovallik, Tam Brutalizm */
     .slider-track { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 20px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
     .slider-track::-webkit-scrollbar { height: 6px; }
@@ -2676,24 +2695,26 @@
     ];
 
     async function checkDailyStatus() {
-        const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
+        const user = localStorage.getItem('kadavra_vip_user'); if(!user) return null;
         const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
         
         try {
             const snap = await database.ref(`kullanicilar/${safeNick}`).once('value');
-            if(!snap.exists()) return;
-            const userData = snap.val();
+            const userData = snap.exists() ? snap.val() : {}; 
             
-            let dailyData = userData.dailyData || { streak: 0, lastLoginDate: '', tasks: [] };
-            const today = new Date(); const todayStr = today.getFullYear() + '-' + (today.getMonth()+1) + '-' + today.getDate();
+            let dailyData = userData.dailyData || { streak: 0, lastLoginDate: '', tasks: [], loginBonusClaimed: false };
+            
+            const today = new Date();
+            const todayStr = today.getFullYear() + '-' + (today.getMonth()+1) + '-' + today.getDate();
+            const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+            const yesterdayStr = yesterday.getFullYear() + '-' + (yesterday.getMonth()+1) + '-' + yesterday.getDate();
+            
             let isNewDay = dailyData.lastLoginDate !== todayStr;
-            let needsTasks = !dailyData.tasks || !Array.isArray(dailyData.tasks) || dailyData.tasks.length === 0;
+            let needsTasks = !dailyData.tasks || dailyData.tasks.length === 0;
 
             let updates = {};
-            if (isNewDay) {
-                const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
-                const yesterdayStr = yesterday.getFullYear() + '-' + (yesterday.getMonth()+1) + '-' + yesterday.getDate();
 
+            if (isNewDay) {
                 if (dailyData.lastLoginDate === yesterdayStr) {
                     dailyData.streak += 1;
                     if (dailyData.streak > 7) dailyData.streak = 1;
@@ -2701,56 +2722,72 @@
                     dailyData.streak = 1;
                 }
                 dailyData.lastLoginDate = todayStr;
-                
-                let loginBonus = dailyData.streak * 50;
-                await database.ref(`kullanicilar/${safeNick}`).update({ karma: (userData.karma || 0) + loginBonus });
-                logKarmaEvent('admin', loginBonus, `${dailyData.streak}. Gün Giriş Bonusu`);
-                showToast(`GÜNLÜK GİRİŞ: +${loginBonus} KARMA (Seri: ${dailyData.streak}/7)`);
-                if (dailyData.streak === 7) { 
-                    await database.ref(`kullanicilar/${safeNick}`).update({ lastKasaTime: 0 });
-                    showToast('7 GÜNLÜK SERİ! ZULA KİLİDİ AÇILDI.', true); 
-                }
+                dailyData.loginBonusClaimed = false; // YENİ GÜN, ÖDÜL HENÜZ ALINMADI BEKLİYOR!
             }
 
             if (isNewDay || needsTasks) {
                 let shuffled = [...dailyTaskPool].sort(() => 0.5 - Math.random());
                 dailyData.tasks = shuffled.slice(0, 3).map(t => ({ id: t.id, desc: t.desc, karma: t.karma, done: false, progress: 0 }));
+            }
+
+            if (isNewDay || needsTasks) {
                 await database.ref(`kullanicilar/${safeNick}/dailyData`).set(dailyData);
             }
-        } catch (error) { console.error("Motor hatasi:", error); }
+            return dailyData;
+        } catch (error) {
+            console.error("Motor hatası:", error); return null;
+        }
     }
 
-    // ════════════ GÖREV ANTİ-HİLE (OTOMATİK TAKİP) MOTORU ════════════
-    function progressTask(taskId, amount = 1) {
+    // MARIO COIN: GÜNLÜK GİRİŞ ÖDÜLÜNÜ EL İLE ALMA FONKSİYONU
+    function claimDailyBonus(event, currentStreak) {
+        const btn = event.currentTarget;
         const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
         const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
         
+        if(btn.disabled) return; // Spam atmayı engelle
+        btn.disabled = true;
+
+        let reward = currentStreak * 50;
+        
         database.ref(`kullanicilar/${safeNick}`).once('value').then(snap => {
-            const data = snap.val();
-            if(!data || !data.dailyData || !data.dailyData.tasks) return;
+            const userData = snap.val() || {};
+            let currentKarma = userData.karma || 0;
             
-            let tasks = data.dailyData.tasks;
-            
-            tasks.forEach((t, index) => {
-                if(t.id === taskId && !t.done) {
-                    let target = (taskId === 't2' || taskId === 't4') ? 3 : 1; // Mesaj ve Şuku görevleri 3 kez yapılmalı
-                    let current = t.progress || 0;
-                    current += amount;
-                    t.progress = current;
-                    
-                    if(current >= target) {
-                        t.done = true;
-                        t.progress = target;
-                        database.ref(`kullanicilar/${safeNick}`).update({
-                            'karma': (data.karma || 0) + t.karma,
-                            [`dailyData/tasks/${index}`]: t
-                        });
-                        logKarmaEvent('görev', t.karma, `Görev Bitti: ${t.desc}`);
-                        showToast(`GÖREV TAMAM: ${t.desc} (+${t.karma} KARMA) 🎁`, true);
-                    } else {
-                        database.ref(`kullanicilar/${safeNick}/dailyData/tasks/${index}`).set(t);
-                    }
-                }
+            let updates = {
+                'dailyData/loginBonusClaimed': true,
+                'karma': currentKarma + reward
+            };
+            if(currentStreak === 7) updates['lastKasaTime'] = 0;
+
+            database.ref(`kullanicilar/${safeNick}`).update(updates).then(() => {
+                logKarmaEvent('admin', reward, `${currentStreak}. Gün Giriş Bonusu`);
+                
+                // MARIO COIN EFEKTİNİ YARAT
+                const rect = btn.getBoundingClientRect();
+                const coin = document.createElement('div');
+                coin.className = 'mario-coin';
+                coin.innerHTML = `+${reward} <span class="text-sm">KARMA</span>`;
+                coin.style.left = (rect.left + rect.width / 2) + 'px';
+                coin.style.top = rect.top + 'px';
+                document.body.appendChild(coin);
+                
+                // ŞING SESİ (Pavyon Kasası veya Retro Jeton Sesi)
+                const coinSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
+                coinSound.volume = 0.6;
+                coinSound.play().catch(e=>{});
+
+                // Kutuyu "Alındı" (Mavi) Rengine Çevir
+                btn.className = `w-8 h-8 flex items-center justify-center font-bold font-mono text-sm bg-blue-600 text-black transition-colors ${currentStreak===7 ? 'border-2 border-yellow-500' : ''}`;
+                btn.onclick = null;
+                
+                if(currentStreak === 7) setTimeout(() => showToast('7 GÜNLÜK SERİ! ZULA KİLİDİ AÇILDI.', true), 1000);
+                
+                // Ekrandaki ana karmayı da çaktırmadan güncelle (Eğer profil açıksa)
+                const karmaStat = document.getElementById('up-stat-karma');
+                if(karmaStat && !userData.infiniteKarma) karmaStat.textContent = (currentKarma + reward).toLocaleString('tr-TR');
+
+                setTimeout(() => coin.remove(), 1200); // Efekti sil
             });
         });
     }
@@ -2760,46 +2797,74 @@
         mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50);
         document.getElementById('daily-tasks-container').innerHTML = '<p class="text-center text-yellow-500 font-mono text-sm animate-pulse">Sistemle senkronize ediliyor...</p>';
         
-        await checkDailyStatus(); 
+        const finalDailyData = await checkDailyStatus();
 
-        const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
-        const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
-        
-        database.ref(`kullanicilar/${safeNick}/dailyData`).once('value').then(snap => {
-            const data = snap.val();
-            if(!data) { document.getElementById('daily-tasks-container').innerHTML = '<p class="text-center text-red-500 font-mono text-sm">Sunucu veriyi reddediyor.</p>'; return; }
+        if(!finalDailyData) {
+            document.getElementById('daily-tasks-container').innerHTML = '<p class="text-center text-red-500 font-mono text-sm">Sunucuya ulaşılamadı. F5 atıp tekrar dene.</p>'; return;
+        }
 
-            const streakBox = document.getElementById('streak-days-container'); streakBox.innerHTML = '';
-            for(let i=1; i<=7; i++) {
-                let isCompleted = i <= data.streak;
-                let bg = isCompleted ? 'bg-blue-600 text-black' : 'bg-gray-900 text-gray-500 border border-gray-700';
-                streakBox.innerHTML += `<div class="w-8 h-8 flex items-center justify-center font-bold font-mono text-sm ${bg} ${i===7 ? 'border-2 border-yellow-500' : ''}">${i===7 && !isCompleted ? '🎁' : i}</div>`;
-            }
-
-            const tasksBox = document.getElementById('daily-tasks-container'); tasksBox.innerHTML = '';
+        // --- STREAK KUTULARINI (GÜNLERİ) EKRANA BAS ---
+        const streakBox = document.getElementById('streak-days-container');
+        streakBox.innerHTML = '';
+        for(let i=1; i<=7; i++) {
+            let isPast = i < finalDailyData.streak;
+            let isToday = i === finalDailyData.streak;
             
-            let myTasks = data.tasks;
-            if(!myTasks || !Array.isArray(myTasks)) { tasksBox.innerHTML = '<p class="text-center text-gray-500 font-mono text-sm">Bugünlük görev kalmadı.</p>'; return; }
+            if (isPast || (isToday && finalDailyData.loginBonusClaimed)) {
+                // Alınmış VEYA Geçmiş Günler (Mavi)
+                streakBox.innerHTML += `<div class="w-8 h-8 flex items-center justify-center font-bold font-mono text-sm bg-blue-600 text-black ${i===7 ? 'border-2 border-yellow-500' : ''}">${i===7 ? '🎁' : i}</div>`;
+            } else if (isToday && !finalDailyData.loginBonusClaimed) {
+                // BUGÜNÜN KUTUSU (Tıklanabilir, Parlayan Altın)
+                streakBox.innerHTML += `<button onclick="claimDailyBonus(event, ${finalDailyData.streak})" class="w-8 h-8 flex items-center justify-center font-bold font-mono text-sm bg-yellow-500 text-black animate-pulse hover:bg-white hover:scale-110 transition-all border-2 border-yellow-700 brutalist-shadow">${i===7 ? '🎁' : i}</button>`;
+            } else {
+                // Gelecek Günler (Kilitli/Sönük)
+                streakBox.innerHTML += `<div class="w-8 h-8 flex items-center justify-center font-bold font-mono text-sm bg-gray-900 text-gray-500 border border-gray-700 ${i===7 ? 'border-2 border-yellow-500/30' : ''}">${i===7 ? '🎁' : i}</div>`;
+            }
+        }
 
-            myTasks.forEach((t) => {
-                let target = (t.id === 't2' || t.id === 't4') ? 3 : 1;
-                let current = t.progress || 0;
-                
-                let statusHTML = t.done 
-                    ? `<span class="bg-gray-800 text-gray-500 px-4 py-2 font-mono text-xs uppercase">TAMAMLANDI</span>`
-                    : `<span class="bg-red-900/40 border border-red-800 text-red-400 px-3 py-1 font-mono text-xs uppercase">${current} / ${target}</span>`; 
-                
-                tasksBox.innerHTML += `
-                    <div class="bg-black border border-gray-800 p-3 flex justify-between items-center hover:border-blue-900 transition-colors">
-                        <span class="text-gray-300 font-mono text-sm">${t.desc} <span class="text-yellow-500 text-xs ml-2">(+${t.karma})</span></span>
-                        ${statusHTML}
-                    </div>
-                `;
-            });
+        // --- GÖREVLERİ EKRANA BAS ---
+        const tasksBox = document.getElementById('daily-tasks-container'); tasksBox.innerHTML = '';
+        if(!finalDailyData.tasks || finalDailyData.tasks.length === 0) { tasksBox.innerHTML = '<p class="text-center text-gray-500 font-mono text-sm">Bugünlük görev kalmadı.</p>'; return; }
+
+        finalDailyData.tasks.forEach((t) => {
+            let target = (t.id === 't2' || t.id === 't4') ? 3 : 1;
+            let current = t.progress || 0;
+            let statusHTML = t.done 
+                ? `<span class="bg-gray-800 text-gray-500 px-4 py-2 font-mono text-xs uppercase">TAMAMLANDI</span>`
+                : `<span class="bg-red-900/40 border border-red-800 text-red-400 px-3 py-1 font-mono text-xs uppercase">${current} / ${target}</span>`; 
+            tasksBox.innerHTML += `
+                <div class="bg-black border border-gray-800 p-3 flex justify-between items-center hover:border-blue-900 transition-colors">
+                    <span class="text-gray-300 font-mono text-sm">${t.desc} <span class="text-yellow-500 text-xs ml-2">(+${t.karma})</span></span>
+                    ${statusHTML}
+                </div>`;
         });
     }
 
     function closeDailyModal() { const mod = document.getElementById('daily-modal'); mod.classList.add('opacity-0'); setTimeout(()=> mod.classList.add('hidden'), 300); }
+
+    // ════════════ GÖREV ANTİ-HİLE (OTOMATİK TAKİP) MOTORU ════════════
+    function progressTask(taskId, amount = 1) {
+        const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
+        const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+        database.ref(`kullanicilar/${safeNick}`).once('value').then(snap => {
+            const data = snap.val(); if(!data || !data.dailyData || !data.dailyData.tasks) return;
+            let tasks = data.dailyData.tasks;
+            tasks.forEach((t, index) => {
+                if(t.id === taskId && !t.done) {
+                    let target = (taskId === 't2' || taskId === 't4') ? 3 : 1; 
+                    let current = t.progress || 0; current += amount; t.progress = current;
+                    if(current >= target) {
+                        t.done = true; t.progress = target;
+                        database.ref(`kullanicilar/${safeNick}`).update({ 'karma': (data.karma || 0) + t.karma, [`dailyData/tasks/${index}`]: t });
+                        logKarmaEvent('görev', t.karma, `Görev Bitti: ${t.desc}`);
+                        showToast(`GÖREV TAMAM: ${t.desc} (+${t.karma} KARMA) 🎁`, true);
+                    } else {
+                        database.ref(`kullanicilar/${safeNick}/dailyData/tasks/${index}`).set(t);
+                    }
+                }
+            });
+        });
+    }
   </script>
 </body>
 </html>
