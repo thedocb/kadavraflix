@@ -209,6 +209,18 @@
 
         <div><p class="text-[10px] text-gray-400 mb-1 uppercase tracking-wider font-bold">Yaşadığı Yer</p><input type="text" id="loc-input" class="w-full bg-black border border-red-900/50 rounded-sm px-3 py-2 text-white text-xs focus:outline-none focus:border-red-500"></div>
 
+       <div class="mt-3 mb-2 border-t border-red-900/30 pt-3">
+          <p class="text-[10px] text-gray-400 mb-1 uppercase tracking-wider font-bold">Görünür Rütbe Tercihi</p>
+          <select id="rank-pref-input" class="w-full bg-black border border-red-900/50 rounded-sm px-3 py-2 text-white text-xs focus:outline-none focus:border-red-500 cursor-pointer">
+            <option value="auto">Otomatik (En Güçlü Rolü Göster)</option>
+            <option value="faction">Sadece Yol Rütbem (Örn: Sauron, Eru)</option>
+            <option value="market">Marketten Aldığım Rol</option>
+            <option value="adminCustom">Bana Özel Verilen Ünvan (Admin Tarafından)</option>
+            <option value="admin">Lejyon Baronu (Sadece Kurucular)</option>
+          </select>
+          <p class="text-[8px] text-gray-500 mt-1">Sende olmayan bir unvanı seçersen sistem otomatik olanı gösterir.</p>
+        </div>
+
         <button onclick="updateProfileSettings()" class="w-full bg-red-900/50 hover:bg-red-600 border border-red-700 py-2 rounded-sm text-white font-bold text-xs uppercase tracking-wider transition-colors mt-2">Profili Kaydet</button>
 
         
@@ -346,71 +358,55 @@
 
 
   <!-- YOLUNU SEÇ EKRANI (FACTION SELECTION) -->
-
   <div id="faction-modal" class="fixed inset-0 z-[4000] bg-black/95 backdrop-blur-xl hidden opacity-0 transition-opacity flex items-center justify-center">
-
-    <div class="w-full max-w-5xl p-6 text-center">
-
+    <div class="w-full max-w-6xl p-6 text-center">
       <h2 class="text-4xl md:text-6xl font-display text-white tracking-widest mb-2 drop-shadow-[0_0_15px_rgba(229,9,20,0.8)]">500 KARMAYA ULAŞTIN</h2>
-
-      <p class="text-red-400 font-bold tracking-widest uppercase mb-12">Raconu Kesme Vakti Geldi, Yolunu Seç!</p>
-
+      <p class="text-red-400 font-bold tracking-widest uppercase mb-10">Raconu Kesme Vakti Geldi, Yolunu Seç!</p>
       
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-        <div onclick="chooseFaction('sw')" class="group relative h-80 bg-black border border-red-900 hover:border-red-500 cursor-pointer overflow-hidden rounded-sm transition-all hover:scale-105">
-
-          <img src="https://images.unsplash.com/photo-1547700055-b61cacebece9?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity grayscale group-hover:grayscale-0">
-
+      <!-- 8'li Yeni Yol Seçim Grid'i (KUTUNUN İÇİNDE) -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 max-h-[65vh] overflow-y-auto scrollbar-thin pr-2">
+        <div onclick="chooseFaction('sw')" class="group relative h-40 bg-black border border-red-900 hover:border-red-500 cursor-pointer overflow-hidden rounded-sm transition-all hover:scale-105">
+          <img src="https://images.unsplash.com/photo-1547700055-b61cacebece9?q=80&w=1170&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity grayscale group-hover:grayscale-0">
           <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
-
-          <div class="absolute bottom-6 w-full text-center">
-
-            <h3 class="text-3xl font-display text-white mb-1">GÜCÜN YOLU</h3>
-
-            <p class="text-xs text-red-400 font-bold uppercase tracking-wider">Star Wars Rütbeleri</p>
-
-          </div>
-
+          <div class="absolute bottom-3 w-full text-center"><h3 class="text-xl font-display text-white mb-0">GÜCÜN YOLU</h3><p class="text-[9px] text-red-400 font-bold uppercase tracking-wider">Star Wars Rütbeleri</p></div>
         </div>
-
-        <div onclick="chooseFaction('fo')" class="group relative h-80 bg-black border border-red-900 hover:border-red-500 cursor-pointer overflow-hidden rounded-sm transition-all hover:scale-105">
-
+        <div onclick="chooseFaction('fo')" class="group relative h-40 bg-black border border-red-900 hover:border-red-500 cursor-pointer overflow-hidden rounded-sm transition-all hover:scale-105">
           <img src="https://hips.hearstapps.com/hmg-prod/images/fallout-tv-show-the-ghoul-cooper-howard-walton-goggins-prime-video-1-661515aba2822.jpg?crop=0.7421733170316032xw:1xh;0,0" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity grayscale group-hover:grayscale-0">
-
           <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
-
-          <div class="absolute bottom-6 w-full text-center">
-
-            <h3 class="text-3xl font-display text-white mb-1">ÇORAK TOPRAKLAR</h3>
-
-            <p class="text-xs text-red-400 font-bold uppercase tracking-wider">Fallout Rütbeleri</p>
-
-          </div>
-
+          <div class="absolute bottom-3 w-full text-center"><h3 class="text-xl font-display text-white mb-0">ÇORAK TOPRAKLAR</h3><p class="text-[9px] text-red-400 font-bold uppercase tracking-wider">Fallout Rütbeleri</p></div>
         </div>
-
-        <div onclick="chooseFaction('rap')" class="group relative h-80 bg-black border border-red-900 hover:border-red-500 cursor-pointer overflow-hidden rounded-sm transition-all hover:scale-105">
-
+        <div onclick="chooseFaction('rap')" class="group relative h-40 bg-black border border-red-900 hover:border-red-500 cursor-pointer overflow-hidden rounded-sm transition-all hover:scale-105">
           <img src="https://hips.hearstapps.com/hmg-prod/images/biggie_smalls_photo_by_clarence_davis_new_york_daily_news_archive_getty_97348258.jpg" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity grayscale group-hover:grayscale-0">
-
           <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
-
-          <div class="absolute bottom-6 w-full text-center">
-
-            <h3 class="text-3xl font-display text-white mb-1">YERALTI KÜLTÜRÜ</h3>
-
-            <p class="text-xs text-red-400 font-bold uppercase tracking-wider">Underground Rap Rütbeleri</p>
-
-          </div>
-
+          <div class="absolute bottom-3 w-full text-center"><h3 class="text-xl font-display text-white mb-0">YERALTI KÜLTÜRÜ</h3><p class="text-[9px] text-red-400 font-bold uppercase tracking-wider">Hip-Hop Rütbeleri</p></div>
         </div>
-
+        <div onclick="chooseFaction('lotr')" class="group relative h-40 bg-black border border-red-900 hover:border-red-500 cursor-pointer overflow-hidden rounded-sm transition-all hover:scale-105">
+          <img src="https://images.unsplash.com/photo-1535666669445-e8c15cd2e7d9?q=80&w=687&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity grayscale group-hover:grayscale-0">
+          <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
+          <div class="absolute bottom-3 w-full text-center"><h3 class="text-xl font-display text-white mb-0">ORTA DÜNYA</h3><p class="text-[9px] text-red-400 font-bold uppercase tracking-wider">LotR Rütbeleri</p></div>
+        </div>
+        <div onclick="chooseFaction('got')" class="group relative h-40 bg-black border border-red-900 hover:border-red-500 cursor-pointer overflow-hidden rounded-sm transition-all hover:scale-105">
+          <img src="https://static0.gamerantimages.com/wordpress/wp-content/uploads/2022/06/game-of-thrones-jon-snow.jpg?w=1600&h=900&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity grayscale group-hover:grayscale-0">
+          <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
+          <div class="absolute bottom-3 w-full text-center"><h3 class="text-xl font-display text-white mb-0">DEMİR TAHT</h3><p class="text-[9px] text-red-400 font-bold uppercase tracking-wider">GoT Rütbeleri</p></div>
+        </div>
+        <div onclick="chooseFaction('mafia')" class="group relative h-40 bg-black border border-red-900 hover:border-red-500 cursor-pointer overflow-hidden rounded-sm transition-all hover:scale-105">
+          <img src="https://plus.unsplash.com/premium_photo-1694781584571-0cdfad3172af?q=80&w=735&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity grayscale group-hover:grayscale-0">
+          <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
+          <div class="absolute bottom-3 w-full text-center"><h3 class="text-xl font-display text-white mb-0">CASA NOSTRA</h3><p class="text-[9px] text-red-400 font-bold uppercase tracking-wider">Mafya Rütbeleri</p></div>
+        </div>
+        <div onclick="chooseFaction('jojo')" class="group relative h-40 bg-black border border-red-900 hover:border-red-500 cursor-pointer overflow-hidden rounded-sm transition-all hover:scale-105">
+          <img src="https://cdn-images.dzcdn.net/images/cover/36fa1ce70eafb199da323aa101feb4e8/0x1900-000000-80-0-0.jpg" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity grayscale group-hover:grayscale-0">
+          <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
+          <div class="absolute bottom-3 w-full text-center"><h3 class="text-xl font-display text-white mb-0">TUHAF MACERA</h3><p class="text-[9px] text-red-400 font-bold uppercase tracking-wider">JoJo Rütbeleri</p></div>
+        </div>
+        <div onclick="chooseFaction('lejyon')" class="group relative h-40 bg-black border border-red-700 hover:border-red-400 cursor-pointer overflow-hidden rounded-sm transition-all hover:scale-105">
+          <img src="https://images.fallout.wiki/thumb/5/5c/FNV-Fort-Vex-Legion.jpg/1200px-FNV-Fort-Vex-Legion.jpg" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity grayscale group-hover:grayscale-0">
+          <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
+          <div class="absolute bottom-3 w-full text-center"><h3 class="text-xl font-display text-white mb-0">ROMA LEJYONU</h3><p class="text-[9px] text-red-400 font-bold uppercase tracking-wider">Lejyon Rütbeleri</p></div>
+        </div>
       </div>
-
     </div>
-
   </div>
 
 
@@ -573,60 +569,75 @@
 
   <!-- RÜTBE REHBERİ EKRANI -->
   <div id="ranks-modal" class="fixed inset-0 z-[4500] bg-black/95 backdrop-blur-xl hidden opacity-0 transition-opacity flex items-center justify-center">
-    <div class="bg-[#0a0a0a]/80/80 border border-red-900/50 w-full max-w-6xl p-8 rounded-sm relative shadow-2xl max-h-[90vh] overflow-y-auto text-center font-sans mx-4">
+    <div class="bg-[#0a0a0a] border border-red-900/50 w-full max-w-6xl p-8 rounded-sm relative shadow-2xl max-h-[90vh] overflow-y-auto text-center font-sans mx-4">
       <button onclick="closeRanksModal()" class="absolute top-4 right-5 text-gray-500 hover:text-white text-3xl leading-none">&times;</button>
       <h2 class="text-3xl font-display text-white tracking-widest mb-2 uppercase drop-shadow-[0_0_15px_rgba(229,9,20,0.8)]">🎖️ Yeraltı Rütbe Rehberi</h2>
       <p class="text-xs text-gray-400 mb-8 uppercase tracking-widest font-bold">Lejyon içerisinde yükselebileceğin tüm basamaklar.</p>
       
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
+      <!-- 9'lu Yeni Rütbe Rehberi Grid'i -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-left pb-4">
         <!-- Ortak / Temel -->
         <div class="bg-black border border-gray-800 p-4 rounded-sm">
           <h3 class="text-sm font-bold text-gray-400 mb-4 border-b border-gray-800 pb-2 uppercase tracking-wider">Temel Yol (0 - 499)</h3>
-          <ul class="space-y-3 text-xs font-mono text-gray-300">
+          <ul class="space-y-2 text-xs font-mono text-gray-300">
             <li><span class="text-red-500 font-bold">0:</span> Çaylak</li>
             <li><span class="text-red-500 font-bold">500:</span> YOL SEÇİMİ AÇILIR</li>
           </ul>
         </div>
         <!-- Star Wars -->
         <div class="bg-black border border-blue-900 p-4 rounded-sm">
-          <h3 class="text-sm font-bold text-blue-400 mb-4 border-b border-blue-900 pb-2 uppercase tracking-wider">Gücün Yolu</h3>
-          <ul class="space-y-3 text-xs font-mono text-blue-200">
-            <li><span class="text-blue-500 font-bold">500:</span> Padawan</li>
-            <li><span class="text-blue-500 font-bold">1K:</span> Jedi Şövalyesi</li>
-            <li><span class="text-blue-500 font-bold">5K:</span> Jedi Ustası</li>
-            <li><span class="text-blue-500 font-bold">25K:</span> Jedi Konseyi</li>
-            <li><span class="text-red-500 font-bold">100K:</span> Sith Lordu</li>
-            <li><span class="text-red-500 font-bold">250K:</span> Darth</li>
-            <li><span class="text-purple-500 font-bold">500K:</span> Gücün Dengeleyicisi</li>
-            <li><span class="text-yellow-400 font-bold">1M:</span> Gücün Ta Kendisi</li>
+          <h3 class="text-sm font-bold text-blue-400 mb-3 border-b border-blue-900 pb-2 uppercase tracking-wider">Gücün Yolu</h3>
+          <ul class="space-y-1 text-[10px] font-mono text-blue-200">
+            <li><span class="text-blue-500 font-bold">500:</span> Padawan</li><li><span class="text-blue-500 font-bold">1K:</span> Jedi Şövalyesi</li><li><span class="text-blue-500 font-bold">5K:</span> Jedi Ustası</li><li><span class="text-blue-500 font-bold">25K:</span> Jedi Konseyi</li><li><span class="text-red-500 font-bold">100K:</span> Sith Lordu</li><li><span class="text-red-500 font-bold">250K:</span> Darth</li><li><span class="text-purple-500 font-bold">500K:</span> Gücün Dengeleyicisi</li><li><span class="text-yellow-400 font-bold">1M:</span> Gücün Ta Kendisi</li>
           </ul>
         </div>
         <!-- Fallout -->
         <div class="bg-black border border-green-900 p-4 rounded-sm">
-          <h3 class="text-sm font-bold text-green-400 mb-4 border-b border-green-900 pb-2 uppercase tracking-wider">Çorak Topraklar</h3>
-          <ul class="space-y-3 text-xs font-mono text-green-200">
-            <li><span class="text-green-500 font-bold">500:</span> Wastelander</li>
-            <li><span class="text-green-500 font-bold">1K:</span> BoS Şövalyesi</li>
-            <li><span class="text-green-500 font-bold">5K:</span> NCR Ranger</li>
-            <li><span class="text-green-500 font-bold">25K:</span> Çorak Efsanesi</li>
-            <li><span class="text-green-500 font-bold">100K:</span> Enclave Subayı</li>
-            <li><span class="text-green-500 font-bold">250K:</span> BoS Paladin</li>
-            <li><span class="text-green-500 font-bold">500K:</span> Wasteland Warlord</li>
-            <li><span class="text-yellow-400 font-bold">1M:</span> Overseer</li>
+          <h3 class="text-sm font-bold text-green-400 mb-3 border-b border-green-900 pb-2 uppercase tracking-wider">Çorak Topraklar</h3>
+          <ul class="space-y-1 text-[10px] font-mono text-green-200">
+            <li><span class="text-green-500 font-bold">500:</span> Wastelander</li><li><span class="text-green-500 font-bold">1K:</span> BoS Şövalyesi</li><li><span class="text-green-500 font-bold">5K:</span> NCR Ranger</li><li><span class="text-green-500 font-bold">25K:</span> Çorak Efsanesi</li><li><span class="text-green-500 font-bold">100K:</span> Enclave Subayı</li><li><span class="text-green-500 font-bold">250K:</span> BoS Paladin</li><li><span class="text-green-500 font-bold">500K:</span> Wasteland Warlord</li><li><span class="text-yellow-400 font-bold">1M:</span> Overseer</li>
           </ul>
         </div>
         <!-- Rap -->
         <div class="bg-black border border-yellow-900 p-4 rounded-sm">
-          <h3 class="text-sm font-bold text-yellow-500 mb-4 border-b border-yellow-900 pb-2 uppercase tracking-wider">Yeraltı Kültürü</h3>
-          <ul class="space-y-3 text-xs font-mono text-yellow-200">
-            <li><span class="text-yellow-600 font-bold">500:</span> Çaylak MC</li>
-            <li><span class="text-yellow-600 font-bold">1K:</span> Battle Rapçi</li>
-            <li><span class="text-yellow-600 font-bold">5K:</span> Underground Kralı</li>
-            <li><span class="text-yellow-600 font-bold">25K:</span> Rap God</li>
-            <li><span class="text-yellow-600 font-bold">100K:</span> Label Patronu</li>
-            <li><span class="text-yellow-600 font-bold">250K:</span> Altın Plak Sahibi</li>
-            <li><span class="text-yellow-600 font-bold">500K:</span> Hip-Hop Efsanesi</li>
-            <li><span class="text-yellow-400 font-bold">1M:</span> Kültürün Sesi</li>
+          <h3 class="text-sm font-bold text-yellow-500 mb-3 border-b border-yellow-900 pb-2 uppercase tracking-wider">Yeraltı Kültürü</h3>
+          <ul class="space-y-1 text-[10px] font-mono text-yellow-200">
+            <li><span class="text-yellow-600 font-bold">500:</span> Çaylak MC</li><li><span class="text-yellow-600 font-bold">1K:</span> Battle Rapçi</li><li><span class="text-yellow-600 font-bold">5K:</span> Underground Kralı</li><li><span class="text-yellow-600 font-bold">25K:</span> Rap God</li><li><span class="text-yellow-600 font-bold">100K:</span> Label Patronu</li><li><span class="text-yellow-600 font-bold">250K:</span> Altın Plak Sahibi</li><li><span class="text-yellow-600 font-bold">500K:</span> Hip-Hop Efsanesi</li><li><span class="text-yellow-400 font-bold">1M:</span> Kültürün Sesi</li>
+          </ul>
+        </div>
+        <!-- LotR -->
+        <div class="bg-black border border-amber-900 p-4 rounded-sm">
+          <h3 class="text-sm font-bold text-amber-500 mb-3 border-b border-amber-900 pb-2 uppercase tracking-wider">Orta Dünya</h3>
+          <ul class="space-y-1 text-[10px] font-mono text-amber-200">
+            <li><span class="text-amber-600 font-bold">500:</span> Gondor Eri</li><li><span class="text-amber-600 font-bold">1K:</span> Rohan Süvarisi</li><li><span class="text-amber-600 font-bold">5K:</span> Kolcu</li><li><span class="text-amber-600 font-bold">25K:</span> Elf Beyi</li><li><span class="text-amber-600 font-bold">100K:</span> Yüzük Kardeşliği</li><li><span class="text-amber-600 font-bold">250K:</span> İstari</li><li><span class="text-amber-600 font-bold">500K:</span> Maia</li><li><span class="text-yellow-400 font-bold">1M:</span> Eru Illuvatar</li>
+          </ul>
+        </div>
+        <!-- GoT -->
+        <div class="bg-black border border-red-950 p-4 rounded-sm">
+          <h3 class="text-sm font-bold text-red-500 mb-3 border-b border-red-950 pb-2 uppercase tracking-wider">Demir Taht</h3>
+          <ul class="space-y-1 text-[10px] font-mono text-red-200">
+            <li><span class="text-red-700 font-bold">500:</span> Yeminli Kılıç</li><li><span class="text-red-700 font-bold">1K:</span> Gece Nöbetçisi</li><li><span class="text-red-700 font-bold">5K:</span> Hanedan Şövalyesi</li><li><span class="text-red-700 font-bold">25K:</span> Yedi Krallık Lordu</li><li><span class="text-red-700 font-bold">100K:</span> Kralın Eli</li><li><span class="text-red-700 font-bold">250K:</span> Ejderha Süvarisi</li><li><span class="text-red-700 font-bold">500K:</span> Akgezen</li><li><span class="text-yellow-400 font-bold">1M:</span> Kuzey'in Kralı</li>
+          </ul>
+        </div>
+        <!-- Mafia -->
+        <div class="bg-black border border-orange-900 p-4 rounded-sm">
+          <h3 class="text-sm font-bold text-orange-500 mb-3 border-b border-orange-900 pb-2 uppercase tracking-wider">Casa Nostra</h3>
+          <ul class="space-y-1 text-[10px] font-mono text-orange-200">
+            <li><span class="text-orange-600 font-bold">500:</span> Tetikçi</li><li><span class="text-orange-600 font-bold">1K:</span> Tahsildar</li><li><span class="text-orange-600 font-bold">5K:</span> Capo</li><li><span class="text-orange-600 font-bold">25K:</span> Consigliere</li><li><span class="text-orange-600 font-bold">100K:</span> Underboss</li><li><span class="text-orange-600 font-bold">250K:</span> Don</li><li><span class="text-orange-600 font-bold">500K:</span> Capo dei capi</li><li><span class="text-yellow-400 font-bold">1M:</span> Yeraltı Baronu</li>
+          </ul>
+        </div>
+        <!-- JoJo -->
+        <div class="bg-black border border-purple-900 p-4 rounded-sm">
+          <h3 class="text-sm font-bold text-purple-400 mb-3 border-b border-purple-900 pb-2 uppercase tracking-wider">Tuhaf Macera</h3>
+          <ul class="space-y-1 text-[10px] font-mono text-purple-200">
+            <li><span class="text-purple-500 font-bold">500:</span> Hamon Çaylağı</li><li><span class="text-purple-500 font-bold">1K:</span> Stand Kullanıcısı</li><li><span class="text-purple-500 font-bold">5K:</span> Stand Ustası</li><li><span class="text-purple-500 font-bold">25K:</span> Ok Taşıyıcısı</li><li><span class="text-purple-500 font-bold">100K:</span> Requiem Sahibi</li><li><span class="text-purple-500 font-bold">250K:</span> Zaman Bükücü</li><li><span class="text-purple-500 font-bold">500K:</span> Evren Sıfırlayıcı</li><li><span class="text-yellow-400 font-bold">1M:</span> Wonder of U</li>
+          </ul>
+        </div>
+        <!-- Lejyon -->
+        <div class="bg-black border border-red-700 p-4 rounded-sm">
+          <h3 class="text-sm font-bold text-red-500 mb-3 border-b border-red-700 pb-2 uppercase tracking-wider">Roma Lejyonu</h3>
+          <ul class="space-y-1 text-[10px] font-mono text-red-200">
+            <li><span class="text-red-600 font-bold">500:</span> Lejyoner</li><li><span class="text-red-600 font-bold">1K:</span> Optio</li><li><span class="text-red-600 font-bold">5K:</span> Centurion</li><li><span class="text-red-600 font-bold">25K:</span> Primus Pilus</li><li><span class="text-red-600 font-bold">100K:</span> T. Laticlavius</li><li><span class="text-red-600 font-bold">250K:</span> Praefectus Castrorum</li><li><span class="text-red-600 font-bold">500K:</span> Legatus</li><li><span class="text-yellow-400 font-bold">1M:</span> Caesar</li>
           </ul>
         </div>
       </div>
@@ -648,6 +659,34 @@
         <button onclick="switchMarketTab('roles')" id="market-tab-roles" class="market-tab flex-1 px-3 py-2 rounded-sm text-xs font-bold uppercase tracking-wider transition-all border border-gray-700 text-gray-400 bg-transparent hover:border-purple-500 hover:text-purple-300 whitespace-nowrap">🎭 Özel Roller</button>
       </div>
       <div id="market-content" class="flex-1 overflow-y-auto pr-1 scrollbar-thin"></div>
+    </div>
+  </div>
+
+  <!-- YERALTI KASASI MODALI -->
+  <div id="kasa-modal" class="fixed inset-0 z-[4500] bg-black/95 backdrop-blur-xl hidden opacity-0 transition-opacity flex items-center justify-center">
+    <div class="bg-[#0a0a0a] border border-green-900/50 w-full max-w-lg p-8 rounded-sm relative shadow-[0_0_30px_rgba(34,197,94,0.15)] mx-4 text-center overflow-hidden">
+      <button onclick="closeKasaModal()" class="absolute top-4 right-5 text-gray-500 hover:text-white text-3xl leading-none">&times;</button>
+      <h2 class="text-3xl font-display text-green-500 tracking-widest mb-2 uppercase drop-shadow-[0_0_10px_rgba(34,197,94,0.5)]">🎁 YERALTI KASASI</h2>
+      <p class="text-[10px] text-gray-400 uppercase tracking-widest font-bold mb-6 border-b border-green-900/30 pb-4">12 Saatte bir şansını dene</p>
+
+      <!-- Kutu ve Animasyon Alanı (CS:GO Tarzı) -->
+      <div id="kasa-anim-container" class="relative w-full h-28 bg-[#050505] border border-green-900/50 rounded-sm overflow-hidden mb-6 flex items-center hidden shadow-[inset_0_0_30px_rgba(0,0,0,1)]">
+         <!-- Ortadaki Lazer Seçici Çizgi -->
+         <div class="absolute inset-y-0 left-1/2 w-1 bg-green-500 z-20 shadow-[0_0_15px_rgba(34,197,94,1)] transform -translate-x-1/2"></div>
+         <!-- Kayan Şerit -->
+         <div id="kasa-track" class="flex items-center h-full" style="transform: translateX(0px);"></div>
+      </div>
+      
+      <!-- Normal Durum (Kapalı Kasa) -->
+      <div id="kasa-default-box" class="h-28 flex items-center justify-center mb-6 cursor-pointer">
+         <span class="text-[80px] animate-pulse drop-shadow-[0_0_20px_rgba(34,197,94,0.6)]" id="kasa-icon">📦</span>
+      </div>
+
+      <!-- Süre Sayacı -->
+      <p id="kasa-timer-text" class="text-xs font-mono text-gray-500 mb-4 hidden"></p>
+
+      <!-- Aç Butonu -->
+      <button id="kasa-ac-btn" onclick="kasaAc()" class="w-full bg-green-900/40 hover:bg-green-600 border border-green-700 py-3 rounded-sm text-white font-bold text-sm uppercase tracking-wider transition-all shadow-[0_0_15px_rgba(34,197,94,0.3)]">Kasayı Patlat</button>
     </div>
   </div>
 
@@ -769,6 +808,7 @@
           <button onclick="openSettings()" class="text-left px-4 py-3 text-xs font-bold text-gray-300 hover:bg-red-900/40 hover:text-white border-b border-red-900/30 transition-colors">⚙️ Ayarlar</button>
           <button onclick="openRanksModal()" class="text-left px-4 py-3 text-xs font-bold text-gray-300 hover:bg-red-900/40 hover:text-white border-b border-red-900/30 transition-colors">🎖️ Rütbe Rehberi</button>
           <button onclick="openKarmaInfo()" class="text-left px-4 py-3 text-xs font-bold text-yellow-500 hover:bg-yellow-900/40 hover:text-yellow-400 border-b border-red-900/30 transition-colors">⚡ Karma Geçmişi / Info</button>
+          <button onclick="openKasaModal()" class="text-left px-4 py-3 text-xs font-bold text-green-500 hover:bg-green-900/40 hover:text-green-400 border-b border-red-900/30 transition-colors">🎁 Yeraltı Kasası (12 Saatte Bir)</button>
           <button onclick="openKarmaMarket()" class="text-left px-4 py-3 text-xs font-bold text-purple-400 hover:bg-purple-900/40 hover:text-purple-300 border-b border-red-900/30 transition-colors">🛒 Karma Marketi</button>
           <button onclick="openLeaderboard()" class="text-left px-4 py-3 text-xs font-bold text-orange-500 hover:bg-orange-900/40 hover:text-orange-400 border-b border-red-900/30 transition-colors">🏆 Lejyon Baronları (Top 10)</button>
           <button id="nav-admin-btn" onclick="openAdminPanel()" class="text-left px-4 py-3 text-xs font-bold text-red-500 hover:bg-red-900/40 hover:text-white border-b border-red-900/30 transition-colors hidden">👑 Lejyon İstihbarat</button>
@@ -1016,15 +1056,15 @@
     // ════════════ MİLYONLUK RÜTBE VE KARMA YOLLARI (FACTIONS) ════════════
 
     const Ranks = {
-
       'sw': { 0:'Youngling', 500:'Padawan', 1000:'Jedi Şövalyesi', 5000:'Jedi Ustası', 25000:'Jedi Konseyi', 100000:'Sith Lordu', 250000:'Darth', 500000:'Gücün Dengeleyicisi', 1000000:'Gücün Ta Kendisi' },
-
-      'fo': { 0:'Vault Dweller', 500:'Wastelander', 1000:'Brotherhood Şövalyesi', 5000:'NCR Ranger', 25000:'Çorak Toprak Efsanesi', 100000:'Enclave Subayı', 250000:'Brotherhood Paladin', 500000:'Wasteland Warlord', 1000000:'Overseer of the Wasteland' },
-
+      'fo': { 0:'Vault Dweller', 500:'Wastelander', 1000:'Brotherhood Şövalyesi', 5000:'NCR Ranger', 25000:'Çorak Efsanesi', 100000:'Enclave Subayı', 250000:'Brotherhood Paladin', 500000:'Wasteland Warlord', 1000000:'Overseer' },
       'rap': { 0:'Sokak Çocuğu', 500:'Çaylak MC', 1000:'Battle Rapçi', 5000:'Underground Kralı', 25000:'Rap God', 100000:'Label Patronu', 250000:'Altın Plak Sahibi', 500000:'Hip-Hop Efsanesi', 1000000:'Kültürün Sesi' },
-
+      'lotr': { 0:'Shire Sakini', 500:'Gondor Eri', 1000:'Rohan Süvarisi', 5000:'Kolcu', 25000:'Elf Beyi', 100000:'Yüzük Kardeşi', 250000:'İstari', 500000:'Sauron', 1000000:'Eru Illuvatar' },
+      'got': { 0:'Kuzeyli', 500:'Yeminli Kılıç', 1000:'Gece Nöbetçisi', 5000:'Hanedan Şövalyesi', 25000:'Yedi Krallık Lordu', 100000:'Kralın Eli', 250000:'Ejderha Süvarisi', 500000:'Akgezen', 1000000:'Kuzey\'in Kralı' },
+      'mafia': { 0:'Sokak Faresi', 500:'Tetikçi', 1000:'Tahsildar', 5000:'Capo', 25000:'Consigliere', 100000:'Underboss', 250000:'Don', 500000:'Capo dei capi', 1000000:'Yeraltı Baronu' },
+      'jojo': { 0:'Sıradan Biri', 500:'Hamon Çaylağı', 1000:'Stand Kullanıcısı', 5000:'Stand Ustası', 25000:'Ok Taşıyıcısı', 100000:'Requiem Sahibi', 250000:'Zaman Bükücü', 500000:'Evren Sıfırlayıcı', 1000000:'Wonder of U' },
+      'lejyon': { 0:'Tiro (Acemi)', 500:'Lejyoner', 1000:'Optio', 5000:'Centurion', 25000:'Primus Pilus', 100000:'Tribunus Laticlavius', 250000:'Praefectus Castrorum', 500000:'Legatus', 1000000:'Caesar' },
       'none': { 0:'Çaylak', 500:'Müdavim', 1000:'Sinefil', 5000:'Kült İzleyici', 25000:'Yeraltı Baronu', 100000:'Sinema İlahı', 250000:'Vizyoner', 500000:'Başyapıt', 1000000:'Kadavraflix Efsanesi' }
-
     };
 
 
@@ -1251,11 +1291,42 @@ function openMyProfile() {
 
         document.getElementById('up-name').textContent = targetNick;
 
-        if (adminler.includes(targetNick.toLowerCase()) && !data.ozelRol) {
-          document.getElementById('up-rank').textContent = '👑 LEJYON BARONU';
-        } else {
-          document.getElementById('up-rank').textContent = calculateRank(karma, data.yol, data.infiniteKarma, data.ozelRol);
+        // --- YENİ KUSURSUZ RÜTBE GÖSTERİM MANTIĞI ---
+        let rawFactionRank = 'Çaylak';
+        let currentYol = data.yol || 'none';
+        if(Ranks[currentYol]) {
+            rawFactionRank = Ranks[currentYol][0];
+            const thresholds = [500, 1000, 5000, 25000, 100000, 250000, 500000, 1000000];
+            for(let t of thresholds) { if(karma >= t) rawFactionRank = Ranks[currentYol][t]; }
         }
+
+        let finalRank = "";
+        const pref = data.rütbeTercihi || 'auto';
+
+        if (pref === 'faction') {
+            finalRank = rawFactionRank;
+        } else if (pref === 'market' && data.ozelRol) {
+            finalRank = data.ozelRol.toUpperCase();
+        } else if (pref === 'adminCustom' && data.adminRol) {
+            finalRank = data.adminRol.toUpperCase();
+        } else if (pref === 'admin' && adminler.includes(targetNick.toLowerCase())) {
+            finalRank = '👑 LEJYON BARONU';
+        } else {
+            // AUTO MANTIĞI (Öncelik Sırası: Admin Özel Rol > Kurucu Baron > Market Rolü > Sonsuz İlah > Yol Rütbesi)
+            if (data.adminRol) {
+                finalRank = data.adminRol.toUpperCase();
+            } else if (adminler.includes(targetNick.toLowerCase())) {
+                finalRank = '👑 LEJYON BARONU';
+            } else if (data.ozelRol) {
+                finalRank = data.ozelRol.toUpperCase();
+            } else if (data.infiniteKarma) {
+                finalRank = '∞ YERALTI İLAHI';
+            } else {
+                finalRank = rawFactionRank;
+            }
+        }
+        document.getElementById('up-rank').textContent = finalRank;
+        // --- MANTIK BİTİŞİ ---
 
         document.getElementById('up-stat-karma').textContent = data.infiniteKarma ? '∞' : karma;
 
@@ -2810,6 +2881,73 @@ function openMyProfile() {
     function logoutUser() { localStorage.removeItem('kadavra_vip_user'); localStorage.removeItem('kadavra_vip_pass'); location.reload(); }
 
 
+    function openSettings() { 
+      closeUserProfile(); const user = localStorage.getItem('kadavra_vip_user');
+      const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      database.ref('kullanicilar/' + safeNick).once('value').then(snap => {
+        const data = snap.val() || {};
+        document.getElementById('pp-input').value = data.pp || ''; document.getElementById('bg-input').value = data.bg || '';
+        document.getElementById('bio-input').value = data.bio || ''; document.getElementById('loc-input').value = data.loc || '';
+        
+        // Rütbe Tercihini Yükle
+        document.getElementById('rank-pref-input').value = data.rütbeTercihi || 'auto';
+
+        if(data.infiniteKarma) {
+           document.getElementById('vip-settings-container').classList.remove('hidden');
+           document.getElementById('vip-prefix-input').value = data.vipPrefix || '';
+           document.getElementById('vip-color-input').value = data.vipColor || '';
+        } else {
+           document.getElementById('vip-settings-container').classList.add('hidden');
+        }
+      });
+      if(adminler.includes(user.toLowerCase())) document.getElementById('admin-btn-container').classList.remove('hidden');
+      const mod = document.getElementById('settings-modal'); mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50); 
+    }
+
+    function updateProfileSettings() {
+      const ppLink = document.getElementById('pp-input').value.trim(); const bgLink = document.getElementById('bg-input').value.trim();
+      const bio = document.getElementById('bio-input').value.trim(); const loc = document.getElementById('loc-input').value.trim();
+      const rankPref = document.getElementById('rank-pref-input').value; // Seçilen Rütbeyi Al
+      
+      const user = localStorage.getItem('kadavra_vip_user'); const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      
+      let updates = {};
+      if(ppLink) updates.pp = ppLink; if(bgLink) updates.bg = bgLink;
+      if(bio) updates.bio = bio; if(loc) updates.loc = loc;
+      updates.rütbeTercihi = rankPref; // Veritabanına Yolla
+      
+      if(!document.getElementById('vip-settings-container').classList.contains('hidden')) {
+          updates.vipPrefix = document.getElementById('vip-prefix-input').value.trim();
+          updates.vipColor = document.getElementById('vip-color-input').value.trim();
+      }
+      
+      database.ref('kullanicilar/' + safeNick).update(updates).then(() => {
+        showToast('Profil ayarları jilet gibi oldu!');
+        setTimeout(() => { closeSettings(); openUserProfile(user); }, 500); 
+      });
+    }
+
+
+    function adminSetCustomRole() {
+      let nick = document.getElementById('admin-target-nick').value.trim();
+      let role = document.getElementById('admin-custom-role').value.trim();
+      if(!nick || !role) return; const safeNick = nick.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      database.ref('kullanicilar/' + safeNick).once('value').then(snap => {
+        if(!snap.exists()) { showToast('Kullanıcı bulunamadı!'); return; }
+        database.ref('kullanicilar/' + safeNick).update({ adminRol: role });
+        showToast(`${nick} adlı kişiye ${role} rolü verildi!`);
+        document.getElementById('admin-custom-role').value = ''; openAdminPanel();
+      });
+    }
+
+    function adminClearCustomRole() {
+      let nick = document.getElementById('admin-target-nick').value.trim();
+      if(!nick) return; const safeNick = nick.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      database.ref('kullanicilar/' + safeNick).update({ adminRol: null });
+      showToast(`${nick} adlı kişinin özel rolü silindi.`); openAdminPanel();
+    }
+
+
     // ════════════════════════════════════════════════════════════════
     // ════════════ KARMA MARKETİ MOTORU — v2 Kült Film Edisyonu ════════════
     // ════════════════════════════════════════════════════════════════
@@ -3122,6 +3260,181 @@ function openMyProfile() {
         if (frameData && frameData.apply) frameData.apply();
       }
     }
+
+    // ════════════ YERALTI KASASI MOTORU ════════════
+    let kasaInterval = null;
+
+    function openKasaModal() {
+        const mod = document.getElementById('kasa-modal');
+        mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50);
+        checkKasaStatus();
+    }
+
+    function closeKasaModal() {
+        const mod = document.getElementById('kasa-modal');
+        mod.classList.add('opacity-0'); setTimeout(()=> mod.classList.add('hidden'), 300);
+        clearInterval(kasaInterval);
+        document.getElementById('kasa-icon').textContent = '📦';
+        document.getElementById('kasa-icon').className = 'text-6xl animate-pulse';
+    }
+
+    function checkKasaStatus() {
+        const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
+        const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+        const btn = document.getElementById('kasa-ac-btn');
+        const timerText = document.getElementById('kasa-timer-text');
+
+        // Veritabanından adamın son kasa açtığı saati çek
+        database.ref(`kullanicilar/${safeNick}/lastKasaTime`).once('value').then(snap => {
+            const lastTime = snap.exists() ? snap.val() : 0;
+            const now = Date.now();
+            const cooldown = 12 * 60 * 60 * 1000; // Tam 12 saat milisaniye cinsinden
+
+            if (now - lastTime >= cooldown) {
+                // Kasa açılabilir durumda
+                btn.disabled = false;
+                btn.className = "w-full bg-green-900/40 hover:bg-green-600 border border-green-700 py-3 rounded-sm text-white font-bold text-sm uppercase tracking-wider transition-all shadow-[0_0_15px_rgba(34,197,94,0.3)]";
+                btn.textContent = "Kasayı Patlat";
+                timerText.classList.add('hidden');
+                clearInterval(kasaInterval);
+            } else {
+                // Kasa beklemede, sayacı çalıştır
+                btn.disabled = true;
+                btn.className = "w-full bg-black border border-gray-800 py-3 rounded-sm text-gray-600 font-bold text-sm uppercase tracking-wider cursor-not-allowed";
+                btn.textContent = "Kasa Soğumada";
+                timerText.classList.remove('hidden');
+
+                clearInterval(kasaInterval);
+                kasaInterval = setInterval(() => {
+                    const remaining = cooldown - (Date.now() - lastTime);
+                    if (remaining <= 0) {
+                        checkKasaStatus(); // Süre bittiğinde ekranı güncelle
+                    } else {
+                        const hours = Math.floor((remaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+                        const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+                        timerText.textContent = `Sonraki Zula: ${hours}s ${minutes}d ${seconds}sn`;
+                    }
+                }, 1000);
+            }
+        });
+    }
+
+    function kasaAc() {
+        const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
+        const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+        const btn = document.getElementById('kasa-ac-btn');
+        btn.disabled = true;
+        btn.className = "w-full bg-black border border-gray-800 py-3 rounded-sm text-gray-600 font-bold text-sm uppercase tracking-wider cursor-wait";
+        btn.textContent = "Kasa Açılıyor...";
+
+        // İhtimaller Tablosu (Renkler ve arkaplan tasarımlarıyla)
+        const rewards = [
+            { amount: 50000, chance: 0.5, name: "KADAVRA HAZİNESİ", icon: "👑", color: "text-yellow-400 drop-shadow-[0_0_10px_rgba(250,204,21,0.8)]", bg: "bg-yellow-900/30 border-yellow-500" },
+            { amount: 10000, chance: 1.5, name: "Baronun Zulası", icon: "💎", color: "text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]", bg: "bg-red-900/30 border-red-500" },
+            { amount: 5000, chance: 8, name: "Büyük Vurgun", icon: "💰", color: "text-purple-400", bg: "bg-purple-900/30 border-purple-500" },
+            { amount: 1000, chance: 15, name: "Sıcak Para", icon: "💵", color: "text-blue-400", bg: "bg-blue-900/30 border-blue-500" },
+            { amount: 500, chance: 30, name: "Harçlık", icon: "🪙", color: "text-green-400", bg: "bg-green-900/30 border-green-500" },
+            { amount: 250, chance: 45, name: "Bozukluk", icon: "🪙", color: "text-gray-400", bg: "bg-[#111] border-gray-600" }
+        ];
+
+        // Şansı Zar Atarak Belirle
+        const rand = Math.random() * 100;
+        let currentProb = 0;
+        let wonReward = rewards[rewards.length - 1]; 
+        for (let r of rewards) {
+            currentProb += r.chance;
+            if (rand <= currentProb) { wonReward = r; break; }
+        }
+
+        // CS:GO Rulet Arayüzünü Hazırla
+        document.getElementById('kasa-default-box').classList.add('hidden');
+        const trackContainer = document.getElementById('kasa-anim-container');
+        const track = document.getElementById('kasa-track');
+        trackContainer.classList.remove('hidden');
+        
+        track.style.transition = 'none';
+        track.style.transform = 'translateX(0px)';
+        track.innerHTML = '';
+
+        // Şeride 60 tane rastgele item ekliyoruz, 50. item KAZANAN item olacak.
+        const totalItems = 60;
+        const winningIndex = 50; 
+        
+        for(let i=0; i<totalItems; i++) {
+            let rItem = rewards[Math.floor(Math.random() * rewards.length)];
+            if(i === winningIndex) rItem = wonReward; // Kazananı tam 50. sıraya mıhladık
+            
+            // Kart tasarımı (Genişlik 80px, Sağ/Sol Margin 4px = Toplam kapladığı alan 88px)
+            const el = document.createElement('div');
+            el.className = `w-20 h-20 flex-shrink-0 flex flex-col items-center justify-center border mx-1 rounded-sm ${rItem.bg}`;
+            el.innerHTML = `<span class="text-4xl drop-shadow-md">${rItem.icon}</span><span class="text-[9px] font-display tracking-widest ${rItem.color} mt-1">${rItem.amount}</span>`;
+            track.appendChild(el);
+        }
+
+        // Sesi Başlat (Kutu açılış tıkırtısı)
+        const rollSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2578/2578-preview.mp3');
+        rollSound.volume = 0.6;
+
+        let tickCount = 0;
+        let tickInterval = setInterval(() => {
+            const tick = rollSound.cloneNode();
+            tick.volume = 0.3;
+            tick.play().catch(e=>{});
+            tickCount++;
+            if(tickCount > 25) clearInterval(tickInterval); // Tıkırtı yavaş yavaş dursun
+        }, 150);
+
+        // Şeridi Kaydırma Matematiği (Her şey milimetrik)
+        void track.offsetWidth; // CSS Reflow (Animasyonun çalışması için tetikleme)
+        const containerWidth = trackContainer.offsetWidth;
+        const itemTotalWidth = 88; // w-20 (80px) + mx-1 (8px) = 88px
+        
+        // Kazanan kutunun her zaman çizginin tam ortasına gelmemesi için rastgele bi sapma (-30px ile +30px arası)
+        const randomOffset = Math.floor(Math.random() * 60) - 30; 
+        
+        // Gidilecek mesafe: (50 * 88px) + Kutunun Yarısı (44px) - Konteynerın Yarısı + Sapma
+        const finalPosition = -((winningIndex * itemTotalWidth) + (itemTotalWidth / 2) - (containerWidth / 2) + randomOffset);
+
+        // Kaymayı Başlat! (6 saniye boyunca cubic-bezier ile yavaşlayarak durur)
+        track.style.transition = 'transform 6s cubic-bezier(0.15, 0.9, 0.15, 1)';
+        track.style.transform = `translateX(${finalPosition}px)`;
+
+        // 6 Saniye Sonra Animasyon Biter, Ödülü Ver
+        setTimeout(() => {
+            // Tadaaa! Kazanma Sesi
+            const winSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3');
+            winSound.volume = 0.8;
+            winSound.play().catch(e=>{});
+            
+            // Kazanan kutuyu zıplatıp parlatıyoruz
+            track.children[winningIndex].classList.add('animate-bounce', 'shadow-[0_0_20px_rgba(255,255,255,0.8)]', 'z-30', 'relative');
+
+            // 1.5 Saniye kutu parladıktan sonra veritabanına ekle
+            setTimeout(() => {
+                database.ref(`kullanicilar/${safeNick}`).once('value').then(snap => {
+                    if (snap.exists()) {
+                        const uData = snap.val();
+                        database.ref(`kullanicilar/${safeNick}`).update({
+                            karma: (uData.karma || 0) + wonReward.amount,
+                            lastKasaTime: Date.now()
+                        }).then(() => {
+                            logKarmaEvent('kasa', wonReward.amount, `Yeraltı Kasası: ${wonReward.name}`);
+                            showToast(`Zuladan ${wonReward.amount.toLocaleString('tr-TR')} karma kopardın!`, true);
+                            
+                            // Ekranı sıfırlayıp soğuma süresini başlat
+                            setTimeout(() => {
+                                trackContainer.classList.add('hidden');
+                                document.getElementById('kasa-default-box').classList.remove('hidden');
+                                checkKasaStatus();
+                            }, 2500);
+                        });
+                    }
+                });
+            }, 1500);
+        }, 6000);
+    }
+
     // ════════════ BİLDİRİM (NOTIFICATION) MOTORU VE SES ════════════
     let notifOpen = false;
     let lastUnreadCount = 0;
