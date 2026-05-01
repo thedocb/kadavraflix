@@ -2186,8 +2186,10 @@
     
     // ════════════ YERALTI KASASI MOTORU ════════════
     let kasaInterval = null;
+    let activeKasaMode = 'normal'; // NORMAL YADA 7. GÜN (STREAK) KASASI
 
     function openKasaModal() {
+        activeKasaMode = 'normal'; // Navbar'dan tıklanınca hep normal açılır
         const mod = document.getElementById('kasa-modal');
         mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50);
         checkKasaStatus();
@@ -2199,6 +2201,7 @@
         clearInterval(kasaInterval);
         document.getElementById('kasa-icon').textContent = '📦';
         document.getElementById('kasa-icon').className = 'text-[80px] drop-shadow-[0_0_20px_rgba(34,197,94,0.4)]';
+        activeKasaMode = 'normal';
     }
 
     function checkKasaStatus() {
@@ -2206,7 +2209,24 @@
         const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
         const btn = document.getElementById('kasa-ac-btn');
         const timerText = document.getElementById('kasa-timer-text');
+        const titleEl = document.querySelector('#kasa-modal h2');
 
+        // ÖZEL 7. GÜN KASASI MODU
+        if (activeKasaMode === 'streak') {
+            titleEl.textContent = "🎁 7. GÜN ÖZEL ZULASI";
+            titleEl.className = "text-5xl font-display text-yellow-500 tracking-widest mb-4 uppercase drop-shadow-[4px_4px_0_#713f12]";
+            btn.disabled = false;
+            btn.className = "w-full bg-yellow-500 hover:bg-white text-black py-4 border-2 border-yellow-700 font-display text-2xl uppercase tracking-widest transition-all hover:translate-x-1 hover:-translate-y-1 brutalist-shadow";
+            btn.textContent = "ÖZEL ZULAYI PATLAT";
+            timerText.classList.add('hidden');
+            clearInterval(kasaInterval);
+            return;
+        }
+
+        // NORMAL KASA MODU
+        titleEl.textContent = "🎁 YERALTI ZULASI";
+        titleEl.className = "text-5xl font-display text-green-500 tracking-widest mb-4 uppercase drop-shadow-[4px_4px_0_#14532d]";
+        
         database.ref(`kullanicilar/${safeNick}/lastKasaTime`).once('value').then(snap => {
             const lastTime = snap.exists() ? snap.val() : 0;
             const now = Date.now();
@@ -2321,17 +2341,31 @@
                 database.ref(`kullanicilar/${safeNick}`).once('value').then(snap => {
                     if (snap.exists()) {
                         const uData = snap.val();
-                        database.ref(`kullanicilar/${safeNick}`).update({
-                            karma: (uData.karma || 0) + wonReward.amount,
-                            lastKasaTime: Date.now()
-                        }).then(() => {
+                        let updates = { karma: (uData.karma || 0) + wonReward.amount };
+                        
+                        // YENİ MANTIK BURADA KANKİ: 7. Gün Kasası ise ana süreyi SIFIRLAMIYOR!
+                        if (activeKasaMode === 'streak') {
+                            updates['dailyData/hasStreakKasa'] = false; // Özel hakkı düşür
+                            logKarmaEvent('kasa', wonReward.amount, `7. Gün Özel Zulasi: ${wonReward.name}`);
+                        } else {
+                            updates['lastKasaTime'] = Date.now(); // Ana kasaysa süreyi yenile
                             logKarmaEvent('kasa', wonReward.amount, `Yeraltı Kasası: ${wonReward.name}`);
+                        }
+
+                        database.ref(`kullanicilar/${safeNick}`).update(updates).then(() => {
                             showToast(`ZULADAN ${wonReward.amount.toLocaleString('tr-TR')} KARMA KOPARDIN!`, true);
                             
                             setTimeout(() => {
                                 trackContainer.classList.add('hidden');
                                 document.getElementById('kasa-default-box').classList.remove('hidden');
-                                checkKasaStatus();
+                                
+                                // Özel katsaysa kapatıp geri Günlük Racon ekranına yolla
+                                if (activeKasaMode === 'streak') {
+                                    closeKasaModal();
+                                    openDailyModal(); 
+                                } else {
+                                    checkKasaStatus();
+                                }
                             }, 2500);
                         });
                     }
@@ -2712,8 +2746,6 @@
             let isNewDay = dailyData.lastLoginDate !== todayStr;
             let needsTasks = !dailyData.tasks || dailyData.tasks.length === 0;
 
-            let updates = {};
-
             if (isNewDay) {
                 if (dailyData.lastLoginDate === yesterdayStr) {
                     dailyData.streak += 1;
@@ -2722,7 +2754,7 @@
                     dailyData.streak = 1;
                 }
                 dailyData.lastLoginDate = todayStr;
-                dailyData.loginBonusClaimed = false; // YENİ GÜN, ÖDÜL HENÜZ ALINMADI BEKLİYOR!
+                dailyData.loginBonusClaimed = false; // YENİ GÜN, ÖDÜL BEKLİYOR!
             }
 
             if (isNewDay || needsTasks) {
@@ -2734,18 +2766,16 @@
                 await database.ref(`kullanicilar/${safeNick}/dailyData`).set(dailyData);
             }
             return dailyData;
-        } catch (error) {
-            console.error("Motor hatası:", error); return null;
-        }
+        } catch (error) { console.error("Motor hatası:", error); return null; }
     }
 
-    // MARIO COIN: GÜNLÜK GİRİŞ ÖDÜLÜNÜ EL İLE ALMA FONKSİYONU
+    // MARIO COIN: GÜNLÜK GİRİŞ ÖDÜLÜNÜ EL İLE ALMA
     function claimDailyBonus(event, currentStreak) {
         const btn = event.currentTarget;
         const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
         const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
         
-        if(btn.disabled) return; // Spam atmayı engelle
+        if(btn.disabled) return; 
         btn.disabled = true;
 
         let reward = currentStreak * 50;
@@ -2758,12 +2788,16 @@
                 'dailyData/loginBonusClaimed': true,
                 'karma': currentKarma + reward
             };
-            if(currentStreak === 7) updates['lastKasaTime'] = 0;
+            
+            // 7. GÜN: ANA KASAYA DOKUNMA, STREAK KASA HAKKI VER!
+            if(currentStreak === 7) {
+                updates['dailyData/hasStreakKasa'] = true;
+            }
 
             database.ref(`kullanicilar/${safeNick}`).update(updates).then(() => {
                 logKarmaEvent('admin', reward, `${currentStreak}. Gün Giriş Bonusu`);
                 
-                // MARIO COIN EFEKTİNİ YARAT
+                // MARIO COIN EFEKTİ
                 const rect = btn.getBoundingClientRect();
                 const coin = document.createElement('div');
                 coin.className = 'mario-coin';
@@ -2772,22 +2806,22 @@
                 coin.style.top = rect.top + 'px';
                 document.body.appendChild(coin);
                 
-                // ŞING SESİ (Pavyon Kasası veya Retro Jeton Sesi)
                 const coinSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
                 coinSound.volume = 0.6;
                 coinSound.play().catch(e=>{});
 
-                // Kutuyu "Alındı" (Mavi) Rengine Çevir
                 btn.className = `w-8 h-8 flex items-center justify-center font-bold font-mono text-sm bg-blue-600 text-black transition-colors ${currentStreak===7 ? 'border-2 border-yellow-500' : ''}`;
                 btn.onclick = null;
                 
-                if(currentStreak === 7) setTimeout(() => showToast('7 GÜNLÜK SERİ! ZULA KİLİDİ AÇILDI.', true), 1000);
+                if(currentStreak === 7) {
+                    setTimeout(() => showToast('7 GÜNLÜK SERİ! ÖZEL ZULA KAZANDIN.', true), 1000);
+                }
                 
-                // Ekrandaki ana karmayı da çaktırmadan güncelle (Eğer profil açıksa)
                 const karmaStat = document.getElementById('up-stat-karma');
                 if(karmaStat && !userData.infiniteKarma) karmaStat.textContent = (currentKarma + reward).toLocaleString('tr-TR');
 
-                setTimeout(() => coin.remove(), 1200); // Efekti sil
+                setTimeout(() => coin.remove(), 1200);
+                setTimeout(() => openDailyModal(), 1500); // Arayüzü tazeleyip butonu göstermek için
             });
         });
     }
@@ -2798,12 +2832,9 @@
         document.getElementById('daily-tasks-container').innerHTML = '<p class="text-center text-yellow-500 font-mono text-sm animate-pulse">Sistemle senkronize ediliyor...</p>';
         
         const finalDailyData = await checkDailyStatus();
+        if(!finalDailyData) { document.getElementById('daily-tasks-container').innerHTML = '<p class="text-center text-red-500 font-mono text-sm">Sunucuya ulaşılamadı. F5 atıp tekrar dene.</p>'; return; }
 
-        if(!finalDailyData) {
-            document.getElementById('daily-tasks-container').innerHTML = '<p class="text-center text-red-500 font-mono text-sm">Sunucuya ulaşılamadı. F5 atıp tekrar dene.</p>'; return;
-        }
-
-        // --- STREAK KUTULARINI (GÜNLERİ) EKRANA BAS ---
+        // --- STREAK KUTULARI ---
         const streakBox = document.getElementById('streak-days-container');
         streakBox.innerHTML = '';
         for(let i=1; i<=7; i++) {
@@ -2811,18 +2842,35 @@
             let isToday = i === finalDailyData.streak;
             
             if (isPast || (isToday && finalDailyData.loginBonusClaimed)) {
-                // Alınmış VEYA Geçmiş Günler (Mavi)
                 streakBox.innerHTML += `<div class="w-8 h-8 flex items-center justify-center font-bold font-mono text-sm bg-blue-600 text-black ${i===7 ? 'border-2 border-yellow-500' : ''}">${i===7 ? '🎁' : i}</div>`;
             } else if (isToday && !finalDailyData.loginBonusClaimed) {
-                // BUGÜNÜN KUTUSU (Tıklanabilir, Parlayan Altın)
                 streakBox.innerHTML += `<button onclick="claimDailyBonus(event, ${finalDailyData.streak})" class="w-8 h-8 flex items-center justify-center font-bold font-mono text-sm bg-yellow-500 text-black animate-pulse hover:bg-white hover:scale-110 transition-all border-2 border-yellow-700 brutalist-shadow">${i===7 ? '🎁' : i}</button>`;
             } else {
-                // Gelecek Günler (Kilitli/Sönük)
                 streakBox.innerHTML += `<div class="w-8 h-8 flex items-center justify-center font-bold font-mono text-sm bg-gray-900 text-gray-500 border border-gray-700 ${i===7 ? 'border-2 border-yellow-500/30' : ''}">${i===7 ? '🎁' : i}</div>`;
             }
         }
 
-        // --- GÖREVLERİ EKRANA BAS ---
+        // --- ÖZEL KASA BUTONU ---
+        const streakContainer = document.getElementById('streak-days-container').parentNode;
+        let oldBtn = document.getElementById('streak-kasa-btn');
+        if(oldBtn) oldBtn.remove();
+
+        if(finalDailyData.hasStreakKasa) {
+            let btn = document.createElement('button');
+            btn.id = 'streak-kasa-btn';
+            btn.className = "w-full mt-5 bg-yellow-500 hover:bg-white text-black border-2 border-yellow-700 py-3 font-display text-xl uppercase tracking-widest transition-all hover:translate-x-1 hover:-translate-y-1 brutalist-shadow font-bold";
+            btn.innerHTML = "🎁 7. GÜN ÖZEL ZULASINI PATLAT";
+            btn.onclick = () => {
+                closeDailyModal();
+                activeKasaMode = 'streak';
+                const modKasa = document.getElementById('kasa-modal');
+                modKasa.classList.remove('hidden'); setTimeout(()=> modKasa.classList.remove('opacity-0'), 50);
+                checkKasaStatus();
+            };
+            streakContainer.appendChild(btn);
+        }
+
+        // --- GÖREVLER ---
         const tasksBox = document.getElementById('daily-tasks-container'); tasksBox.innerHTML = '';
         if(!finalDailyData.tasks || finalDailyData.tasks.length === 0) { tasksBox.innerHTML = '<p class="text-center text-gray-500 font-mono text-sm">Bugünlük görev kalmadı.</p>'; return; }
 
@@ -2865,6 +2913,7 @@
             });
         });
     }
+    
   </script>
 </body>
 </html>
