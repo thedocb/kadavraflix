@@ -2132,14 +2132,6 @@
       ],
       entrances: [
         { 
-          id: 'yakinda', 
-          name: 'Yakında eklenecek...', 
-          icon: '🫩', 
-          price: 9999999, 
-          desc: 'Meraklı fahişe seni, yakında eklenecek şeyleri niye kovalıyorsun lan?', 
-          displayColor: '#FFFFFF' 
-        },
-        { 
           id: 'kan-yagmuru', 
           name: 'Kan Yağmuru', 
           icon: '🩸', 
@@ -2242,7 +2234,8 @@
         let btnHTML = '';
         if (owned) {
           if (isActive) {
-            btnHTML = `<button disabled class="w-full py-3 border-2 border-green-600 bg-green-900/20 text-green-500 font-display text-lg tracking-widest uppercase cursor-default shadow-[4px_4px_0_#16a34a]">AKTİF KULLANIMDA</button>`;
+            // İŞTE YENİ SÖKME BUTONU BURADA KANKİ!
+            btnHTML = `<button onclick="unequipMarketItem('${tab}')" class="w-full py-3 border-2 border-red-600 bg-red-900/20 text-red-500 font-display text-lg tracking-widest uppercase hover:bg-red-600 hover:text-white transition-all shadow-[4px_4px_0_#dc2626] hover:shadow-none hover:translate-x-1 hover:translate-y-1">❌ SÖK</button>`;
           } else {
             btnHTML = `<button onclick="activateMarketItem('${tab}','${item.id}')" class="w-full py-3 border-2 border-purple-600 bg-purple-900/20 text-purple-400 font-display text-lg tracking-widest uppercase hover:bg-purple-600 hover:text-white transition-all shadow-[4px_4px_0_#9333ea] hover:shadow-none hover:translate-x-1 hover:translate-y-1">▶ KUŞAN</button>`;
           }
@@ -2678,9 +2671,157 @@
       checkDailyStatus(); // GÜNLÜK SİSTEM MOTORUNU BURADA ATEŞLİYORUZ
     }
 
-    // // ════════════ V.I.P MEKAN GİRİŞ ANONSU (MATRIX & BATMAN ŞOVU) ════════════
+    // // ════════════ V.I.P MEKAN GİRİŞ ANONSU (2 MİLYONLUK ŞOVLAR) ════════════
     let isInitialEntranceLoad = true;
 
+    function listenEntrances() {
+       database.ref('yeralti_girisler').limitToLast(1).on('child_added', snap => {
+          if(isInitialEntranceLoad) { isInitialEntranceLoad = false; return; }
+          const data = snap.val();
+          const isPlayerOpen = !document.getElementById('player-overlay').classList.contains('hidden');
+          
+          // Adam film izliyorsa ekranını patlatıp rahatsız etme, racona ters.
+          if(Date.now() - data.timestamp < 10000 && !isPlayerOpen) {
+             const safeName = data.user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+             const displayName = data.user.toUpperCase();
+             
+             // GİREN ADAM MARKET'TEN NE KUŞANMIŞ ONA BAKIYORUZ
+             database.ref(`kullanicilar/${safeName}/marketAktif/entrances`).once('value').then(entrSnap => {
+                 let activeEntrance = entrSnap.val();
+                 
+                 // Eski kuruculara kıyak (Bedava şov)
+                 if(!activeEntrance) {
+                     if(safeName === 'fraude') activeEntrance = 'batman';
+                     else if (safeName === 'kadavra' || safeName === 'doc_b' || safeName === 'arda') activeEntrance = 'matrix';
+                     else return; // Fakirse sessizce girer KŞLFGDKŞLGF
+                 }
+
+                 const overlay = document.getElementById('custom-entrance-overlay');
+                 overlay.innerHTML = '';
+                 overlay.classList.remove('hidden');
+                 overlay.style.opacity = '1';
+                 overlay.style.background = 'rgba(5,5,5,0.95)'; 
+                 
+                 let interval = null;
+                 let duration = 4000;
+                 
+                 // ════ ŞOV MOTORLARI ATEŞLENİYOR ════
+                 if(activeEntrance === 'kan-yagmuru') {
+                     playBloodRain(overlay, displayName);
+                     duration = 4500;
+                 } else if (activeEntrance === 'void-domain') {
+                     playVoidDomain(overlay, displayName);
+                     duration = 5000;
+                 } else if (activeEntrance === 'nuke-drop') {
+                     playNukeDrop(overlay, displayName);
+                     duration = 4500;
+                 } else if (activeEntrance === 'batman') {
+                     playBatEffect(overlay);
+                 } else if (activeEntrance === 'matrix') {
+                     interval = playMatrixEffect(overlay);
+                 }
+                 
+                 // Şov bitince ekranı temizle
+                 setTimeout(() => {
+                     overlay.style.opacity = '0';
+                     setTimeout(() => {
+                         overlay.classList.add('hidden');
+                         overlay.innerHTML = '';
+                         overlay.style.background = '';
+                         overlay.style.animation = '';
+                         if(interval) clearInterval(interval);
+                     }, 500);
+                 }, duration);
+             });
+          }
+       });
+    }
+
+    // ════ 2 MİLYONLUK ŞOV FONKSİYONLARI ════
+    function playBloodRain(container, userName) {
+        // Arkası saydam kırmızı
+        container.style.background = 'rgba(30, 5, 5, 0.85)';
+        
+        let html = `
+            <style>
+                @keyframes bloodFall { 0% { transform: translateY(-10vh); opacity: 1; } 100% { transform: translateY(110vh); opacity: 0; } }
+            </style>
+            <div id="blood-rain-container" class="absolute inset-0 overflow-hidden pointer-events-none z-0"></div>
+            <div class="flex flex-col items-center justify-center relative z-10 w-full h-full text-center">
+                <h1 class="text-[7vw] font-display text-red-600 tracking-widest uppercase drop-shadow-[4px_4px_0_#000] leading-none">${userName}<br><span class="text-white text-[4vw]">KAN AĞLATIYOR</span></h1>
+            </div>
+        `;
+        container.innerHTML = html;
+
+        // Kan Damlaları Yağmuru
+        const rainContainer = document.getElementById('blood-rain-container');
+        for(let i=0; i<40; i++) {
+            let drop = document.createElement('div');
+            drop.innerHTML = '🩸';
+            drop.className = 'absolute text-2xl md:text-4xl';
+            drop.style.left = Math.random() * 100 + 'vw';
+            drop.style.top = '-10vh';
+            
+            let duration = Math.random() * 2 + 1.5; // 1.5s - 3.5s arası düşüş
+            let delay = Math.random() * 2; // Rastgele başlama
+            
+            drop.style.animation = `bloodFall ${duration}s linear ${delay}s infinite`;
+            rainContainer.appendChild(drop);
+        }
+    }
+
+    function playVoidDomain(container, userName) {
+        // Arkası saydam mor/lacivert
+        container.style.background = 'rgba(15, 5, 25, 0.85)';
+        container.innerHTML = `
+            <style>
+                @keyframes domainExpand { 0% { transform: scale(0) rotate(0deg); opacity: 1; } 100% { transform: scale(150) rotate(180deg); opacity: 0.2; } }
+                @keyframes domainText { 0% { opacity: 0; transform: scale(0.8); } 20% { opacity: 1; transform: scale(1); } 90% { opacity: 1; transform: scale(1); } 100% { opacity: 0; } }
+            </style>
+            
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden z-0">
+                <span class="text-[50px] drop-shadow-[0_0_20px_#a855f7]" style="animation: domainExpand 4.5s ease-in-out forwards;">🌌</span>
+            </div>
+            
+            <div class="flex flex-col items-center justify-center relative z-10 w-full h-full text-center" style="animation: domainText 4.5s ease-in-out forwards;">
+                <h1 class="text-[8vw] font-display text-white tracking-widest uppercase [text-shadow:0_0_40px_#a855f7] mb-2">DOMAIN EXPANSION</h1>
+                <p class="text-2xl md:text-4xl font-mono text-purple-400 mt-4 border-2 border-purple-500 bg-black/50 backdrop-blur-md px-6 py-3 brutalist-shadow">${userName} EVRENİ YARATTI</p>
+            </div>
+        `;
+    }
+
+    function playNukeDrop(container, userName) {
+        // Arkası saydam koyu yeşil
+        container.style.background = 'rgba(5, 20, 5, 0.85)';
+        container.innerHTML = `
+            <style>
+                @keyframes bombDrop { 0% { top: -20%; transform: translateX(-50%) rotate(180deg); } 40% { top: 50%; transform: translateX(-50%) rotate(180deg) scale(1.5); opacity: 1; } 41% { opacity: 0; } 100% { opacity: 0; } }
+                @keyframes nukeFlashOut { 0% { opacity: 0; background: #fff; } 40% { opacity: 0; } 41% { opacity: 1; background: #fff; } 50% { background: rgba(34, 197, 94, 0.6); } 100% { opacity: 0; } }
+                @keyframes toxicWave { 0% { transform: translate(-50%, 100%) rotate(0deg); opacity: 0; } 40% { opacity: 0; } 45% { opacity: 1; } 100% { transform: translate(-50%, -20%) rotate(360deg); opacity: 0; } }
+                @keyframes textShow { 0%, 40% { opacity: 0; transform: translateY(20px); } 50%, 90% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; } }
+            </style>
+            
+            <!-- Bomba Düşüşü -->
+            <div class="absolute inset-0 z-10 pointer-events-none overflow-hidden">
+                <span class="absolute left-1/2 text-[80px]" style="animation: bombDrop 4.5s ease-in forwards;">💣</span>
+            </div>
+
+            <!-- Patlama Flaşı -->
+            <div class="absolute inset-0 z-20 pointer-events-none" style="animation: nukeFlashOut 4.5s ease-out forwards;"></div>
+
+            <!-- Sıvı / Toksik Dalga (Dönen oval mantığıyla akışkan dalga efekti) -->
+            <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden flex items-end justify-center">
+                <div class="absolute left-1/2 w-[200vw] h-[200vw] bg-green-500/30 rounded-[45%]" style="animation: toxicWave 4.5s linear forwards;"></div>
+                <div class="absolute left-1/2 w-[210vw] h-[210vw] bg-green-600/20 rounded-[40%]" style="animation: toxicWave 4.5s linear forwards; animation-delay: 0.2s;"></div>
+            </div>
+            
+            <div class="flex flex-col items-center justify-center relative z-30 w-full h-full text-center" style="animation: textShow 4.5s ease-out forwards;">
+                <h1 class="text-[7vw] font-display text-white tracking-widest uppercase mt-4 leading-none drop-shadow-[0_0_20px_#22c55e]">${userName}<br>NÜKLEER ATTI</h1>
+            </div>
+        `;
+    }
+
+    // ════ ESKİ KURUCU ŞOVLARI ════
     function playBatEffect(container) {
         container.innerHTML = '<div id="bat-swarm" class="absolute inset-0 flex items-center justify-center"></div><h1 class="relative z-10 text-[12vw] font-display text-gray-300 font-bold tracking-widest uppercase opacity-0 transition-opacity duration-1000 [text-shadow:0_0_30px_#fff]" id="bat-text">FRAUDE</h1>';
         const swarm = document.getElementById('bat-swarm');
@@ -2693,35 +2834,23 @@
             let destX = startX + (Math.random() - 0.5) * 800;
             let destY = -100;
             let duration = 1 + Math.random() * 1.5;
-            
-            bat.style.left = startX + 'px';
-            bat.style.top = startY + 'px';
+            bat.style.left = startX + 'px'; bat.style.top = startY + 'px';
             bat.style.transition = `transform ${duration}s ease-in, opacity ${duration}s`;
             swarm.appendChild(bat);
-            
-            setTimeout(() => {
-                bat.style.transform = `translate(${destX - startX}px, ${destY - startY}px) scale(${0.5 + Math.random()})`;
-                bat.style.opacity = '0';
-            }, 50);
+            setTimeout(() => { bat.style.transform = `translate(${destX - startX}px, ${destY - startY}px) scale(${0.5 + Math.random()})`; bat.style.opacity = '0'; }, 50);
         }
         setTimeout(() => document.getElementById('bat-text').style.opacity = '1', 1000);
     }
 
     function playMatrixEffect(container) {
         container.innerHTML = '<canvas id="matrix-canvas" class="absolute inset-0 w-full h-full opacity-60"></canvas><h1 class="relative z-10 text-[12vw] font-display text-green-500 tracking-widest uppercase opacity-0 transition-opacity duration-1000 drop-shadow-[4px_4px_0_#000] [text-shadow:0_0_30px_#22c55e]" id="matrix-text">KADAVRA</h1>';
-        const c = document.getElementById('matrix-canvas');
-        const ctx = c.getContext('2d');
+        const c = document.getElementById('matrix-canvas'); const ctx = c.getContext('2d');
         c.width = window.innerWidth; c.height = window.innerHeight;
-        const letters = '01KADAVRA'.split('');
-        const fontSize = 18;
-        const columns = c.width / fontSize;
-        const drops = [];
-        for(let x = 0; x < columns; x++) drops[x] = 1;
+        const letters = '01KADAVRA'.split(''); const fontSize = 18; const columns = c.width / fontSize;
+        const drops = []; for(let x = 0; x < columns; x++) drops[x] = 1;
         const interval = setInterval(() => {
-            ctx.fillStyle = 'rgba(5, 5, 5, 0.15)';
-            ctx.fillRect(0, 0, c.width, c.height);
-            ctx.fillStyle = '#22c55e';
-            ctx.font = fontSize + 'px monospace';
+            ctx.fillStyle = 'rgba(5, 5, 5, 0.15)'; ctx.fillRect(0, 0, c.width, c.height);
+            ctx.fillStyle = '#22c55e'; ctx.font = fontSize + 'px monospace';
             for(let i = 0; i < drops.length; i++) {
                 const text = letters[Math.floor(Math.random() * letters.length)];
                 ctx.fillText(text, i * fontSize, drops[i] * fontSize);
@@ -2732,51 +2861,6 @@
         setTimeout(() => document.getElementById('matrix-text').style.opacity = '1', 800);
         return interval;
     }
-    
-    function listenEntrances() {
-       database.ref('yeralti_girisler').limitToLast(1).on('child_added', snap => {
-          if(isInitialEntranceLoad) { isInitialEntranceLoad = false; return; }
-          const data = snap.val();
-          const isPlayerOpen = !document.getElementById('player-overlay').classList.contains('hidden');
-          
-          // FİLM İZLEYEN ADAMI RAHATSIZ ETMEZ!
-          if(Date.now() - data.timestamp < 10000 && !isPlayerOpen) {
-             const safeName = data.user.toLowerCase();
-             
-             // 🚨 GÜVENLİK DUVARI: EĞER GİREN KİŞİ FRAUDE VEYA KADAVRA DEĞİLSE HİÇBİR ŞEY YAPMA! 🚨
-             if(safeName !== 'fraude' && safeName !== 'kadavra' && safeName !== 'doc b' && safeName !== 'arda') {
-                 return; // Şovu iptal et, normal kullanıcılar sessizce girsin.
-             }
-
-             const overlay = document.getElementById('custom-entrance-overlay');
-             overlay.innerHTML = '';
-             overlay.classList.remove('hidden');
-             overlay.style.opacity = '1';
-             overlay.style.background = 'rgba(5,5,5,0.95)'; 
-             
-             let interval = null;
-             
-             // İSME GÖRE ÖZEL ANİMASYON TETİKLEYİCİSİ
-             if(safeName === 'fraude') {
-                 playBatEffect(overlay);
-             } else if (safeName === 'kadavra' || safeName === 'doc b' || safeName === 'arda') {
-                 interval = playMatrixEffect(overlay);
-             } 
-             
-             // 4 Saniye sonra şovu bitir ve ekranı temizle
-             setTimeout(() => {
-                 overlay.style.opacity = '0';
-                 setTimeout(() => {
-                     overlay.classList.add('hidden');
-                     overlay.innerHTML = '';
-                     if(interval) clearInterval(interval);
-                 }, 500);
-             }, 4000);
-          }
-       });
-    }
-    
-    function logoutUser() { localStorage.removeItem('kadavra_vip_user'); localStorage.removeItem('kadavra_vip_pass'); location.reload(); }
 
     // ════════════ SLIDER OKLARI (AKILLI NAVİGASYON) ════════════
     function setupSliders() {
