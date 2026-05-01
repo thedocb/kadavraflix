@@ -526,6 +526,7 @@
         <button onclick="switchMarketTab('frames')" id="market-tab-frames" class="market-tab px-6 py-3 border-b-4 border-transparent text-sm font-display text-gray-500 tracking-widest uppercase transition-all hover:text-white">🖼️ ÇERÇEVELER</button>
         <button onclick="switchMarketTab('roles')" id="market-tab-roles" class="market-tab px-6 py-3 border-b-4 border-transparent text-sm font-display text-gray-500 tracking-widest uppercase transition-all hover:text-white">🎭 ÖZEL UNVANLAR</button>
         <button onclick="switchMarketTab('sounds')" id="market-tab-sounds" class="market-tab px-6 py-3 border-b-4 border-transparent text-sm font-display text-gray-500 tracking-widest uppercase transition-all hover:text-white">🎵 SES EFEKTLERİ</button>
+        <button onclick="switchMarketTab('entrances')" id="market-tab-entrances" class="market-tab px-6 py-3 border-b-4 border-transparent text-sm font-display text-gray-500 tracking-widest uppercase transition-all hover:text-white">🚀 GİRİŞ ŞOVLARI</button>
       </div>
       <div id="market-content" class="flex-1 overflow-y-auto pr-2 scrollbar-thin"></div>
     </div>
@@ -1406,6 +1407,15 @@
       if (!q.trim()) { box.classList.add('hidden'); return; } 
       let resultsHTML = ''; const safeQ = q.toLowerCase();
 
+      // ════════════ SİNEMATİK EASTER EGG SİSTEMİ ════════════
+      const secretCodes = ['enclave', 'wonder of u', 'fight club'];
+      if(secretCodes.includes(safeQ)) {
+          box.classList.add('hidden');
+          document.getElementById('search-input').value = '';
+          triggerEasterEgg(safeQ);
+          return;
+      }
+
       try {
         const snap = await database.ref('kullanicilar').once('value');
         if(snap.exists()) {
@@ -1434,6 +1444,78 @@
       }
 
       if(resultsHTML === '') { box.classList.add('hidden'); } else { box.innerHTML = resultsHTML; box.classList.remove('hidden'); }
+    }
+
+    // ════════════ SİNEMATİK ANİMASYON MOTORU ════════════
+    function triggerEasterEgg(code) {
+        const overlay = document.getElementById('custom-entrance-overlay');
+        overlay.innerHTML = '';
+        overlay.classList.remove('hidden');
+        overlay.style.opacity = '1';
+        overlay.style.background = '#050505'; 
+        
+        let audio = null;
+        let duration = 4000; // Standart bekleme süresi
+
+        // Geçici CSS Animasyonları (Sadece Easter Egg çalıştığında var olur)
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes crtFlicker { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.9; } }
+            @keyframes typeWriter { from { width: 0; } to { width: 100%; } }
+            @keyframes calamityBreathe { 0% { transform: scale(1); filter: drop-shadow(0 0 10px #7e22ce); } 50% { transform: scale(1.05); filter: drop-shadow(0 0 40px #a855f7); } 100% { transform: scale(1); filter: drop-shadow(0 0 10px #7e22ce); } }
+            @keyframes tylerFlash { 0%, 96%, 98%, 100% { filter: invert(0); } 97% { filter: invert(1); background: red; } }
+        `;
+        overlay.appendChild(style);
+
+        if (code === 'enclave') {
+            // SAF CSS FALLOUT TERMİNALİ
+            overlay.style.background = 'radial-gradient(circle, #001a00 0%, #000000 100%)';
+            overlay.innerHTML += `
+                <div class="absolute inset-0 pointer-events-none" style="background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(34, 197, 94, 0.1) 2px, rgba(34, 197, 94, 0.1) 4px); animation: crtFlicker 0.15s infinite;"></div>
+                <div class="flex flex-col items-start justify-center w-full h-full max-w-4xl mx-auto text-green-500 font-mono text-2xl md:text-4xl text-left pl-8">
+                    <p class="overflow-hidden whitespace-nowrap border-r-4 border-green-500 pr-2" style="animation: typeWriter 1.5s steps(40, end) forwards, crtFlicker 0.5s step-end infinite alternate;">> SECURE UPLINK ESTABLISHED...</p>
+                    <p class="mt-4 text-green-700 opacity-0" style="animation: floatUpFade 2s 1.5s forwards;">"God Bless America."</p>
+                </div>
+            `;
+            audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3');
+        } 
+        else if (code === 'wonder of u') {
+            // AĞIR VE SİNSİ FELAKET EFEKTİ
+            overlay.innerHTML += `
+                <div class="w-full h-full flex flex-col items-center justify-center bg-black relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-t from-purple-900/30 to-transparent opacity-0" style="animation: crtFlicker 2s ease-in forwards;"></div>
+                    <h1 class="text-[8vw] text-black font-display tracking-widest uppercase z-10" style="animation: calamityBreathe 3s ease-in-out infinite;">THE FLOW OF CALAMITY</h1>
+                    <div class="w-0 h-1 bg-purple-600 mt-6 z-10" style="animation: typeWriter 1.5s 1s ease-in forwards;"></div>
+                    <p class="text-gray-400 font-mono mt-8 tracking-widest uppercase text-xl z-10 opacity-0 transition-opacity duration-1000" style="animation: floatUpFade 2.5s 1.5s forwards;">Beni takip etmeyi mi seçtin?</p>
+                </div>
+            `;
+            audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2573/2573-preview.mp3'); 
+            audio.playbackRate = 0.6; // Sesi yavaşlatıp şeytani bir tona soktuk
+            duration = 4500;
+        } 
+        else if (code === 'fight club') {
+            // FİGHT CLUB SUBLİMİNAL ŞOK
+            overlay.style.animation = 'tylerFlash 0.3s ease-in-out forwards';
+            overlay.innerHTML += `
+                <div class="flex flex-col items-center justify-center w-full h-full bg-[#050505] relative z-10">
+                    <h1 class="text-[6vw] text-red-600 font-display tracking-widest uppercase drop-shadow-[4px_4px_0_#5f0000]">1. KURAL</h1>
+                    <p class="text-[3vw] text-white font-mono mt-4 uppercase font-bold tracking-widest bg-red-900/40 px-6 py-3 border-2 border-red-600 brutalist-shadow">Kadavraflix hakkında konuşma.</p>
+                </div>
+            `;
+            audio = new Audio('https://assets.mixkit.co/active_storage/sfx/1004/1004-preview.mp3'); 
+        }
+
+        if(audio) { audio.volume = 0.7; audio.play().catch(e=>console.log(e)); }
+        
+        setTimeout(() => {
+            overlay.style.opacity = '0';
+            setTimeout(() => { 
+                overlay.classList.add('hidden'); 
+                overlay.innerHTML = ''; 
+                overlay.style.animation = ''; 
+                overlay.style.background = ''; 
+            }, 500);
+        }, duration);
     }
 
     async function searchSelect(id, type) { document.getElementById('search-results').classList.add('hidden'); document.getElementById('search-input').value = ''; try { const item = await tmdb(`/${type}/${id}`); openModal(item, type); } catch(e) { showToast('Dosya yok.'); } }
@@ -2046,6 +2128,40 @@
           displayColor: '#22c55e', 
           audioUrl: 'https://cdn.discordapp.com/attachments/1499504072657469585/1499506043011469333/Marty_Robbins_-_Big_Iron_Audio.mp3?ex=69f50b54&is=69f3b9d4&hm=bc091218e6e0045161f62bd08b63b6fb01b6dee47711fd9ae8d8f9e82077e278&',
           volume: 0.10
+        }
+      ],
+      entrances: [
+        { 
+          id: 'yakinda', 
+          name: 'Yakında eklenecek...', 
+          icon: '🫩', 
+          price: 9999999, 
+          desc: 'Meraklı fahişe seni, yakında eklenecek şeyleri niye kovalıyorsun lan?', 
+          displayColor: '#FFFFFF' 
+        },
+        { 
+          id: 'kan-yagmuru', 
+          name: 'Kan Yağmuru', 
+          icon: '🩸', 
+          price: 2000000, 
+          desc: 'Siteye her girişinde ekran kızıla boyanır, kan damlar.', 
+          displayColor: '#ef4444' 
+        },
+        { 
+          id: 'void-domain', 
+          name: 'Void Domain', 
+          icon: '🌌', 
+          price: 2500000, 
+          desc: 'Jujutsu kafası. Ekran paramparça olur, uzay boşluğuna düşersin.', 
+          displayColor: '#a855f7' 
+        },
+        { 
+          id: 'nuke-drop', 
+          name: 'Nuke Drop', 
+          icon: '☢️', 
+          price: 3000000, 
+          desc: 'Fallout stili. Ekrana nükleer bomba düşer, her yer bembeyaz olur.', 
+          displayColor: '#22c55e' 
         }
       ]
     };
@@ -2913,7 +3029,7 @@
             });
         });
     }
-    
+
   </script>
 </body>
 </html>
