@@ -348,7 +348,7 @@
         </div>
         
         <div class="flex justify-between items-center bg-black border border-amber-900 p-4 mb-6">
-            <span class="text-gray-400 font-mono text-sm uppercase">CİPLERİN:</span>
+            <span class="text-gray-400 font-mono text-sm uppercase">ÇİPLERİN:</span>
             <span class="text-amber-500 font-display text-4xl tracking-wider" id="mojave-karma-display">0</span>
         </div>
 
@@ -679,6 +679,7 @@
       <a href="#" onclick="switchView('home'); return false;" class="hover:text-red-500 transition-colors">ANASAYFA</a>
       <a href="#" onclick="switchView('movies'); return false;" class="hover:text-red-500 transition-colors">FİLMLER</a>
       <a href="#" onclick="switchView('series'); return false;" class="hover:text-red-500 transition-colors">DİZİLER</a>
+      <a href="#" onclick="switchView('reviews'); return false;" class="hover:text-red-500 transition-colors">NOTLAR</a>
     </div>
     
     <div class="flex items-center gap-4">
@@ -770,6 +771,15 @@
         <section><h2 class="section-title mb-6">BİLİM KURGU <span>DİZİLERİ</span></h2><div id="scifi-series-row" class="slider-track"></div></section>
         <section><h2 class="section-title mb-6">ANİMASYON <span>DOSYALARI</span></h2><div id="anim-series-row" class="slider-track"></div></section>
     </div>
+    <!-- ════ YERALTI GLOBAL NOTLAR AKIŞI ════ -->
+    <div id="view-reviews" class="space-y-16 hidden">
+        <section>
+            <h2 class="section-title mb-6">YERALTINDAN <span>FISILTILAR</span></h2>
+            <div id="global-reviews-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <p class="text-gray-600 font-mono animate-pulse">Sokakların sesi dinleniyor...</p>
+            </div>
+        </section>
+    </div>
   </main>
 
   <footer class="border-t-2 border-gray-900 bg-black px-8 py-10 text-center text-gray-600 font-mono text-[10px]">
@@ -801,21 +811,32 @@
 
           <div id="modal-seasons-wrap" class="hidden w-full max-w-4xl"><div class="border-b-2 border-gray-800 mb-6 pb-2"><h3 class="text-white font-display text-3xl tracking-widest">KAYIT BÖLÜMLERİ</h3></div><div id="season-tabs" class="flex flex-wrap gap-2 mb-6"></div><div id="episode-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[400px] overflow-y-auto pr-2"></div></div>
           
-          <div class="w-full max-w-4xl mt-16 border-t-4 border-red-900 pt-10">
-            <h3 class="text-white font-display text-4xl tracking-widest mb-8">MEKANIN YORUMLARI</h3>
-            <div class="flex gap-4 mb-10 bg-black p-4 border-2 border-gray-900">
-              <div id="comment-avatar" class="w-12 h-12 bg-red-800 flex items-center justify-center font-display text-2xl text-black shrink-0 border border-red-500"></div>
-              <div class="flex-1 flex gap-2">
-                <input type="text" id="comment-input" placeholder="Raconunu kes..." class="w-full brutalist-input px-3 py-2 text-sm focus:border-red-600 bg-[#111]" onkeypress="if(event.key === 'Enter') postComment()">
-                <button onclick="postComment()" class="bg-red-700 hover:bg-white text-black px-8 font-display text-xl tracking-widest transition-colors shrink-0">YAZ</button>
+          <!-- ════ YERALTINDAN NOTLAR (İNCELEMELER) ════ -->
+          <div id="movie-reviews-section" class="w-full max-w-4xl mt-16 border-t-4 border-red-900 pt-10">
+              <h3 class="text-white font-display text-4xl tracking-widest mb-8 uppercase drop-shadow-[2px_2px_0_#450a0a]">YERALTINDAN NOTLAR</h3>
+              
+              <!-- Yargı Dağıtma (Yazma) Alanı -->
+              <div class="bg-[#050505] border-2 border-gray-800 p-5 mb-8 brutalist-shadow transition-all focus-within:border-red-900">
+                  <!-- Yıldız Seçici -->
+                  <div class="flex gap-2 mb-4 text-4xl cursor-pointer select-none" id="review-star-selector">
+                      <span class="star hover:scale-110 transition-transform text-gray-700" onclick="setReviewScore(1)">★</span>
+                      <span class="star hover:scale-110 transition-transform text-gray-700" onclick="setReviewScore(2)">★</span>
+                      <span class="star hover:scale-110 transition-transform text-gray-700" onclick="setReviewScore(3)">★</span>
+                      <span class="star hover:scale-110 transition-transform text-gray-700" onclick="setReviewScore(4)">★</span>
+                      <span class="star hover:scale-110 transition-transform text-gray-700" onclick="setReviewScore(5)">★</span>
+                  </div>
+                  <input type="hidden" id="review-score-value" value="0">
+                  
+                  <textarea id="review-text-input" class="w-full bg-[#111] border-2 border-gray-800 text-gray-300 p-4 font-mono text-sm focus:border-red-600 outline-none resize-y" rows="3" placeholder="Namluya kelimeleri sür... Filme dair acımasız veya övgü dolu notlarını buraya düş."></textarea>
+                  
+                  <button onclick="submitMovieReview()" class="mt-4 w-full md:w-auto bg-red-900 hover:bg-white hover:text-black text-white font-display text-xl py-3 px-8 transition-colors border-2 border-red-700 shadow-[4px_4px_0_#7f1d1d] hover:shadow-none hover:translate-x-1 hover:translate-y-1">NOTU YERALTINA KAZI</button>
               </div>
-            </div>
-            <div id="comments-list" class="space-y-4 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin"></div>
+
+              <!-- İncelemeler Listesi -->
+              <div id="movie-reviews-list" class="space-y-4 max-h-[500px] overflow-y-auto scrollbar-thin pr-2">
+                  <p class="text-gray-600 font-mono animate-pulse">Sokaklardan fısıltılar dinleniyor...</p>
+              </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- KOLEKSİYONA EKLE MODALI -->
   <div id="add-collection-modal" class="fixed inset-0 z-[5000] bg-black/95 backdrop-blur-none hidden opacity-0 transition-opacity flex items-center justify-center">
@@ -1414,7 +1435,33 @@
     
     function renderHero(item, type) { const el = id => document.getElementById(id); const bg = el('hero-bg'); const img = `${IMG_BASE}original${item.backdrop_path}`; bg.style.backgroundImage = `url(${img})`; bg.style.opacity = '0'; const t = new Image(); t.src = img; t.onload = () => { bg.style.opacity = '1'; }; el('hero-title').textContent = item.title || item.name; el('hero-desc').textContent = item.overview || 'Veri bulunamadı.'; const year = (item.release_date || item.first_air_date || '').slice(0,4); const rating = item.vote_average ? item.vote_average.toFixed(1) : '–'; el('hero-meta').innerHTML = `<span class="bg-yellow-500 text-black px-2 py-0.5 border-2 border-yellow-700">⭐ ${rating}</span><span>${year}</span><span class="text-red-500 bg-black px-2 py-0.5 border border-red-900">${type === 'tv' ? 'DİZİ' : 'FİLM'}</span>`; ['hero-badge','hero-title','hero-desc','hero-meta','hero-btns'].forEach(id => { const el2 = el(id); el2.style.opacity = '1'; el2.style.transform = 'translateY(0)'; }); el('hero-play').onclick = () => { currentItem = { ...item, media_type: type }; playModal(); }; el('hero-btns').querySelector('button:last-child').onclick = () => openModal(item, type); }
     function playHero() { if (!heroData) return; openModal(heroData, heroData.media_type || 'movie'); } function infoHero() { if (!heroData) return; openModal(heroData, heroData.media_type || 'movie'); }
-    async function switchView(viewName) { closeAll(); document.getElementById('view-home').classList.add('hidden'); document.getElementById('view-movies').classList.add('hidden'); document.getElementById('view-series').classList.add('hidden'); document.getElementById('view-' + viewName).classList.remove('hidden'); if (viewName === 'home') { loadHero('all'); } else if (viewName === 'movies') { loadHero('movie'); const action = await tmdb('/discover/movie', { with_genres: 28 }); renderRow('action-row', action.results, () => 'movie'); const comedy = await tmdb('/discover/movie', { with_genres: 35 }); renderRow('comedy-row', comedy.results, () => 'movie'); const scifi = await tmdb('/discover/movie', { with_genres: 878 }); renderRow('scifi-row', scifi.results, () => 'movie'); } else if (viewName === 'series') { loadHero('tv'); const action = await tmdb('/discover/tv', { with_genres: 10759 }); renderRow('action-series-row', action.results, () => 'tv'); const scifi = await tmdb('/discover/tv', { with_genres: 10765 }); renderRow('scifi-series-row', scifi.results, () => 'tv'); const anim = await tmdb('/discover/tv', { with_genres: 16 }); renderRow('anim-series-row', anim.results, () => 'tv'); } window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    async function switchView(viewName) { 
+        closeAll(); 
+        document.getElementById('view-home').classList.add('hidden'); 
+        document.getElementById('view-movies').classList.add('hidden'); 
+        document.getElementById('view-series').classList.add('hidden'); 
+        if(document.getElementById('view-reviews')) document.getElementById('view-reviews').classList.add('hidden');
+
+        document.getElementById('view-' + viewName).classList.remove('hidden'); 
+
+        if (viewName === 'home') { loadHero('all'); } 
+        else if (viewName === 'movies') { 
+            loadHero('movie'); 
+            const action = await tmdb('/discover/movie', { with_genres: 28 }); renderRow('action-row', action.results, () => 'movie'); 
+            const comedy = await tmdb('/discover/movie', { with_genres: 35 }); renderRow('comedy-row', comedy.results, () => 'movie'); 
+            const scifi = await tmdb('/discover/movie', { with_genres: 878 }); renderRow('scifi-row', scifi.results, () => 'movie'); 
+        } 
+        else if (viewName === 'series') { 
+            loadHero('tv'); 
+            const action = await tmdb('/discover/tv', { with_genres: 10759 }); renderRow('action-series-row', action.results, () => 'tv'); 
+            const scifi = await tmdb('/discover/tv', { with_genres: 10765 }); renderRow('scifi-series-row', scifi.results, () => 'tv'); 
+            const anim = await tmdb('/discover/tv', { with_genres: 16 }); renderRow('anim-series-row', anim.results, () => 'tv'); 
+        }
+        else if (viewName === 'reviews') {
+            loadGlobalReviews(); // Yeraltı akışını ateşle!
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' }); 
+    }
     async function loadTrending() { const data = await tmdb('/trending/all/week'); renderRow('trending-row', data.results, item => item.media_type || 'movie'); } async function loadMovies() { const data = await tmdb('/movie/now_playing'); renderRow('movies-row', data.results, () => 'movie'); } async function loadSeries() { const data = await tmdb('/tv/popular'); renderRow('series-row', data.results, () => 'tv'); }
     function renderRow(rowId, items, typeGetter) { const row = document.getElementById(rowId); row.innerHTML = ''; items.slice(0, 18).forEach(item => { if (!item.poster_path) return; const type = typeGetter(item); const title = item.title || item.name || ''; const div = document.createElement('div'); div.className = 'card-wrap'; div.innerHTML = `<img class="card-img" src="${IMG_BASE}w342${item.poster_path}" loading="lazy" /><p class="card-title">${title}</p>`; div.addEventListener('click', () => openModal(item, type)); row.appendChild(div); }); }
     
@@ -1425,7 +1472,7 @@
       const year = (item.release_date || item.first_air_date || '').slice(0,4); const rating = item.vote_average ? item.vote_average.toFixed(1) : '–';
       document.getElementById('modal-meta').innerHTML = `<span class="bg-yellow-500 text-black px-2 border-2 border-yellow-700">⭐ ${rating}</span><span class="text-gray-300 ml-2">${year}</span><span class="ml-2 text-red-500 bg-red-900/20 px-2 py-0.5 border border-red-800">${type === 'tv' ? 'DİZİ' : 'FİLM'}</span>`;
       overlay.classList.add('open'); checkWatchlistStatus(item.id); document.body.style.overflow = 'hidden'; 
-      loadComments(item.id);
+      loadMovieReviews(item.id);
       document.getElementById('modal-seasons-wrap').classList.add('hidden'); document.getElementById('modal-cast').textContent = 'Taranıyor...'; const trailerBtn = document.getElementById('modal-trailer-btn'); trailerBtn.classList.add('hidden');
       try {
         const details = await tmdb(`/${type}/${item.id}`, { append_to_response: 'external_ids,seasons,credits,videos' }); currentItem.imdb_id = details.imdb_id || (details.external_ids && details.external_ids.imdb_id);
@@ -1435,47 +1482,97 @@
       } catch(e) { document.getElementById('modal-cast').textContent = 'Bilinmiyor'; }
     }
     
-    function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); document.body.style.overflow = ''; document.getElementById('player-frame').src = ''; document.getElementById('modal-poster').parentElement.classList.remove('hidden'); const btnArea = document.getElementById('modal-desc').nextElementSibling; if(btnArea) btnArea.classList.remove('hidden'); const cList = document.getElementById('comments-list'); if(cList) cList.parentElement.classList.remove('hidden'); if (window.history.state && window.history.state.modalOpen) { window.history.back(); } }
+    if(document.getElementById('review-text-input')) { document.getElementById('review-text-input').value = ''; setReviewScore(0); }
+    function closeModal()  { document.getElementById('modal-overlay').classList.remove('open'); document.body.style.overflow = ''; document.getElementById('player-frame').src = ''; document.getElementById('modal-poster').parentElement.classList.remove('hidden'); const btnArea = document.getElementById('modal-desc').nextElementSibling; if(btnArea) btnArea.classList.remove('hidden'); const cList = document.getElementById('comments-list'); if(cList) cList.parentElement.classList.remove('hidden'); if (window.history.state && window.history.state.modalOpen) { window.history.back(); } }
     window.onpopstate = function(event) { const overlay = document.getElementById('modal-overlay'); if (overlay && overlay.classList.contains('open')) { closeModal(); } };
     function renderSeasonTabs(showId) { const tabs = document.getElementById('season-tabs'); tabs.innerHTML = ''; currentSeasons.forEach((s, i) => { const btn = document.createElement('button'); btn.className = 'season-tab' + (i === 0 ? ' active' : ''); btn.textContent = `SEZON ${s.season_number}`; btn.onclick = () => { document.querySelectorAll('.season-tab').forEach(b => b.classList.remove('active')); btn.classList.add('active'); loadEpisodes(showId, s.season_number); }; tabs.appendChild(btn); }); if (currentSeasons.length > 0) loadEpisodes(showId, currentSeasons[0].season_number); }
     async function loadEpisodes(showId, seasonNum) { const list = document.getElementById('episode-list'); list.innerHTML = '<div class="text-red-600 font-mono">Taranıyor...</div>'; try { const data = await tmdb(`/tv/${showId}/season/${seasonNum}`); list.innerHTML = ''; (data.episodes || []).forEach(ep => { const div = document.createElement('div'); div.className = 'bg-black border border-gray-800 p-4 hover:border-red-600 cursor-pointer transition flex flex-col gap-1 group'; div.innerHTML = `<div class="text-xs text-red-500 font-mono mb-1">BÖLÜM ${ep.episode_number}</div><div class="text-sm font-bold text-gray-300 uppercase truncate group-hover:text-white">${ep.name}</div><div class="text-[10px] font-mono text-gray-600 flex justify-between mt-2"><span>${ep.runtime ? ep.runtime+' DK' : ''}</span><svg class="w-4 h-4 text-gray-800 group-hover:text-red-500 transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>`; div.onclick = () => playEpisode(ep); list.appendChild(div); }); } catch(e) { list.innerHTML = '<p class="text-red-600 font-mono text-xs">Arşiv Bozuk.</p>'; } }
     
     // ════════════ YENİ VİDSRC PLAYER VE İZLEDİKÇE KATLANAN KARMA SİSTEMİ ════════════
+    // ════════════ YENİ VİDSRC PLAYER & AFK ANTİ-HİLE MOTORU ════════════
     let karmaTimer = null;
-    function playEpisode(ep) { openPlayer(currentItem, ep); } function playModal() { if (!currentItem) return; openPlayer(currentItem, null); }
+    let watchTicksSession = 0;
+    let isAFK = false;
+
+    function playEpisode(ep) { openPlayer(currentItem, ep); } 
+    function playModal() { if (!currentItem) return; openPlayer(currentItem, null); }
     
     function openPlayer(item, episode) { 
-      const imdb = item.imdb_id; if (!imdb) { showToast('🎬 Dosya Kodu Eksik.'); return; } 
-      saveToHistory(item, item.media_type); broadcastToTayfa(item, episode); 
-      
-      let url = `https://vidsrc.net/embed/movie?imdb=${imdb}`; 
-      if (episode) { url = `https://vidsrc.net/embed/tv?imdb=${imdb}&season=${episode.season_number}&episode=${episode.episode_number}`; } 
-      
-      document.getElementById('player-frame').src = url; 
-      const overlay = document.getElementById('player-overlay');
-      overlay.classList.remove('hidden'); overlay.classList.add('flex'); document.body.style.overflow = 'hidden'; 
-      
-      const user = localStorage.getItem('kadavra_vip_user'); 
-      if(user) {
-        const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
-        clearInterval(karmaTimer);
-        karmaTimer = setInterval(() => {
-          database.ref(`kullanicilar/${safeNick}`).once('value').then(snap => {
-            if(snap.exists()) {
-              let gain = 10 + ((snap.val().watchTicks || 0) * 2); 
-              if(gain > 300) gain = 300; 
-              database.ref(`kullanicilar/${safeNick}`).update({ karma: (snap.val().karma || 0) + gain, watchTicks: (snap.val().watchTicks || 0) + 1 });
-            }
-          });
-        }, 300000); 
-      }
+        const imdb = item.imdb_id; if (!imdb) { showToast('🎬 Dosya Kodu Eksik.'); return; } 
+        saveToHistory(item, item.media_type); broadcastToTayfa(item, episode); 
+        
+        let url = `https://vidsrc.net/embed/movie?imdb=${imdb}`; 
+        if (episode) { url = `https://vidsrc.net/embed/tv?imdb=${imdb}&season=${episode.season_number}&episode=${episode.episode_number}`; } 
+        
+        document.getElementById('player-frame').src = url; 
+        const overlay = document.getElementById('player-overlay');
+        overlay.classList.remove('hidden'); overlay.classList.add('flex'); document.body.style.overflow = 'hidden'; 
+        
+        const user = localStorage.getItem('kadavra_vip_user'); 
+        if(user) {
+            const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+            
+            // AFK Değişkenlerini Sıfırla
+            watchTicksSession = 0;
+            isAFK = false;
+            clearInterval(karmaTimer);
+            
+            karmaTimer = setInterval(() => {
+                if (isAFK) return; // Adam AFK ekranındaysa karma verme!
+                
+                watchTicksSession++;
+                
+                // HER 4 TİCK'TE BİR (20 Dakika) AFK KONTROLÜ YAP
+                if (watchTicksSession % 4 === 0) {
+                    isAFK = true;
+                    showAFKCheck();
+                    return; // Bu seferlik karma yok, onay bekliyoruz
+                }
+
+                database.ref(`kullanicilar/${safeNick}`).once('value').then(snap => {
+                    if(snap.exists() && !snap.val().infiniteKarma) {
+                        let gain = 10 + ((snap.val().watchTicks || 0) * 2); 
+                        if(gain > 300) gain = 300; 
+                        database.ref(`kullanicilar/${safeNick}`).update({ karma: (snap.val().karma || 0) + gain, watchTicks: (snap.val().watchTicks || 0) + 1 });
+                    }
+                });
+            }, 300000); // 5 Dakikada bir
+        }
     }
     
     function closePlayer() { 
-      const overlay = document.getElementById('player-overlay');
-      overlay.classList.add('hidden'); overlay.classList.remove('flex');
-      document.getElementById('player-frame').src = ''; document.body.style.overflow = ''; 
-      clearInterval(karmaTimer); 
+        const overlay = document.getElementById('player-overlay');
+        overlay.classList.add('hidden'); overlay.classList.remove('flex');
+        document.getElementById('player-frame').src = ''; document.body.style.overflow = ''; 
+        
+        clearInterval(karmaTimer); 
+        
+        // Kapatırken AFK ekranı açık kalmışsa onu da sil
+        const afkDiv = document.getElementById('afk-check-box');
+        if(afkDiv) afkDiv.remove();
+    }
+
+    // ════ Netflix Tarzı AFK Kontrol Ekranı ════
+    function showAFKCheck() {
+        const overlay = document.getElementById('player-overlay');
+        
+        const afkDiv = document.createElement('div');
+        afkDiv.id = 'afk-check-box';
+        afkDiv.className = 'absolute inset-0 z-[11000] bg-black/90 flex flex-col items-center justify-center backdrop-blur-sm';
+        afkDiv.innerHTML = `
+            <div class="text-[100px] mb-4 drop-shadow-[0_0_30px_#ef4444] animate-pulse">💀</div>
+            <h2 class="text-5xl md:text-6xl font-display text-red-600 tracking-widest uppercase drop-shadow-[4px_4px_0_#450a0a] mb-6 text-center">HAYATTA MISIN LEJYONER?</h2>
+            <p class="text-gray-400 font-mono text-lg mb-10 text-center max-w-xl leading-relaxed">Sistem uzun süredir hareketsizlik tespit etti. Uyuya kaldıysan karma akışı kesilir. Buradaysan raconu onayla.</p>
+            <button onclick="resolveAFK()" class="bg-red-900 hover:bg-white hover:text-black text-white px-10 py-5 font-display text-2xl md:text-3xl tracking-widest uppercase border-2 border-red-700 brutalist-shadow transition-all shadow-[4px_4px_0_#7f1d1d] hover:shadow-none hover:translate-x-1 hover:translate-y-1">BURADAYIM, AKIŞA DEVAM ET</button>
+        `;
+        overlay.appendChild(afkDiv);
+    }
+
+    function resolveAFK() {
+        isAFK = false;
+        const afkDiv = document.getElementById('afk-check-box');
+        if(afkDiv) afkDiv.remove();
+        showToast('KARMA AKIŞI YENİDEN SAĞLANDI.', true);
     }
 
     function closeAll() { closeModal(); closePlayer(); }
@@ -1734,6 +1831,211 @@
           list.appendChild(div);
         });
       });
+    }
+
+    // ════════════ YERALTINDAN NOTLAR (İNCELEME) MOTORU ════════════
+    function setReviewScore(score) {
+        document.getElementById('review-score-value').value = score;
+        const stars = document.querySelectorAll('#review-star-selector .star');
+        stars.forEach((star, index) => {
+            if (index < score) {
+                star.classList.remove('text-gray-700');
+                star.classList.add('text-red-600', 'drop-shadow-[0_0_10px_#ef4444]');
+            } else {
+                star.classList.remove('text-red-600', 'drop-shadow-[0_0_10px_#ef4444]');
+                star.classList.add('text-gray-700');
+            }
+        });
+    }
+
+    function submitMovieReview() {
+        if (!currentItem) return;
+        const user = localStorage.getItem('kadavra_vip_user');
+        if (!user) { showToast('Önce yeraltına giriş yapmalısın!'); return; }
+        
+        const score = parseInt(document.getElementById('review-score-value').value);
+        const text = document.getElementById('review-text-input').value.trim();
+        
+        if (score === 0) { showToast('Yıldız vermeden yargı dağıtamazsın!'); return; }
+        if (text.length < 10) { showToast('En azından birkaç kelime et aq, bu ne biçim inceleme!'); return; }
+
+        const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+        const movieId = currentItem.id;
+        
+        // GLOBAL FEED İÇİN FİLMİN POSTERİ VE ADINI DA KAZIYORUZ (Hız Optimizasyonu)
+        const reviewData = {
+            author: user,
+            authorSafe: safeNick,
+            movieId: movieId,
+            movieTitle: currentItem.title || currentItem.name || 'Gizli Kayıt',
+            moviePoster: currentItem.poster_path || '',
+            mediaType: currentItem.media_type || 'movie',
+            score: score,
+            text: text,
+            likes: 0,
+            timestamp: Date.now()
+        };
+
+        database.ref(`yeralti_incelemeler/${movieId}/${safeNick}`).set(reviewData).then(() => {
+            showToast('NOTUN YERALTINA KAZINDI!', true);
+            document.getElementById('review-text-input').value = '';
+            setReviewScore(0);
+            
+            database.ref(`kullanicilar/${safeNick}/karma`).once('value').then(snap => {
+                const currentKarma = snap.val() || 0;
+                database.ref(`kullanicilar/${safeNick}`).update({ karma: currentKarma + 500 });
+                showMojaveFloatingKarma(500, 'review-text-input');
+                logKarmaEvent('yorum', 500, 'Yeraltından Notlar: Yargı Dağıtıldı');
+            });
+            progressTask('t3'); 
+        }).catch(err => console.error(err));
+    }
+
+    // ════════ GLOBAL AKIŞ (HERKESİN YORUMLARI) ════════
+    function loadGlobalReviews() {
+        const grid = document.getElementById('global-reviews-grid');
+        if(!grid) return;
+        grid.innerHTML = '<p class="text-gray-500 font-mono animate-pulse col-span-full">Kayıtlar derleniyor...</p>';
+
+        database.ref('yeralti_incelemeler').once('value').then(snap => {
+            if(!snap.exists()) {
+                grid.innerHTML = '<p class="text-gray-500 font-mono border-2 border-gray-800 p-4 col-span-full bg-black">Henüz kimse racon kesmemiş.</p>';
+                return;
+            }
+
+            let allReviews = [];
+            snap.forEach(movieNode => {
+                movieNode.forEach(userNode => {
+                    allReviews.push({ ...userNode.val(), _key: userNode.key });
+                });
+            });
+
+            // En yeni yorumlar en üste
+            allReviews.sort((a,b) => b.timestamp - a.timestamp);
+            grid.innerHTML = '';
+
+            // Sadece son 30 incelemeyi gösterelim
+            allReviews.slice(0, 30).forEach(rev => {
+                let starsHTML = '';
+                for(let i=0; i<5; i++) { starsHTML += i < rev.score ? '<span class="text-red-500 drop-shadow-[0_0_5px_#ef4444]">★</span>' : '<span class="text-gray-800">★</span>'; }
+                const date = new Date(rev.timestamp).toLocaleDateString('tr-TR', { day:'numeric', month:'short' });
+                
+                // Eskiden atılmış yorumlarda afiş kaydı yoksa fallback
+                const posterSrc = rev.moviePoster ? `${IMG_BASE}w185${rev.moviePoster}` : 'https://via.placeholder.com/185x278/050505/333333?text=?';
+                const mType = rev.mediaType || 'movie';
+
+                grid.innerHTML += `
+                    <div class="bg-black border-2 border-gray-900 p-4 flex gap-4 hover:border-red-900 transition-all brutalist-card group cursor-pointer" onclick="searchSelect(${rev.movieId}, '${mType}')">
+                        
+                        <!-- Film Posteri -->
+                        <div class="w-20 h-28 shrink-0 bg-gray-900 border border-gray-800 relative overflow-hidden">
+                            <img src="${posterSrc}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all">
+                        </div>
+
+                        <!-- İnceleme İçeriği -->
+                        <div class="flex-1 min-w-0 flex flex-col">
+                            <div class="flex justify-between items-start mb-1 border-b border-gray-900 pb-1">
+                                <span onclick="event.stopPropagation(); openUserProfile('${rev.author}')" class="font-display text-lg text-white hover:text-red-500 transition-colors tracking-widest uppercase truncate">${rev.author}</span>
+                                <div class="text-[10px] bg-[#111] px-1 border border-gray-800 shrink-0">${starsHTML}</div>
+                            </div>
+                            
+                            <p class="text-[10px] text-red-600 font-mono font-bold uppercase truncate mb-1 border-l-2 border-red-800 pl-1">${rev.movieTitle || 'Gizli Dosya'}</p>
+                            
+                            <p class="font-mono text-gray-400 text-xs leading-relaxed line-clamp-3 mb-2 flex-1">${rev.text}</p>
+                            
+                            <span class="text-[9px] text-gray-600 font-mono uppercase mt-auto text-right">${date}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        });
+    }
+
+    function loadMovieReviews(movieId) {
+        const listDiv = document.getElementById('movie-reviews-list');
+        if(!listDiv) return;
+
+        database.ref(`yeralti_incelemeler/${movieId}`).on('value', snap => {
+            listDiv.innerHTML = '';
+            if (!snap.exists()) {
+                listDiv.innerHTML = '<p class="text-gray-500 font-mono text-sm border-2 border-gray-800 p-4 border-dashed bg-black">Bu dosyaya henüz not düşülmemiş. İlk kanı sen dök.</p>';
+                return;
+            }
+
+            let reviews = [];
+            snap.forEach(child => { reviews.push({...child.val(), _key: child.key}); });
+            reviews.sort((a, b) => b.timestamp - a.timestamp); // En yeni inceleme en üstte
+
+            const currentUser = localStorage.getItem('kadavra_vip_user') || '?';
+            const isAdmin = adminler.includes(currentUser.toLowerCase());
+
+            reviews.forEach(rev => {
+                // Yıldızları oluştur
+                let starsHTML = '';
+                for(let i=0; i<5; i++) {
+                    starsHTML += i < rev.score ? '<span class="text-red-500 text-xl drop-shadow-[0_0_5px_#ef4444]">★</span>' : '<span class="text-gray-800 text-xl">★</span>';
+                }
+                
+                const date = new Date(rev.timestamp).toLocaleDateString('tr-TR', { day:'numeric', month:'long', year:'numeric' });
+                const isMine = rev.author === currentUser;
+                const canDelete = isMine || isAdmin;
+                const deleteBtn = canDelete ? `<button onclick="deleteMovieReview('${movieId}', '${rev._key}')" class="text-gray-600 hover:text-red-600 font-mono font-bold ml-3" title="Sil">X</button>` : '';
+
+                // Profil Resmi HTML'i (Firebase'den dinamik çekecek)
+                let ppHTML = `<div class="w-14 h-14 bg-gray-900 flex items-center justify-center font-display text-3xl text-white shrink-0 border-2 border-red-800" id="rev-pp-${rev._key}">${rev.author.charAt(0).toUpperCase()}</div>`;
+                
+                database.ref('kullanicilar/' + rev.authorSafe + '/pp').once('value').then(ppSnap => {
+                    if(ppSnap.exists()) {
+                        const ppEl = document.getElementById(`rev-pp-${rev._key}`);
+                        if(ppEl) ppEl.innerHTML = `<img src="${ppSnap.val()}" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all">`;
+                    }
+                });
+
+                listDiv.innerHTML += `
+                    <div class="bg-black border-l-4 border-red-700 p-5 flex gap-4 hover:bg-[#0a0a0a] transition-colors brutalist-card shadow-black brutalist-shadow">
+                        ${ppHTML}
+                        <div class="flex-1">
+                            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center border-b border-gray-800 pb-3 mb-3 gap-2">
+                                <div class="flex items-center gap-2">
+                                    <button onclick="closeModal(); openUserProfile('${rev.author}')" class="font-display text-2xl text-white hover:text-red-500 transition-colors tracking-widest uppercase">${rev.author}</button>
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <div class="text-lg tracking-widest bg-[#111] px-3 py-1 border border-gray-800 flex items-center">${starsHTML}</div>
+                                    ${deleteBtn}
+                                </div>
+                            </div>
+                            <p class="font-mono text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">${rev.text}</p>
+                            <div class="flex justify-between items-center mt-4 pt-3 border-t border-gray-900">
+                                <span class="text-[10px] text-gray-500 font-mono uppercase tracking-widest">${date}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        });
+    }
+
+    function deleteMovieReview(movieId, reviewKey) {
+        if(confirm('Yargıyı geri mi çekiyorsun? Kazandığın 500 Karma GERİ ALINACAK!')) {
+            const user = localStorage.getItem('kadavra_vip_user');
+            const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+
+            database.ref(`yeralti_incelemeler/${movieId}/${reviewKey}`).remove().then(() => {
+                showToast('NOT SİLİNDİ. KARMA İADE ALINDI.', true);
+                
+                // 500 Karmayı Acımasızca Geri Çek
+                database.ref(`kullanicilar/${safeNick}`).once('value').then(snap => {
+                    if(snap.exists() && !snap.val().infiniteKarma) {
+                        const currentKarma = snap.val().karma || 0;
+                        const newKarma = Math.max(0, currentKarma - 500); // Eksiye düşmemesi için
+                        database.ref(`kullanicilar/${safeNick}`).update({ karma: newKarma });
+                        
+                        showMojaveFloatingKarma(-500, 'review-text-input');// Ekranda kırmızı eksi fırlasın ki acıyı hissetsin
+                        logKarmaEvent('admin', -500, 'Ceza: Not Silindi');
+                    }
+                });
+            });
+        }
     }
 
     function openRanksModal() { const mod = document.getElementById('ranks-modal'); mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50); }
@@ -3073,28 +3375,43 @@
         setTimeout(()=> mod.classList.add('hidden'), 300); 
     }
 
-    // ════════════ UÇAN KARMA (FLOAT) SİSTEMİ ════════════
-    function showMojaveFloatingKarma(amount) {
-        const display = document.getElementById('mojave-karma-display');
-        if(!display) return;
-        const rect = display.getBoundingClientRect();
+    // ════════════ UÇAN KARMA (FLOAT) SİSTEMİ (KESİN ÇÖZÜM) ════════════
+    function showMojaveFloatingKarma(amount, targetId = 'mojave-karma-display') {
+        const display = document.getElementById(targetId);
+        let x, y;
+        
+        // Eğer hedef (ÇİPLERİN tablosu) varsa onun üstünde çıksın
+        if (display && display.getBoundingClientRect().top > 0) {
+            const rect = display.getBoundingClientRect();
+            x = rect.left + rect.width / 2;
+            y = rect.top;
+        } else {
+            // Hedef yoksa (veya görünmüyorsa) ekranın tam ortasında patlasın!
+            x = window.innerWidth / 2;
+            y = window.innerHeight / 2;
+        }
+
         const coin = document.createElement('div');
         const isWin = amount >= 0;
         
         coin.className = 'mojave-float-text';
         coin.innerHTML = isWin ? `+${amount.toLocaleString('tr-TR')}` : `${amount.toLocaleString('tr-TR')}`;
-        coin.style.color = isWin ? '#22c55e' : '#ef4444'; // Kazanana yeşil, kaybedene kan kırmızısı
+        coin.style.color = isWin ? '#22c55e' : '#ef4444'; 
         coin.style.textShadow = isWin ? '0 0 15px #22c55e, 2px 2px 0 #000' : '0 0 15px #ef4444, 2px 2px 0 #000';
-        coin.style.fontSize = '2.5rem';
+        coin.style.fontSize = '3rem'; // Biraz daha büyük yaptık ki fark edilsin
         
-        // CİPLERİN yazısının tam ortasından yukarı fışkırsın
-        coin.style.left = (rect.left + rect.width / 2) + 'px';
-        coin.style.top = rect.top + 'px';
+        // CSS animasyonunun çalışması için fixed pozisyon ayarı
+        coin.style.position = 'fixed';
+        coin.style.left = x + 'px';
+        coin.style.top = y + 'px';
+        coin.style.transform = 'translate(-50%, -50%)';
+        coin.style.zIndex = '100000'; // Her şeyin üstünde olsun
+        
         document.body.appendChild(coin);
         
         setTimeout(() => coin.remove(), 1500);
     }
-
+    
     // ════════════ LUCKY 38 RULET MOTORU ════════════
     function switchCasinoGame(game) {
         document.querySelectorAll('.casino-tab').forEach(b => { b.style.borderColor='transparent'; b.style.color='#4b5563'; b.style.background='transparent'; });
