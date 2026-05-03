@@ -1863,12 +1863,21 @@
         const text = document.getElementById('review-text-input').value.trim();
         
         if (score === 0) { showToast('Yıldız vermeden yargı dağıtamazsın!'); return; }
-        if (text.length < 10) { showToast('En azından birkaç kelime et aq, bu ne biçim inceleme!'); return; }
+        
+        // 🔪 ANTI-SPAM: Kelime ve Karakter Sayacı
+        const words = text.split(/\s+/).filter(w => w.length > 0);
+        if (words.length < 15) { 
+            showToast(`Sadece ${words.length} kelime mi? En az 15 kelimelik ciddili bir not düş!`); 
+            return; 
+        }
+        if (text.length < 80) { 
+            showToast('Klavye mi tokatladın aq? Biraz daha detaylı yaz!'); 
+            return; 
+        }
 
         const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
         const movieId = currentItem.id;
         
-        // GLOBAL FEED İÇİN FİLMİN POSTERİ VE ADINI DA KAZIYORUZ (Hız Optimizasyonu)
         const reviewData = {
             author: user,
             authorSafe: safeNick,
@@ -1890,7 +1899,7 @@
             database.ref(`kullanicilar/${safeNick}/karma`).once('value').then(snap => {
                 const currentKarma = snap.val() || 0;
                 database.ref(`kullanicilar/${safeNick}`).update({ karma: currentKarma + 500 });
-                showMojaveFloatingKarma(500, 'review-text-input');
+                showMojaveFloatingKarma(500); 
                 logKarmaEvent('yorum', 500, 'Yeraltından Notlar: Yargı Dağıtıldı');
             });
             progressTask('t3'); 
@@ -1985,7 +1994,7 @@
                 const date = new Date(rev.timestamp).toLocaleDateString('tr-TR', { day:'numeric', month:'long', year:'numeric' });
                 const isMine = rev.author === currentUser;
                 const canDelete = isMine || isAdmin;
-                const deleteBtn = canDelete ? `<button onclick="deleteMovieReview('${movieId}', '${rev._key}')" class="text-gray-600 hover:text-red-600 font-mono font-bold ml-3" title="Sil">X</button>` : '';
+                const deleteBtn = canDelete ? `<button onclick="deleteMovieReview('${movieId}', '${rev._key}', '${rev.authorSafe}')" class="text-gray-600 hover:text-red-600 font-mono font-bold ml-3" title="Sil">X</button>` : '';
 
                 // Profil Resmi HTML'i (Firebase'den dinamik çekecek)
                 let ppHTML = `<div class="w-14 h-14 bg-gray-900 flex items-center justify-center font-display text-3xl text-white shrink-0 border-2 border-red-800" id="rev-pp-${rev._key}">${rev.author.charAt(0).toUpperCase()}</div>`;
@@ -2021,23 +2030,24 @@
         });
     }
 
-    function deleteMovieReview(movieId, reviewKey) {
-        if(confirm('Yargıyı geri mi çekiyorsun? Kazandığın 500 Karma GERİ ALINACAK!')) {
-            const user = localStorage.getItem('kadavra_vip_user');
-            const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
-
+    function deleteMovieReview(movieId, reviewKey, targetSafeNick) {
+        if(confirm('Yargıyı siliyoruz. Yazan adamın cebinden 500 Karma GERİ ALINACAK! Emin misin?')) {
             database.ref(`yeralti_incelemeler/${movieId}/${reviewKey}`).remove().then(() => {
                 showToast('NOT SİLİNDİ. KARMA İADE ALINDI.', true);
                 
-                // 500 Karmayı Acımasızca Geri Çek
-                database.ref(`kullanicilar/${safeNick}`).once('value').then(snap => {
+                // CEZAYI DİREKT YAZAN ADAMIN (targetSafeNick) CEBİNE KESİYORUZ!
+                database.ref(`kullanicilar/${targetSafeNick}`).once('value').then(snap => {
                     if(snap.exists() && !snap.val().infiniteKarma) {
                         const currentKarma = snap.val().karma || 0;
-                        const newKarma = Math.max(0, currentKarma - 500); // Eksiye düşmemesi için
-                        database.ref(`kullanicilar/${safeNick}`).update({ karma: newKarma });
+                        const newKarma = Math.max(0, currentKarma - 500); 
+                        database.ref(`kullanicilar/${targetSafeNick}`).update({ karma: newKarma });
                         
-                        showMojaveFloatingKarma(-500, 'review-text-input');// Ekranda kırmızı eksi fırlasın ki acıyı hissetsin
-                        logKarmaEvent('admin', -500, 'Ceza: Not Silindi');
+                        // Eğer admin silmiyorsa, adam kendi siliyorsa kırmızı eksi havaya uçsun
+                        const myUser = localStorage.getItem('kadavra_vip_user');
+                        const mySafeNick = myUser ? myUser.toLowerCase().replace(/[.#$\[\]]/g, '_') : '';
+                        if(mySafeNick === targetSafeNick) {
+                            showMojaveFloatingKarma(-500);
+                        }
                     }
                 });
             });
