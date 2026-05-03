@@ -77,6 +77,32 @@
     }
     #hero-content { position: relative; z-index: 2; padding: 0 5vw 8vh; max-width: 800px; }
 
+    /* ════ ZAR TİTREME EFEKTİ ════ */
+    @keyframes diceShake {
+        0% { transform: translate(2px, 1px) rotate(0deg) scale(1); }
+        20% { transform: translate(-3px, 0px) rotate(10deg) scale(1.1); }
+        40% { transform: translate(2px, -2px) rotate(-10deg) scale(1); }
+        60% { transform: translate(-3px, 2px) rotate(0deg) scale(1.1); }
+        80% { transform: translate(2px, -1px) rotate(10deg) scale(1); }
+        100% { transform: translate(1px, -2px) rotate(-10deg) scale(1.1); }
+    }
+    
+    /* ════ KUMARHANE UÇAN KARMA EFEKTİ ════ */
+    @keyframes mojaveFloatUp {
+        0% { opacity: 1; transform: translate(-50%, 0) scale(0.5); }
+        20% { transform: translate(-50%, -20px) scale(1.2); }
+        100% { opacity: 0; transform: translate(-50%, -80px) scale(1); }
+    }
+    .mojave-float-text {
+        animation: mojaveFloatUp 1.5s ease-out forwards;
+        position: fixed;
+        z-index: 99999;
+        font-family: 'JetBrains Mono', monospace;
+        font-weight: 900;
+        white-space: nowrap;
+        pointer-events: none;
+    }
+    
     /* ════ MARIO COIN (FLOAT TEXT) EFEKTİ ════ */
     @keyframes floatUpFade {
         0% { opacity: 1; transform: translate(-50%, 0) scale(0.5); }
@@ -95,6 +121,15 @@
         font-size: 1.8rem;
         white-space: nowrap;
     }
+
+    /* ════ MOJAVE KUMARHANESİ EFEKTLERİ ════ */
+    @keyframes neonFlickerAmber {
+      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { text-shadow: 0 0 10px #d97706, 0 0 20px #d97706, 0 0 40px #b45309; opacity: 1; }
+      20%, 22%, 24%, 55% { text-shadow: none; opacity: 0.3; }
+    }
+    .mojave-neon { animation: neonFlickerAmber 4s infinite alternate; color: #fef3c7; }
+    .mojave-bg { background: radial-gradient(circle at center, #1a0f00 0%, #050505 100%); }
+    .mojave-border { border: 2px solid #d97706; box-shadow: 4px 4px 0px rgba(217, 119, 6, 0.4); }
 
     /* Slider / Kart Tasarımları - Sıfır Ovallik, Tam Brutalizm */
     .slider-track { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 20px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
@@ -293,6 +328,50 @@
             <div id="admin-ref-list" class="mt-6 space-y-2 max-h-[150px] overflow-y-auto scrollbar-thin text-xs text-gray-300 font-mono"></div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOJAVE KUMARHANESİ MODALI -->
+  <div id="mojave-modal" class="fixed inset-0 z-[6000] bg-black/95 backdrop-blur-sm hidden opacity-0 transition-opacity flex items-center justify-center">
+    <!-- CRT TV Cızırtısı -->
+    <div class="absolute inset-0 pointer-events-none opacity-20" style="background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, #d97706 2px, #d97706 4px); mix-blend-mode: overlay;"></div>
+    
+    <div class="mojave-bg mojave-border w-full max-w-7xl p-8 rounded-none relative flex flex-col md:flex-row gap-8 mx-4 max-h-[90vh] overflow-hidden z-10">
+      <button onclick="closeMojaveCasino()" class="absolute top-4 right-6 text-amber-700 hover:text-amber-400 text-3xl font-mono leading-none font-bold z-50">X</button>
+      
+      <!-- OYUN MASASI (SOL TARAF) -->
+      <div class="flex-1 flex flex-col overflow-y-auto pr-2 scrollbar-thin">
+        <div class="text-center border-b-2 border-amber-800 pb-4 mb-6">
+            <h2 class="text-5xl md:text-7xl font-display uppercase tracking-widest mojave-neon">MOJAVE KUMARHANESİ</h2>
+            <p class="text-amber-600 font-mono text-xs uppercase tracking-widest mt-2">"Mr. House her zaman kazanır."</p>
+        </div>
+        
+        <div class="flex justify-between items-center bg-black border border-amber-900 p-4 mb-6">
+            <span class="text-gray-400 font-mono text-sm uppercase">CİPLERİN:</span>
+            <span class="text-amber-500 font-display text-4xl tracking-wider" id="mojave-karma-display">0</span>
+        </div>
+
+        <!-- OYUN SEÇİM MENÜSÜ -->
+        <div class="flex gap-4 mb-6 border-b-2 border-gray-800 pb-0 overflow-x-auto">
+            <button onclick="switchCasinoGame('rulet')" id="casino-tab-rulet" class="casino-tab px-6 py-3 border-b-4 border-amber-600 text-amber-500 font-display text-lg tracking-widest uppercase transition-all bg-amber-900/20">LUCKY 38 ÇARKI</button>
+            <button onclick="switchCasinoGame('zar')" id="casino-tab-zar" class="casino-tab px-6 py-3 border-b-4 border-transparent text-gray-600 hover:text-amber-500 font-display text-lg tracking-widest uppercase transition-all">ŞEYTANIN ZARI</button>
+            <button onclick="switchCasinoGame('rus')" id="casino-tab-rus" class="casino-tab px-6 py-3 border-b-4 border-transparent text-red-900 hover:text-red-500 font-display text-lg tracking-widest uppercase transition-all">RUS RULETİ</button>
+            <button onclick="switchCasinoGame('pvp')" id="casino-tab-pvp" class="casino-tab px-6 py-3 border-b-4 border-transparent text-red-900 hover:text-red-500 font-display text-lg tracking-widest uppercase transition-all">KANLI DÜELLO</button>
+          </div>
+
+        <!-- OYUN ALANI (Javascript ile dolacak) -->
+        <div id="mojave-game-area" class="flex-1 flex flex-col items-center justify-center min-h-[300px] border border-amber-900/50 bg-black/50 p-6 relative overflow-hidden">
+            <!-- Oyunlar buraya gelecek -->
+        </div>
+      </div>
+
+      <!-- CANLI YERALTI BÜLTENİ (SAĞ TARAF) -->
+      <div class="w-full md:w-80 border-l-2 border-amber-900 pl-6 flex flex-col">
+          <h3 class="text-xl font-display text-amber-600 mb-4 tracking-widest border-b border-amber-900/50 pb-2">🎰 CANLI MASALAR</h3>
+          <div id="mojave-live-feed" class="flex-1 overflow-y-auto scrollbar-thin space-y-3 pr-2 font-mono text-[10px]">
+              <p class="text-gray-600 animate-pulse text-center mt-10">Bağlantı kuruluyor...</p>
+          </div>
       </div>
     </div>
   </div>
@@ -633,6 +712,7 @@
           <button onclick="openKarmaInfo()" class="text-left px-4 py-3 font-display tracking-widest text-lg text-yellow-600 hover:bg-yellow-500 hover:text-black border-b border-gray-800 transition-colors">⚡ HESAP DÖKÜMÜ</button>
           <button onclick="openKasaModal()" class="text-left px-4 py-3 font-display tracking-widest text-lg text-green-600 hover:bg-green-500 hover:text-black border-b border-gray-800 transition-colors">🎁 YERALTI ZULASI</button>
           <button onclick="openKarmaMarket()" class="text-left px-4 py-3 font-display tracking-widest text-lg text-purple-500 hover:bg-purple-600 hover:text-black border-b border-gray-800 transition-colors">🛒 KARA BORSA</button>
+          <button onclick="openMojaveCasino()" class="text-left px-4 py-3 font-display tracking-widest text-lg text-amber-500 hover:bg-amber-600 hover:text-black border-b border-gray-800 transition-colors">🎰 MOJAVE KUMARHANESİ</button>
           <button onclick="openLeaderboard()" class="text-left px-4 py-3 font-display tracking-widest text-lg text-orange-600 hover:bg-orange-500 hover:text-black border-b border-gray-800 transition-colors">🏆 BARONLAR (TOP 10)</button>
           <button id="nav-admin-btn" onclick="openAdminPanel()" class="text-left px-4 py-3 font-display tracking-widest text-lg text-red-600 hover:bg-red-700 hover:text-white border-b border-gray-800 transition-colors hidden">👑 İSTİHBARAT</button>
           <button onclick="logoutUser()" class="text-left px-4 py-3 font-display tracking-widest text-lg text-gray-600 hover:bg-white hover:text-red-600 transition-colors mt-2 bg-red-900/10">🚪 FİŞİ ÇEK</button>
@@ -2967,6 +3047,749 @@
             }
             return dailyData;
         } catch (error) { console.error("Motor hatası:", error); return null; }
+    }
+
+    function openMojaveCasino() {
+        const user = localStorage.getItem('kadavra_vip_user'); if(!user) { showToast('Giriş yap!'); return; }
+        const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+        database.ref('kullanicilar/' + safeNick).once('value').then(snap => {
+            const data = snap.exists() ? snap.val() : {};
+            const karma = data.infiniteKarma ? '∞' : (data.karma || 0);
+            document.getElementById('mojave-karma-display').textContent = typeof karma === 'number' ? karma.toLocaleString('tr-TR') : karma;
+            
+            const mod = document.getElementById('mojave-modal');
+            mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50);
+            
+            // İŞTE BURASI DÜZELDİ! Başlangıç ekranını Rulet yaptık.
+            switchCasinoGame('rulet'); 
+            // Canlı bülten motorunu ateşliyoruz, her sekmede arka planda akmaya devam edecek.
+            listenCasinoLiveFeed();
+        });
+    }
+
+    function closeMojaveCasino() { 
+        const mod = document.getElementById('mojave-modal'); 
+        mod.classList.add('opacity-0'); 
+        setTimeout(()=> mod.classList.add('hidden'), 300); 
+    }
+
+    // ════════════ UÇAN KARMA (FLOAT) SİSTEMİ ════════════
+    function showMojaveFloatingKarma(amount) {
+        const display = document.getElementById('mojave-karma-display');
+        if(!display) return;
+        const rect = display.getBoundingClientRect();
+        const coin = document.createElement('div');
+        const isWin = amount >= 0;
+        
+        coin.className = 'mojave-float-text';
+        coin.innerHTML = isWin ? `+${amount.toLocaleString('tr-TR')}` : `${amount.toLocaleString('tr-TR')}`;
+        coin.style.color = isWin ? '#22c55e' : '#ef4444'; // Kazanana yeşil, kaybedene kan kırmızısı
+        coin.style.textShadow = isWin ? '0 0 15px #22c55e, 2px 2px 0 #000' : '0 0 15px #ef4444, 2px 2px 0 #000';
+        coin.style.fontSize = '2.5rem';
+        
+        // CİPLERİN yazısının tam ortasından yukarı fışkırsın
+        coin.style.left = (rect.left + rect.width / 2) + 'px';
+        coin.style.top = rect.top + 'px';
+        document.body.appendChild(coin);
+        
+        setTimeout(() => coin.remove(), 1500);
+    }
+
+    // ════════════ LUCKY 38 RULET MOTORU ════════════
+    function switchCasinoGame(game) {
+        document.querySelectorAll('.casino-tab').forEach(b => { b.style.borderColor='transparent'; b.style.color='#4b5563'; b.style.background='transparent'; });
+        const activeBtn = document.getElementById('casino-tab-' + game);
+        if (activeBtn) { 
+            activeBtn.style.borderColor = (game === 'rus' || game === 'pvp') ? '#ef4444' : '#d97706'; 
+            activeBtn.style.color = (game === 'rus' || game === 'pvp') ? '#ef4444' : '#f59e0b'; 
+            activeBtn.style.background = (game === 'rus' || game === 'pvp') ? 'rgba(220, 38, 38, 0.1)' : 'rgba(217, 119, 6, 0.1)'; 
+        }
+        
+        const area = document.getElementById('mojave-game-area');
+        
+        if (game === 'rulet') {
+            // (Bir önceki mesajdaki rulet ekranı kodları aynı kalıyor, buraya dokunmuyoruz. Eğer ruleti bozduysan bir önceki mesajdan alıp buraya koyarsın pampik.)
+            area.innerHTML = `
+                <div class="w-full flex flex-col items-center">
+                    <div class="w-full max-w-3xl relative overflow-hidden border-4 border-amber-800 bg-black h-28 flex items-center shadow-[0_0_30px_rgba(217,119,6,0.2)] mb-8 brutalist-shadow">
+                        <div class="absolute left-1/2 top-0 bottom-0 w-1 bg-white z-20" style="transform: translateX(-50%); box-shadow: 0 0 15px #fff;"></div>
+                        <div id="roulette-track" class="flex transition-transform duration-[4000ms] ease-[cubic-bezier(0.15,0.9,0.15,1)]" style="transform: translateX(0px);"></div>
+                    </div>
+                    <div class="w-full max-w-3xl flex gap-4 mb-6">
+                        <input type="number" id="rulet-bet-amount" placeholder="MASAYA KOYACAK KARMA..." class="brutalist-input flex-1 p-4 text-2xl text-amber-500 font-mono text-center bg-[#050505] border-2 border-amber-900 focus:border-amber-500">
+                    </div>
+                    <div class="w-full max-w-3xl grid grid-cols-3 gap-4">
+                        <button onclick="playLucky38('red')" class="bg-red-700 hover:bg-white hover:text-black text-white font-display text-2xl py-5 border-b-4 border-red-900 transition-all shadow-[0_0_15px_rgba(220,38,38,0.3)] hover:scale-105">KIRMIZI (2X)</button>
+                        <button onclick="playLucky38('green')" class="bg-green-600 hover:bg-white hover:text-black text-white font-display text-2xl py-5 border-b-4 border-green-900 transition-all shadow-[0_0_15px_rgba(34,197,94,0.3)] hover:scale-105">YEŞİL (14X)</button>
+                        <button onclick="playLucky38('black')" class="bg-gray-800 hover:bg-white hover:text-black text-white font-display text-2xl py-5 border-b-4 border-black transition-all shadow-[0_0_15px_rgba(31,41,55,0.3)] hover:scale-105">SİYAH (2X)</button>
+                    </div>
+                </div>
+            `;
+            setTimeout(() => initRouletteTrack(), 100); 
+        }
+        else if (game === 'zar') {
+            area.innerHTML = `
+                <div class="w-full flex flex-col items-center justify-center h-full">
+                    <!-- Zar Ekranı -->
+                    <div class="w-full max-w-2xl bg-[#050505] border-2 border-red-900 py-6 px-4 mb-4 relative overflow-hidden flex flex-col items-center brutalist-shadow">
+                        <div class="absolute inset-0 bg-red-900/5" style="animation: pulse 2s infinite;"></div>
+                        <div class="flex gap-8 mb-2 z-10">
+                            <div id="dice-1" class="text-[90px] text-white drop-shadow-[0_0_20px_#ef4444] transition-all" style="line-height: 1;">⚅</div>
+                            <div id="dice-2" class="text-[90px] text-white drop-shadow-[0_0_20px_#ef4444] transition-all" style="line-height: 1;">⚅</div>
+                        </div>
+                        <div id="dice-result-text" class="text-2xl font-display text-red-500 tracking-widest uppercase z-10 h-8 mt-2">MASAYA ZAR AT!</div>
+                    </div>
+                    
+                    <!-- Bahis Konsolu -->
+                    <div class="w-full max-w-2xl flex gap-4 mb-4">
+                        <input type="number" id="zar-bet-amount" placeholder="MASAYA KOYACAK KARMA..." class="brutalist-input flex-1 p-3 text-xl text-red-500 font-mono text-center bg-[#111] border-2 border-red-900 focus:border-red-500">
+                    </div>
+                    
+                    <!-- Oynama Butonları -->
+                    <div class="w-full max-w-2xl grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <button onclick="playDevilDice('alt')" class="bg-[#111] hover:bg-white hover:text-black text-gray-300 font-display text-lg py-3 border-2 border-gray-800 transition-all shadow-[4px_4px_0_#374151] hover:shadow-none hover:translate-x-1 hover:translate-y-1">7'DEN KÜÇÜK (2X)</button>
+                        <button onclick="playDevilDice('yedi')" class="bg-red-900 hover:bg-red-600 hover:text-white text-white font-display text-2xl py-3 border-2 border-red-700 transition-all shadow-[4px_4px_0_#ef4444] hover:shadow-none hover:translate-x-1 hover:translate-y-1">TAM 7 (5X)</button>
+                        <button onclick="playDevilDice('ust')" class="bg-[#111] hover:bg-white hover:text-black text-gray-300 font-display text-lg py-3 border-2 border-gray-800 transition-all shadow-[4px_4px_0_#374151] hover:shadow-none hover:translate-x-1 hover:translate-y-1">7'DEN BÜYÜK (2X)</button>
+                    </div>
+                </div>
+            `;
+        }
+        else if (game === 'rus') {
+            const user = localStorage.getItem('kadavra_vip_user');
+            const safeNick = user ? user.toLowerCase().replace(/[.#$\[\]]/g, '_') : '';
+            database.ref(`kullanicilar/${safeNick}/karma`).once('value').then(snap => {
+                const myKarma = snap.val() || 0;
+                area.innerHTML = `
+                    <div class="w-full flex flex-col items-center justify-center h-full text-center">
+                        <div class="text-[80px] mb-1 drop-shadow-[0_0_20px_#ef4444]" id="rus-gun-icon">🔫</div>
+                        <h2 class="text-3xl font-display text-red-600 tracking-widest mb-3 uppercase drop-shadow-[2px_2px_0_#450a0a]">RUS RULETİ</h2>
+                        <div class="bg-[#050505] border-2 border-red-900 p-4 max-w-xl w-full mb-4 brutalist-shadow">
+                            <p class="text-gray-300 font-mono text-xs leading-relaxed">Masaya koyacak belli bir miktar yok, <span class="text-red-500 font-bold">MEVCUT TÜM KARMANI (${myKarma.toLocaleString('tr-TR')})</span> riske atıyorsun. Tetiği çekersen ya cüzdanın <span class="text-green-500 font-bold">%30 büyür</span> (3/4 Şans), ya da kafana sıkarsın ve <span class="text-red-600 font-bold">HER ŞEY SIFIRLANIR</span> (1/4 Şans).</p>
+                        </div>
+                        <button onclick="playRussianRoulette(${myKarma})" class="bg-red-900 hover:bg-white hover:text-black text-white font-display text-2xl py-4 px-8 border-2 border-red-700 transition-all shadow-[4px_4px_0_#7f1d1d] hover:shadow-none hover:translate-x-1 hover:translate-y-1">TÜM SERVETİNLE TETİĞİ ÇEK</button>
+                    </div>
+                `;
+            });
+        }
+        else if (game === 'pvp') renderPvPLobby();
+    }
+
+    // ════════════ ŞEYTANIN ZARI MOTORU ════════════
+    let isDiceRolling = false;
+    function playDevilDice(prediction) {
+        if(isDiceRolling) return;
+        const amount = parseInt(document.getElementById('zar-bet-amount').value);
+        if(!amount || amount < 10) { showToast('Cebindeki son 10 karmayı bari koy!'); return; }
+        
+        const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
+        const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+
+        database.ref(`kullanicilar/${safeNick}`).once('value').then(snap => {
+            const uData = snap.val();
+            if(!uData.infiniteKarma && (uData.karma || 0) < amount) { showToast('KARMAN YETMİYOR FAKİR!'); return; }
+
+            isDiceRolling = true;
+
+            // Parayı Çek, Uçan Karmayı Çıkar
+            if(!uData.infiniteKarma) {
+                const currentKarma = (uData.karma || 0) - amount;
+                database.ref(`kullanicilar/${safeNick}`).update({ karma: currentKarma });
+                document.getElementById('mojave-karma-display').textContent = currentKarma.toLocaleString('tr-TR');
+            }
+            showMojaveFloatingKarma(-amount);
+            
+            let predText = prediction === 'alt' ? '7\'DEN KÜÇÜK' : (prediction === 'ust' ? '7\'DEN BÜYÜK' : 'TAM 7');
+            broadcastCasinoLiveFeed(`🎲 ${user}, Şeytanın Zarına ${amount.toLocaleString('tr-TR')} bastı. Tahmini: ${predText}!`);
+            
+            const rollSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2003/2003-preview.mp3'); 
+            rollSound.volume = 0.8; rollSound.play().catch(e=>{});
+
+            const diceFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+            const d1 = document.getElementById('dice-1');
+            const d2 = document.getElementById('dice-2');
+            const resText = document.getElementById('dice-result-text');
+            
+            resText.textContent = "ZARLAR DÖNÜYOR...";
+            resText.className = "text-3xl font-display text-gray-500 tracking-widest uppercase z-10 h-10 animate-pulse";
+
+            // Animasyon: CSS ile delicesine salla
+            d1.style.animation = "diceShake 0.15s linear infinite";
+            d2.style.animation = "diceShake 0.15s linear infinite reverse";
+            d1.style.color = '#fff'; d2.style.color = '#fff';
+
+            // Zarların üstündeki sayıları hızla değiştir
+            let rollInterval = setInterval(() => {
+                d1.textContent = diceFaces[Math.floor(Math.random() * 6)];
+                d2.textContent = diceFaces[Math.floor(Math.random() * 6)];
+            }, 80);
+
+            // 2.5 Saniye sonra zarı masaya vur
+            setTimeout(() => {
+                clearInterval(rollInterval);
+                d1.style.animation = "none";
+                d2.style.animation = "none";
+                
+                // Gerçek Sonucu Belirle
+                const res1 = Math.floor(Math.random() * 6) + 1;
+                const res2 = Math.floor(Math.random() * 6) + 1;
+                const total = res1 + res2;
+                
+                d1.textContent = diceFaces[res1 - 1];
+                d2.textContent = diceFaces[res2 - 1];
+                
+                // Zarlar masaya vuruyormuş gibi bir büyüme efekti
+                d1.style.transform = "scale(1.4)"; d2.style.transform = "scale(1.4)";
+                setTimeout(() => { d1.style.transform = "scale(1)"; d2.style.transform = "scale(1)"; }, 150);
+
+                const slamSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3'); 
+                slamSound.volume = 0.6; slamSound.play().catch(e=>{});
+
+                let isWin = false;
+                let multiplier = 0;
+
+                if(prediction === 'alt' && total < 7) { isWin = true; multiplier = 2; }
+                else if(prediction === 'ust' && total > 7) { isWin = true; multiplier = 2; }
+                else if(prediction === 'yedi' && total === 7) { isWin = true; multiplier = 5; }
+
+                if(isWin) {
+                    resText.textContent = `TOPLAM ${total} - KAZANDIN!`;
+                    resText.className = "text-4xl font-display text-green-500 tracking-widest uppercase z-10 h-10 drop-shadow-[0_0_10px_#22c55e]";
+                    d1.style.color = '#22c55e'; d2.style.color = '#22c55e';
+                    d1.style.filter = "drop-shadow(0 0 20px #22c55e)"; d2.style.filter = "drop-shadow(0 0 20px #22c55e)";
+                    
+                    const winAmount = amount * multiplier;
+                    if(!uData.infiniteKarma) {
+                        database.ref(`kullanicilar/${safeNick}`).once('value').then(winSnap => {
+                            const curr = winSnap.val().karma || 0;
+                            database.ref(`kullanicilar/${safeNick}`).update({ karma: curr + winAmount });
+                            document.getElementById('mojave-karma-display').textContent = (curr + winAmount).toLocaleString('tr-TR');
+                        });
+                    }
+                    showMojaveFloatingKarma(winAmount);
+                    broadcastCasinoLiveFeed(`🔥 ZAR KRALI! ${user}, Şeytanın Zarından ${winAmount.toLocaleString('tr-TR')} kopardı! (Zar: ${total})`);
+                } else {
+                    resText.textContent = `TOPLAM ${total} - KASA ALDI!`;
+                    resText.className = "text-4xl font-display text-red-600 tracking-widest uppercase z-10 h-10 drop-shadow-[0_0_10px_#dc2626]";
+                    d1.style.color = '#6b7280'; d2.style.color = '#6b7280'; // Gri yap ölü zar gibi
+                    d1.style.filter = "none"; d2.style.filter = "none";
+                    broadcastCasinoLiveFeed(`💀 ŞEYTAN TOKATLADI! ${user}, masada ${amount.toLocaleString('tr-TR')} karma bıraktı. (Zar: ${total})`);
+                }
+                
+                isDiceRolling = false;
+                
+                // 3 saniye sonra zarları eski tehlikeli haline geri döndür
+                setTimeout(() => {
+                    if(!isDiceRolling) {
+                        d1.style.color = 'white'; d2.style.color = 'white';
+                        d1.style.filter = "drop-shadow(0 0 20px #ef4444)"; d2.style.filter = "drop-shadow(0 0 20px #ef4444)";
+                        resText.textContent = "YENİDEN ZAR AT!";
+                        resText.className = "text-3xl font-display text-red-500 tracking-widest uppercase z-10 h-10";
+                    }
+                }, 3000);
+
+            }, 2500); 
+        });
+    }
+
+    function createRouletteItem(type) {
+        const div = document.createElement('div');
+        // Kutu genişliği tam 90px olsun
+        div.className = `w-[90px] h-28 flex-shrink-0 flex justify-center items-center font-display text-4xl border-r-2 border-black/50 ${type === 'red' ? 'bg-red-700 text-white' : (type==='black' ? 'bg-gray-800 text-white' : 'bg-green-600 text-white')}`;
+        div.innerHTML = type === 'green' ? '🌿' : (type === 'red' ? '♦' : '♠');
+        return div;
+    }
+
+    function initRouletteTrack() {
+        const track = document.getElementById('roulette-track');
+        track.innerHTML = '';
+        for(let i=0; i<30; i++) {
+            const type = Math.random() < 0.05 ? 'green' : (Math.random() < 0.5 ? 'red' : 'black');
+            track.appendChild(createRouletteItem(type));
+        }
+        track.style.transition = 'none';
+        track.style.transform = `translateX(0px)`;
+    }
+
+    // (Bunu fonksiyonun hemen dışına, üstüne bir yere koy ki hafızada kalsın)
+    let mojaveStreak = 0; 
+    let isRouletteSpinning = false;
+
+    function playLucky38(color) {
+        if(isRouletteSpinning) return;
+        const amount = parseInt(document.getElementById('rulet-bet-amount').value);
+        if(!amount || amount < 10) { showToast('En az 10 Karma basmalısın!'); return; }
+        
+        const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
+        const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+
+        database.ref(`kullanicilar/${safeNick}`).once('value').then(snap => {
+            const uData = snap.val();
+            if(!uData.infiniteKarma && (uData.karma || 0) < amount) { showToast('KARMAN YETMİYOR!'); return; }
+
+            isRouletteSpinning = true;
+
+            if(!uData.infiniteKarma) {
+                const currentKarma = (uData.karma || 0) - amount;
+                database.ref(`kullanicilar/${safeNick}`).update({ karma: currentKarma });
+                document.getElementById('mojave-karma-display').textContent = currentKarma.toLocaleString('tr-TR');
+            }
+            showMojaveFloatingKarma(-amount);
+            broadcastCasinoLiveFeed(`🎰 ${user}, Lucky 38 çarkında ${color.toUpperCase()}'a ${amount.toLocaleString('tr-TR')} bastı!`);
+            
+            const rollSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2578/2578-preview.mp3');
+            rollSound.volume = 0.6; rollSound.play().catch(e=>{});
+
+            // ════════════ ŞEYTANİ HİLE MOTORU (RIG) ════════════
+            const rand = Math.random();
+            let winningColor = 'black';
+            
+            let chanceGreen = 0.05;
+            let chancePicked = 0.475; // Seçtiği rengin normal gelme ihtimali
+
+            // MR HOUSE PROTOKOLÜ: 2 veya daha fazla kez üst üste kazandıysa SİKİŞ BAŞLAR.
+            if (mojaveStreak >= 2) {
+                chancePicked = 0.20; // Kazanma ihtimalini %47.5'ten %20'ye düşür!
+                chanceGreen = 0.10; // Yeşil ihtimalini artır ki kasa iyice cukkalasın.
+            } 
+            // COURIER 6 ŞANSI: 3 veya daha fazla kez üst üste kaybettiyse YEM AT.
+            else if (mojaveStreak <= -3) {
+                chancePicked = 0.70; // Acı ve kazanma ihtimalini %70'e çıkar!
+                chanceGreen = 0.02;
+            }
+
+            // Hileli şansları zarlara dök
+            if (rand < chanceGreen) {
+                winningColor = 'green';
+            } else {
+                if (color === 'red') {
+                    winningColor = rand < (chanceGreen + chancePicked) ? 'red' : 'black';
+                } else if (color === 'black') {
+                    winningColor = rand < (chanceGreen + chancePicked) ? 'black' : 'red';
+                } else { // Yeşil seçmiş manyaklar için
+                    winningColor = rand < chanceGreen ? 'green' : (Math.random() < 0.5 ? 'red' : 'black');
+                }
+            }
+            // ═══════════════════════════════════════════════════
+
+            const track = document.getElementById('roulette-track');
+            track.innerHTML = '';
+            
+            const winIndex = 70;
+            const totalItems = 90;
+            for(let i=0; i<totalItems; i++) {
+                let type = Math.random() < 0.05 ? 'green' : (Math.random() < 0.5 ? 'red' : 'black');
+                if(i === winIndex) type = winningColor;
+                track.appendChild(createRouletteItem(type));
+            }
+
+            const itemWidth = 90; 
+            const container = track.parentElement;
+            const cWidth = container.offsetWidth;
+            const randomOffset = Math.floor(Math.random() * 60) - 30; 
+            const finalPosition = -((winIndex * itemWidth) + (itemWidth / 2) - (cWidth / 2) + randomOffset);
+
+            track.style.transition = 'none';
+            track.style.transform = `translateX(0px)`;
+            
+            setTimeout(() => {
+                track.style.transition = 'transform 4s cubic-bezier(0.15, 0.9, 0.15, 1)';
+                track.style.transform = `translateX(${finalPosition}px)`;
+                
+                setTimeout(() => {
+                    isRouletteSpinning = false;
+                    let winMultiplier = 0;
+                    if(color === winningColor) { winMultiplier = (winningColor === 'green') ? 14 : 2; }
+
+                    if(winMultiplier > 0) {
+                        // KAZANDI -> Seriyi artıya geçir
+                        mojaveStreak = mojaveStreak > 0 ? mojaveStreak + 1 : 1;
+
+                        const winAmount = amount * winMultiplier;
+                        if(!uData.infiniteKarma) {
+                            database.ref(`kullanicilar/${safeNick}`).once('value').then(winSnap => {
+                                const curr = winSnap.val().karma || 0;
+                                database.ref(`kullanicilar/${safeNick}`).update({ karma: curr + winAmount });
+                                document.getElementById('mojave-karma-display').textContent = (curr + winAmount).toLocaleString('tr-TR');
+                            });
+                        }
+                        showMojaveFloatingKarma(winAmount);
+                        const winSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3'); winSound.volume = 0.8; winSound.play().catch(e=>{});
+                        showToast(`VURGUN! ÇARK ${winningColor.toUpperCase()} GELDİ! +${winAmount.toLocaleString()} KARMA`, true);
+                        broadcastCasinoLiveFeed(`💰 İNANILMAZ! ${user}, Lucky 38'den tam ${winAmount.toLocaleString('tr-TR')} Karma vurdu!`);
+                    } else {
+                        // KAYBETTİ -> Seriyi eksiye geçir
+                        mojaveStreak = mojaveStreak < 0 ? mojaveStreak - 1 : -1;
+
+                        showToast(`GEÇMİŞ OLSUN! Çark ${winningColor.toUpperCase()} geldi.`, false);
+                        broadcastCasinoLiveFeed(`💀 KASA KAZANDI! ${user}, ${amount.toLocaleString('tr-TR')} karmayı masaya bıraktı.`);
+                    }
+                }, 4200); 
+            }, 50);
+        });
+    }
+
+    // ════════════ CANLI BÜLTEN (LIVE FEED) MOTORU ════════════
+    function broadcastCasinoLiveFeed(msg) {
+        database.ref('yeralti_kumarhane/live_feed').push({ text: msg, timestamp: Date.now() });
+    }
+
+    function listenCasinoLiveFeed() {
+        database.ref('yeralti_kumarhane/live_feed').off('value'); // Eski dinleyicileri öldür
+        // Verileri kesinlikle zamana göre sıralayarak çek
+        database.ref('yeralti_kumarhane/live_feed').orderByChild('timestamp').limitToLast(15).on('value', snap => {
+            const box = document.getElementById('mojave-live-feed');
+            if(!box) return;
+            box.innerHTML = '';
+            if(!snap.exists()) { box.innerHTML = '<p class="text-gray-600 text-center mt-10 font-mono">Masa sessiz, çıt çıkmıyor...</p>'; return; }
+            
+            let msgs = [];
+            snap.forEach(c => { msgs.push(c.val()); });
+            msgs.reverse(); // En yeni mesaj en üste gelsin
+            
+            msgs.forEach(m => {
+                const time = new Date(m.timestamp).toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'});
+                box.innerHTML += `
+                    <div class="border-b border-amber-900/30 pb-2 mb-2 animate-pulse">
+                        <span class="text-amber-700 font-bold">[${time}]</span> <span class="text-gray-300">${m.text}</span>
+                    </div>
+                `;
+            });
+        });
+    }
+
+    // ════════════ KANLI DÜELLO (PVP YAZI-TURA) MOTORU ════════════
+    function renderPvPLobby() {
+        const area = document.getElementById('mojave-game-area');
+        area.innerHTML = `
+            <div class="w-full max-w-2xl flex flex-col gap-6 w-full h-full">
+                <!-- Yeni Masa Kur -->
+                <div class="bg-black/80 border-2 border-red-900 p-6 brutalist-shadow">
+                    <h3 class="text-2xl font-display text-red-500 tracking-widest mb-4">⚔️ YENİ DÜELLO BAŞLAT</h3>
+                    <div class="flex flex-col sm:flex-row gap-4 items-center">
+                        <input type="number" id="pvp-bet-amount" placeholder="MİKTAR (KARMA)" class="brutalist-input flex-1 w-full p-3 text-lg text-amber-500 focus:border-red-600 bg-[#111]">
+                        <select id="pvp-side-select" class="bg-[#111] w-full sm:w-auto border-2 border-gray-800 p-3 text-white font-mono focus:border-red-600 cursor-pointer">
+                            <option value="Yazı">YAZI</option>
+                            <option value="Tura">TURA</option>
+                        </select>
+                        <button onclick="createPvPMatch()" class="w-full sm:w-auto bg-red-800 hover:bg-white text-white hover:text-black font-display text-xl px-6 py-3 transition-colors border-2 border-red-800">MASAYI AÇ</button>
+                    </div>
+                </div>
+                <!-- Açık Masalar -->
+                <div class="bg-black/50 border border-gray-800 p-4 flex-1 flex flex-col">
+                    <h3 class="text-xl font-display text-gray-400 tracking-widest mb-4 border-b border-gray-800 pb-2">BEKLEYEN MASALAR</h3>
+                    <div id="pvp-matches-list" class="flex-1 space-y-3 overflow-y-auto scrollbar-thin pr-2">
+                        <p class="text-center text-gray-600 font-mono text-sm animate-pulse">Lobi dinleniyor...</p>
+                    </div>
+                </div>
+            </div>
+        `;
+        listenPvPMatches();
+    }
+
+    function createPvPMatch() {
+        const amount = parseInt(document.getElementById('pvp-bet-amount').value);
+        const side = document.getElementById('pvp-side-select').value;
+        const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
+        const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+
+        if(!amount || amount < 10) { showToast('Masa en az 10 Karma ile açılır.'); return; }
+
+        database.ref(`kullanicilar/${safeNick}`).once('value').then(snap => {
+            const uData = snap.val();
+            if(!uData.infiniteKarma && (uData.karma || 0) < amount) { showToast('YETERSİZ KARMA.'); return; }
+            
+            if(!uData.infiniteKarma) {
+                const newKarma = (uData.karma || 0) - amount;
+                database.ref(`kullanicilar/${safeNick}`).update({ karma: newKarma });
+                document.getElementById('mojave-karma-display').textContent = newKarma.toLocaleString('tr-TR');
+            }
+            
+            // MAÇI OLUŞTUR VE ID'SİNİ AL
+            const newMatchRef = database.ref('yeralti_kumarhane/duellolar').push();
+            newMatchRef.set({
+                host: user,
+                hostSafe: safeNick,
+                amount: amount,
+                hostSide: side,
+                status: 'waiting',
+                timestamp: Date.now()
+            });
+
+            showToast('DÜELLO MASASI AÇILDI!');
+            logKarmaEvent('kasa', -amount, `Düello Bahsi: Masaya Kondu`);
+            broadcastCasinoLiveFeed(`🔴 ${user}, masaya ${amount.toLocaleString('tr-TR')} Karma fırlattı. Meydan okuyan var mı?`);
+            document.getElementById('pvp-bet-amount').value = '';
+
+            // HOST İÇİN PUSUDA BEKLEYEN ANİMASYON AJANI
+            let hostListener = newMatchRef.on('value', matchSnap => {
+                if(!matchSnap.exists()) return;
+                const mData = matchSnap.val();
+                if(mData.status === 'finished') {
+                    newMatchRef.off('value', hostListener); // Animasyon tetiklendi, dinlemeyi bırak!
+                    
+                    // HOST'UN EKRANINI HACKLE VE ANİMASYONU PATLAT!
+                    const isHostWinner = mData.winner === mData.host;
+                    playCoinFlipShow(mData.host, mData.challenger, mData.hostSide, isHostWinner, mData.amount * 2, true);
+                }
+            });
+        });
+    }
+
+    let pvpListener = null;
+    function listenPvPMatches() {
+        if(pvpListener) database.ref('yeralti_kumarhane/duellolar').off('value', pvpListener);
+        
+        pvpListener = database.ref('yeralti_kumarhane/duellolar').on('value', snap => {
+            const checkList = document.getElementById('pvp-matches-list');
+            if(!checkList) return; 
+            
+            checkList.innerHTML = '';
+            let hasMatches = false;
+            const myUser = localStorage.getItem('kadavra_vip_user') || '';
+
+            if(snap.exists()) {
+                let matches = [];
+                snap.forEach(c => { if(c.val().status === 'waiting') matches.push({...c.val(), key: c.key}); });
+                matches.sort((a,b) => b.timestamp - a.timestamp);
+
+                matches.forEach(m => {
+                    hasMatches = true;
+                    const isMe = m.host.toLowerCase() === myUser.toLowerCase();
+                    const btnHTML = isMe 
+                        ? `<button onclick="cancelPvPMatch('${m.key}', ${m.amount})" class="bg-gray-800 text-gray-400 px-4 py-2 font-mono text-xs hover:text-red-500 brutalist-shadow transition-colors">İPTAL ET</button>`
+                        : `<button onclick="joinPvPMatch('${m.key}', '${m.host}', ${m.amount}, '${m.hostSide}')" class="bg-red-700 hover:bg-white text-black font-bold font-mono px-4 py-3 text-xs uppercase shadow-[4px_4px_0_#ef4444] transition-all hover:translate-x-1 hover:-translate-y-1 hover:shadow-none">MEYDAN OKU</button>`;
+
+                    checkList.innerHTML += `
+                        <div class="bg-[#050505] border-l-4 border-red-600 p-4 flex flex-col sm:flex-row justify-between sm:items-center gap-4 transition-colors hover:bg-gray-900 brutalist-card">
+                            <div class="flex items-center gap-4">
+                                <span class="text-4xl drop-shadow-[2px_2px_0_#ef4444] animate-pulse">🪙</span>
+                                <div>
+                                    <p class="font-display text-2xl text-white tracking-widest">${m.host}</p>
+                                    <p class="text-gray-400 font-mono text-xs uppercase">Şunu seçti: <span class="text-red-500 font-bold">${m.hostSide}</span></p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-6">
+                                <p class="text-amber-500 font-mono text-lg font-bold border-r border-gray-800 pr-6">${m.amount.toLocaleString('tr-TR')} KARMA</p>
+                                ${btnHTML}
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            if(!hasMatches) checkList.innerHTML = '<p class="text-center text-gray-600 font-mono text-sm mt-10">Açık masa yok. Korkaklık etme, ilk sen aç.</p>';
+        });
+    }
+
+    function cancelPvPMatch(matchKey, amount) {
+        const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
+        const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+        database.ref(`kullanicilar/${safeNick}`).once('value').then(snap => {
+            const data = snap.val();
+            if(!data.infiniteKarma) {
+                const newKarma = (data.karma || 0) + amount;
+                database.ref(`kullanicilar/${safeNick}`).update({ karma: newKarma });
+                document.getElementById('mojave-karma-display').textContent = newKarma.toLocaleString('tr-TR');
+            }
+            database.ref(`yeralti_kumarhane/duellolar/${matchKey}`).remove();
+            showToast('MASA İPTAL EDİLDİ. KARMAN İADE EDİLDİ.');
+            logKarmaEvent('kasa', amount, `Düello İptali (İade)`);
+            broadcastCasinoLiveFeed(`✖️ ${user} masayı kapattı, parayı geri çekti.`);
+        });
+    }
+
+    // ════════════ 3D PARA ANİMASYONU (ORTAK MOTOR) ════════════
+    function playCoinFlipShow(hostNick, challengerNick, hostSide, isHostWinner, winAmount, isMeHost) {
+        let winningSide = isHostWinner ? hostSide : (hostSide === 'Yazı' ? 'Tura' : 'Yazı');
+        let finalRotation = winningSide === 'Yazı' ? 1800 : 1980; 
+
+        let oldStyle = document.getElementById('coin-flip-style');
+        if(oldStyle) oldStyle.remove();
+        const style = document.createElement('style');
+        style.id = 'coin-flip-style';
+        style.innerHTML = `
+            @keyframes coinFlip3D {
+                0% { transform: translateY(0) rotateX(0deg) scale(1); }
+                50% { transform: translateY(-150px) rotateX(900deg) scale(1.3); }
+                100% { transform: translateY(0) rotateX(${finalRotation}deg) scale(1); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        const area = document.getElementById('mojave-game-area');
+        area.innerHTML = `
+            <div class="w-full h-full flex flex-col items-center justify-center relative min-h-[300px]">
+                <div style="perspective: 1000px; width: 140px; height: 140px; margin: 0 auto; z-index: 50; margin-bottom: 2rem;">
+                    <div class="w-full h-full relative" style="transform-style: preserve-3d; animation: coinFlip3D 2.5s cubic-bezier(0.3, 0.1, 0.3, 1) forwards;">
+                        <div class="absolute inset-0 rounded-full border-[6px] border-amber-600 bg-amber-500 flex flex-col justify-center items-center" style="backface-visibility: hidden; box-shadow: inset 0 0 25px #78350f, 0 0 15px rgba(0,0,0,0.5);">
+                            <span class="text-5xl drop-shadow-md" style="filter: grayscale(100%) sepia(100%) hue-rotate(5deg) saturate(300%) contrast(1.5);">🐻</span>
+                            <span class="text-2xl font-display text-amber-900 font-black tracking-widest mt-1">NCR</span>
+                        </div>
+                        <div class="absolute inset-0 rounded-full border-[6px] border-gray-300 bg-gray-100 flex flex-col justify-center items-center" style="backface-visibility: hidden; transform: rotateX(180deg); box-shadow: inset 0 0 25px #4b5563, 0 0 15px rgba(0,0,0,0.5);">
+                            <span class="text-5xl drop-shadow-md">🎩</span>
+                            <span class="text-[16px] font-display text-gray-800 font-black tracking-widest mt-1 leading-none text-center">LUCKY<br>38</span>
+                        </div>
+                    </div>
+                </div>
+                <h2 class="text-3xl font-display text-white mt-8 tracking-widest uppercase animate-pulse z-10">KANLI DÜELLO ATILIYOR...</h2>
+                <p class="text-amber-500 font-mono mt-2 text-xl z-10">${hostNick} <span class="text-red-600 font-bold">VS</span> ${challengerNick}</p>
+            </div>
+        `;
+        const tossSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
+        tossSound.volume = 0.8; tossSound.play().catch(e=>{});
+
+        setTimeout(() => {
+            const iWon = isMeHost ? isHostWinner : !isHostWinner;
+            
+            if(!iWon) {
+                area.innerHTML = `
+                    <div class="w-full h-full flex flex-col items-center justify-center">
+                        <div class="text-[100px] drop-shadow-[0_0_30px_#ef4444]">💀</div>
+                        <h2 class="text-5xl font-display text-red-600 mt-6 tracking-widest uppercase">KAYBETTİN</h2>
+                        <p class="text-gray-400 font-mono mt-2">Para ${winningSide.toUpperCase()} geldi. Adam paranı aldı.</p>
+                        <button onclick="renderPvPLobby()" class="mt-8 bg-[#111] border-2 border-red-900 text-red-500 px-8 py-3 font-display text-xl uppercase hover:bg-white hover:text-black transition-colors brutalist-shadow">LOBİYE DÖN</button>
+                    </div>
+                `;
+            } else {
+                area.innerHTML = `
+                    <div class="w-full h-full flex flex-col items-center justify-center">
+                        <div class="text-[100px] drop-shadow-[0_0_30px_#22c55e]">👑</div>
+                        <h2 class="text-5xl font-display text-green-500 mt-6 tracking-widest uppercase">KAZANDIN!</h2>
+                        <p class="text-amber-500 font-mono mt-2">Para ${winningSide.toUpperCase()} geldi. +${winAmount.toLocaleString('tr-TR')} KARMA</p>
+                        <button onclick="renderPvPLobby()" class="mt-8 bg-[#111] border-2 border-green-900 text-green-500 px-8 py-3 font-display text-xl uppercase hover:bg-white hover:text-black transition-colors brutalist-shadow">LOBİYE DÖN</button>
+                    </div>
+                `;
+                showMojaveFloatingKarma(winAmount);
+                const winSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3'); winSound.volume = 0.8; winSound.play().catch(e=>{});
+            }
+            
+            // Animasyon bitince herkesin güncel cüzdanını Firebase'den çekip ekrana yaz
+            const user = localStorage.getItem('kadavra_vip_user');
+            if(user) {
+                const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+                database.ref('kullanicilar/' + safeNick + '/karma').once('value').then(s => {
+                    if(s.exists()) document.getElementById('mojave-karma-display').textContent = s.val().toLocaleString('tr-TR');
+                });
+            }
+        }, 2600);
+    }
+
+
+    // ════════════ ANİMASYONLU 3D KANLI DÜELLO (PVP) MOTORU ════════════
+    function joinPvPMatch(matchKey, hostNick, amount, hostSide) {
+        const challenger = localStorage.getItem('kadavra_vip_user'); if(!challenger) return;
+        const chalSafe = challenger.toLowerCase().replace(/[.#$\[\]]/g, '_');
+        
+        database.ref(`kullanicilar/${chalSafe}`).once('value').then(snap => {
+            const uData = snap.val();
+            if(!uData.infiniteKarma && (uData.karma || 0) < amount) { showToast('KARMAN YETMİYOR FAKİR!'); return; }
+            
+            if(!uData.infiniteKarma) {
+                const newKarma = (uData.karma || 0) - amount;
+                database.ref(`kullanicilar/${chalSafe}`).update({ karma: newKarma });
+                document.getElementById('mojave-karma-display').textContent = newKarma.toLocaleString('tr-TR');
+            }
+            showMojaveFloatingKarma(-amount);
+
+            // ZAR ATILIYOR
+            const isHostWinner = Math.random() < 0.5;
+            const winnerNick = isHostWinner ? hostNick : challenger;
+            const loserNick = isHostWinner ? challenger : hostNick;
+            const winnerSafe = isHostWinner ? hostNick.toLowerCase().replace(/[.#$\[\]]/g, '_') : chalSafe;
+            const winAmount = amount * 2;
+
+            // KAZANANIN PARASINI VER VE MAÇI BİTİR
+            database.ref(`kullanicilar/${winnerSafe}`).once('value').then(winSnap => {
+                const winData = winSnap.val();
+                if(!winData.infiniteKarma) {
+                    const finalWinnerKarma = (winData.karma || 0) + winAmount;
+                    database.ref(`kullanicilar/${winnerSafe}`).update({ karma: finalWinnerKarma });
+                }
+            });
+
+            database.ref(`yeralti_kumarhane/duellolar/${matchKey}`).update({
+                status: 'finished', challenger: challenger, winner: winnerNick, loser: loserNick, finishedAt: Date.now()
+            });
+
+            broadcastCasinoLiveFeed(`🔥 DÜELLO SONUCU: ${winnerNick}, ${loserNick}'u tokatlayıp ${winAmount.toLocaleString('tr-TR')} Karmayı aldı!`);
+
+            // MEYDAN OKUYAN İÇİN ANİMASYONU TETİKLE
+            playCoinFlipShow(hostNick, challenger, hostSide, isHostWinner, winAmount, false);
+        });
+    }
+
+    // ════════════ RUS RULETİ MOTORU ════════════
+    let isRusRolling = false;
+    function playRussianRoulette(currentKarma) {
+        if(isRusRolling) return;
+        if(currentKarma <= 0) { showToast('Cüzdanında tek kuruş yok, ölüsün zaten aq!'); return; }
+        
+        const user = localStorage.getItem('kadavra_vip_user'); if(!user) return;
+        const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+
+        isRusRolling = true;
+        const icon = document.getElementById('rus-gun-icon');
+        icon.style.animation = 'diceShake 0.1s infinite';
+        
+        const cylinderSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2578/2578-preview.mp3'); 
+        cylinderSound.playbackRate = 2.0; cylinderSound.volume = 0.8; cylinderSound.play().catch(e=>{});
+
+        broadcastCasinoLiveFeed(`🔫 ${user}, masaya TÜM SERVETİNİ (${currentKarma.toLocaleString('tr-TR')}) koydu ve 6 patların topunu çevirdi...`);
+
+        setTimeout(() => {
+            const area = document.getElementById('mojave-game-area');
+            const survived = Math.random() < 0.75; // %75 YAŞAM ŞANSI, %25 ÖLÜM ŞANSI!
+
+            icon.style.animation = 'none';
+
+            if (survived) {
+                const profit = Math.floor(currentKarma * 0.30); // %30 Kâr!
+                const finalKarma = currentKarma + profit;
+                
+                database.ref(`kullanicilar/${safeNick}`).once('value').then(snap => {
+                    if(!snap.val().infiniteKarma) {
+                        database.ref(`kullanicilar/${safeNick}`).update({ karma: finalKarma });
+                        document.getElementById('mojave-karma-display').textContent = finalKarma.toLocaleString('tr-TR');
+                    }
+                });
+
+                area.style.background = 'rgba(34, 197, 94, 0.1)';
+                area.innerHTML = `
+                    <div class="w-full flex flex-col items-center justify-center h-full text-center">
+                        <div class="text-[90px] mb-2 drop-shadow-[0_0_30px_#22c55e]">😌</div>
+                        <h2 class="text-3xl font-display text-green-500 tracking-widest mb-3 uppercase drop-shadow-[2px_2px_0_#064e3b]">KLİK SESİ!</h2>
+                        <p class="text-amber-500 font-mono text-lg mb-6 border-t border-green-900/50 pt-3">HAYATTASIN. +${profit.toLocaleString('tr-TR')} KARMA KÂR ETTİN!</p>
+                        <button onclick="switchCasinoGame('rus')" class="bg-[#111] hover:bg-white hover:text-black text-white font-display text-xl py-3 px-8 border-2 border-gray-600 transition-all brutalist-shadow">TERİNİ SİL VE KALK</button>
+                    </div>
+                `;
+                showMojaveFloatingKarma(profit);
+                const winSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3'); winSound.play();
+                broadcastCasinoLiveFeed(`🍀 ŞEYTANIN BACAĞINI KIRDI! ${user}, tüm servetini %30 katlayarak masadan kalktı.`);
+            } else {
+                database.ref(`kullanicilar/${safeNick}`).once('value').then(snap => {
+                    if(!snap.val().infiniteKarma) {
+                        database.ref(`kullanicilar/${safeNick}`).update({ karma: 0 });
+                        document.getElementById('mojave-karma-display').textContent = "0";
+                    }
+                });
+
+                showMojaveFloatingKarma(-currentKarma);
+                
+                area.style.animation = "nukeFlashOut 2s ease-out forwards";
+                area.style.background = '#450a0a';
+                area.innerHTML = `
+                    <div class="w-full flex flex-col items-center justify-center h-full text-center relative z-10">
+                        <div class="text-[90px] mb-2 drop-shadow-[0_0_30px_#000]">💀</div>
+                        <h2 class="text-5xl font-display text-white tracking-widest mb-3 uppercase drop-shadow-[4px_4px_0_#000]">BUM.</h2>
+                        <p class="text-red-400 font-mono text-lg mb-6 bg-black/50 px-6 py-2">BEYNİN VE TÜM SERVETİN DUVARA DAĞILDI.</p>
+                        <button onclick="switchCasinoGame('rus')" class="bg-black hover:bg-red-600 text-white font-display text-xl py-3 px-8 border-2 border-red-900 transition-all shadow-[4px_4px_0_#000]">KANLARI TEMİZLE</button>
+                    </div>
+                `;
+                const bang = new Audio('https://assets.mixkit.co/active_storage/sfx/1004/1004-preview.mp3'); 
+                bang.volume = 1.0; bang.play().catch(e=>{});
+                broadcastCasinoLiveFeed(`☠️ R.I.P. EFSANE ÇÖKTÜ! ${user} kafasına sıktı, TÜM SERVETİ (${currentKarma.toLocaleString('tr-TR')}) kül oldu!`);
+            }
+            isRusRolling = false;
+        }, 2500);
     }
 
     // MARIO COIN: GÜNLÜK GİRİŞ ÖDÜLÜNÜ EL İLE ALMA
