@@ -175,6 +175,118 @@
     }
     body.theme-courier #up-pp-frame-overlay { display: none !important; }
 
+    /* ════════ MEGA EVRİM: FRINGE OBSERVER 👁️ ════════ */
+    body.theme-observer { background-color: #030712 !important; color: #cbd5e1 !important; font-family: 'JetBrains Mono', monospace !important; }
+    body.theme-observer #body-theme-overlay { z-index: 0 !important; background-color: #030712 !important; }
+    
+    /* Gözcü Arka Plan Animasyonları (Statik ve Silik Yazılar) */
+    .observer-noise { position: absolute; inset: 0; background: url('https://www.transparenttextures.com/patterns/stardust.png'); animation: staticFlicker 0.2s infinite; opacity: 0.15; z-index: 1; pointer-events: none; }
+    .observer-glyphs { position: absolute; inset: 0; background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(148, 163, 184, 0.05) 2px, rgba(148, 163, 184, 0.05) 4px); z-index: 2; pointer-events: none; }
+    .observer-vignette { position: absolute; inset: 0; box-shadow: inset 0 0 150px rgba(0,0,0,0.9); z-index: 3; pointer-events: none; }
+    
+    @keyframes staticFlicker { 0% { opacity: 0.1; } 50% { opacity: 0.15; } 100% { opacity: 0.1; } }
+
+    /* Profil Kutularını Gizli FBI Dosyalarına Çevirme */
+    body.theme-observer #user-profile-modal .brut-box { background: rgba(3, 7, 18, 0.9) !important; border: 1px solid #334155 !important; border-top: 4px solid #94a3b8 !important; box-shadow: inset 0 0 20px rgba(0,0,0,0.8) !important; }
+    body.theme-observer #user-profile-modal h3 { color: #f1f5f9 !important; border-color: #475569 !important; background: #0f172a !important; padding: 4px 8px; font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: 0.2em; }
+    
+    /* Sansür (Redacted) Efekti - Yazıların arkası siyah bantlı gibi */
+    body.theme-observer #up-bio, body.theme-observer .font-mono { text-shadow: 0 0 4px rgba(255,255,255,0.2); }
+    body.theme-observer #wall-input { background: #020617 !important; border: 1px dashed #475569 !important; color: #94a3b8 !important; }
+    body.theme-observer .border-red-600, body.theme-observer .bg-red-700 { border-color: #475569 !important; background-color: #1e293b !important; color: #f8fafc !important; }
+
+
+    /* ════════ MEGA EVRİM: KIŞ RÜZGARLARI (GoT) 🐺 ════════ */
+    body.theme-got { background-color: #020617 !important; color: #e2e8f0 !important; font-family: 'Outfit', serif !important; }
+    body.theme-got #body-theme-overlay { z-index: 0 !important; background-color: #020617 !important; }
+
+    /* Kar Yağışı Efektleri (İki katmanlı derinlik) */
+    .got-snow-bg { position: absolute; inset: -100px 0 0 0; background-image: radial-gradient(circle, #fff 2px, transparent 2px), radial-gradient(circle, #fff 1px, transparent 1px); background-size: 100px 100px, 50px 50px; background-position: 0 0, 20px 20px; animation: snowFall 15s linear infinite; opacity: 0.2; z-index: 1; pointer-events: none; }
+    .got-snow-fg { position: absolute; inset: -100px 0 0 0; background-image: radial-gradient(circle, #cbd5e1 3px, transparent 3px); background-size: 150px 150px; animation: snowFall 10s linear infinite; opacity: 0.4; z-index: 2; pointer-events: none; filter: blur(1px); }
+    .got-vignette { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(2,6,23,0) 0%, rgba(2,6,23,0.9) 100%); z-index: 3; pointer-events: none; }
+
+    @keyframes snowFall { 0% { transform: translateY(0); } 100% { transform: translateY(200px); } }
+
+    /* Profil Kutularını Buzlu Ejderha Camına Çevirme */
+    body.theme-got #user-profile-modal .brut-box { background: rgba(15, 23, 42, 0.7) !important; border: 2px solid #1e293b !important; border-top: 4px solid #0284c7 !important; backdrop-filter: blur(8px); box-shadow: 0 8px 32px rgba(0,0,0,0.8); }
+    body.theme-got #user-profile-modal h3 { color: #bae6fd !important; border-color: #0284c7 !important; font-family: 'Bebas Neue', serif; text-shadow: 0 0 10px rgba(2, 132, 199, 0.5); }
+    body.theme-got #wall-input { background: rgba(2, 6, 23, 0.8) !important; border: 1px solid #334155 !important; border-left: 4px solid #0284c7 !important; color: #f1f5f9 !important; }
+    body.theme-got .border-red-600, body.theme-got .bg-red-700 { border-color: #0284c7 !important; background-color: #0369a1 !important; color: #fff !important; text-shadow: 0 0 5px rgba(255,255,255,0.5); }
+    body.theme-got #up-pp { border-color: #0284c7 !important; border-radius: 50% !important; box-shadow: 0 0 20px rgba(2,132,199,0.5); }
+
+
+    /* ════════ MEGA EVRİM: THE BUTCHER 🔪 ════════ */
+    body.theme-butcher { background-color: #0a0000 !important; color: #fca5a5 !important; font-family: 'JetBrains Mono', monospace !important; }
+    body.theme-butcher #body-theme-overlay { z-index: 0 !important; background-color: #0a0000 !important; }
+
+    /* 1. Arka Plan Ambiyansı: Sarkan Zincirler ve Cızırdayan Kırmızı Spot Işığı */
+    .butcher-bg-overlay { position: absolute; inset: 0; background: radial-gradient(circle at center, #2b0000 0%, #050000 100%); z-index: 1; pointer-events: none;}
+    .butcher-chains {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background-image: repeating-linear-gradient(90deg, transparent, transparent 100px, rgba(0,0,0,0.9) 100px, rgba(0,0,0,0.9) 110px);
+        opacity: 0.5; z-index: 2; pointer-events: none;
+    }
+    .butcher-flicker {
+        position: absolute; inset: 0; background: rgba(220, 38, 38, 0.08); z-index: 3; pointer-events: none;
+        animation: butcherFlicker 4s infinite;
+    }
+    @keyframes butcherFlicker { 0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; } 20%, 22%, 24%, 55% { opacity: 0.2; } }
+
+    /* 2. Profil Kutuları: Kanlı Mezbaha Fayansları ve Paslı Kenarlar */
+    body.theme-butcher #user-profile-modal .brut-box {
+        background-color: #1a0505 !important;
+        background-image: 
+            linear-gradient(rgba(69, 10, 10, 0.3) 2px, transparent 2px),
+            linear-gradient(90deg, rgba(69, 10, 10, 0.3) 2px, transparent 2px) !important;
+        background-size: 40px 40px !important;
+        border: 4px solid #450a0a !important;
+        border-top: 6px solid #7f1d1d !important;
+        box-shadow: inset 0 0 50px rgba(0,0,0,0.95), 8px 8px 0px rgba(69, 10, 10, 0.9) !important;
+    }
+    body.theme-butcher #user-profile-modal h3 { color: #fecaca !important; border-color: #7f1d1d !important; text-shadow: 2px 2px 0px #450a0a; background: #2b0000 !important; display: inline-block; padding: 4px 10px; }
+
+    /* 3. Yeraltı Duvarı (Racon Kes): Sağ Üste Saplanmış Kanlı Satır */
+    body.theme-butcher .brut-box:has(#wall-input) { position: relative; overflow: visible !important; }
+    body.theme-butcher .brut-box:has(#wall-input)::after {
+        content: ''; position: absolute; top: -35px; right: -15px; width: 80px; height: 100px;
+        /* Saf CSS ile çizilmiş Efsanevi Satır Bıçağı */
+        background: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M40,90 L50,90 L50,50 L40,50 Z' fill='%234a2e15' /%3E%3Cpath d='M35,50 L70,50 C80,50 85,45 85,30 L85,10 L35,10 Z' fill='%2394a3b8' /%3E%3Ccircle cx='75' cy='20' r='3' fill='%230f172a' /%3E%3Cpath d='M35,50 L70,50 C80,50 85,45 85,30 L85,25 C80,35 60,40 35,45 Z' fill='%23b91c1c' /%3E%3Cpath d='M40,50 L50,50 L50,55 L40,55 Z' fill='%23334155' /%3E%3C/svg%3E") no-repeat center;
+        background-size: contain; transform: rotate(25deg); filter: drop-shadow(4px 8px 4px rgba(0,0,0,0.9));
+        pointer-events: none; z-index: 20; animation: cleaverStuck 3s infinite alternate;
+    }
+    @keyframes cleaverStuck { 0% { transform: rotate(25deg) scale(1); } 100% { transform: rotate(26deg) scale(1.02); } }
+
+    body.theme-butcher #wall-input, body.theme-butcher #review-text-input { 
+        background: #110000 !important; border: 1px dashed #7f1d1d !important; color: #f87171 !important; 
+        box-shadow: inset 0 0 10px rgba(220,38,38,0.1);
+    }
+    body.theme-butcher button[onclick="postToWall()"] {
+        background: #7f1d1d !important; color: #000 !important; font-weight: 900 !important; border: 2px solid #450a0a !important; box-shadow: 4px 4px 0px #2b0000 !important;
+    }
+
+    /* 4. Avatar (WANTED'ı iptal et, Paslı Demir ve Damlayan Kan ekle) */
+    body.theme-butcher #up-pp-wrapper {
+        background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important; transform: none !important;
+    }
+    body.theme-butcher #up-pp-wrapper::before, body.theme-butcher #up-pp-wrapper::after { display: none !important; }
+    
+    body.theme-butcher #up-pp {
+        border: 6px solid #450a0a !important; box-shadow: 0 0 40px rgba(153, 27, 27, 0.6) !important;
+        filter: contrast(1.3) grayscale(0.2) sepia(0.4) hue-rotate(-20deg) !important; /* Leatherface Filtresi */
+    }
+    
+    body.theme-butcher #up-pp-frame-overlay {
+        display: block !important;
+        /* Saf SVG ile çizilmiş ve animasyonlu damlayan kanlar */
+        background: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M20,0 L25,30 C25,35 20,35 20,30 Z M50,0 L55,50 C55,55 50,55 50,50 Z M80,0 L83,20 C83,23 80,23 80,20 Z' fill='%23b91c1c'/%3E%3C/svg%3E") no-repeat top;
+        background-size: 100% 100%; transform-origin: top; animation: butcherDrip 2s infinite alternate ease-in-out;
+    }
+    @keyframes butcherDrip { 0% { transform: scaleY(0.8); opacity: 0.8; } 100% { transform: scaleY(1.1); opacity: 1; } }
+
+    /* Butonlar ve İkonlar */
+    body.theme-butcher .border-red-600, body.theme-butcher .border-red-800 { border-color: #7f1d1d !important; }
+    body.theme-butcher .bg-red-600, body.theme-butcher .bg-red-700 { background-color: #7f1d1d !important; color: #110000 !important; }
+    
     /* ════ ZAR TİTREME EFEKTİ ════ */
     @keyframes diceShake {
         0% { transform: translate(2px, 1px) rotate(0deg) scale(1); }
@@ -2643,6 +2755,42 @@
 
           overlay.innerHTML = terminalHTML;
           if(profileBg) profileBg.innerHTML = terminalHTML; 
+      }
+
+      // 👁️ FRINGE OBSERVER MOTORU 👁️
+      else if (themeId === 'fringe-observer') {
+          document.body.classList.add('theme-observer');
+          const observerHTML = `
+              <div class="observer-noise"></div>
+              <div class="observer-glyphs"></div>
+              <div class="observer-vignette"></div>
+          `;
+          overlay.innerHTML = observerHTML;
+          if(profileBg) profileBg.innerHTML = observerHTML; 
+      }
+      
+      // 🐺 GAME OF THRONES MOTORU 🐺
+      else if (themeId === 'got-winter') {
+          document.body.classList.add('theme-got');
+          const gotHTML = `
+              <div class="got-snow-bg"></div>
+              <div class="got-snow-fg"></div>
+              <div class="got-vignette"></div>
+          `;
+          overlay.innerHTML = gotHTML;
+          if(profileBg) profileBg.innerHTML = gotHTML; 
+      }
+      
+      // 🔪 THE BUTCHER MOTORU 🔪
+      else if (themeId === 'butcher-locker') {
+          document.body.classList.add('theme-butcher');
+          const butcherHTML = `
+              <div class="butcher-bg-overlay"></div>
+              <div class="butcher-chains"></div>
+              <div class="butcher-flicker"></div>
+          `;
+          overlay.innerHTML = butcherHTML;
+          if(profileBg) profileBg.innerHTML = butcherHTML; 
       }
     }
 
