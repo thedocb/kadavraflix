@@ -41,17 +41,18 @@
     .brutalist-border { border: 2px solid #e50914; }
     
     .neon-text  { color: #fecaca; text-shadow: 2px 2px 0px #e50914; }
-    
+
+    /* ════ SİLİNEN ANA OMURGA GERİ GELDİ (BUTONLAR, NAVBAR, HERO) ════ */
     /* Jilet Gibi Butonlar */
     .neon-btn { 
         background: #050505; border: 2px solid #e50914; color: #fecaca; 
-        transition: all 0.1s ease; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; font-weight: bold;
+        transition: all 0.1s ease; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; font-weight: bold; 
     }
     .neon-btn:hover { 
         background: #e50914; color: #000; 
         transform: translate(-4px, -4px); box-shadow: 6px 6px 0px #5f0000; 
     }
-    
+
     .ghost-btn { border: 1px solid rgba(229, 9, 20, 0.5); background: transparent; transition: all 0.1s ease; font-family: 'JetBrains Mono', monospace; }
     .ghost-btn:hover { background: #e50914; color: #000; transform: translate(-3px, -3px); box-shadow: 4px 4px 0px rgba(229, 9, 20, 0.5); }
 
@@ -65,17 +66,114 @@
     #navbar { transition: background .2s ease, border .2s ease; border-bottom: 2px solid transparent; }
     #navbar.scrolled { background: rgba(5,5,5,1); border-bottom: 2px solid #e50914; }
 
-    #hero { min-height: 96vh; position: relative; display: flex; align-items: flex-end; }
-   #hero-bg { 
+    /* İŞTE POSTERİ GERİ GETİREN KAYIP KODLAR! */
+    #hero { min-height: 96vh; position: relative; display: flex; align-items: flex-end; z-index: 5; }
+    #hero-bg { 
         position: absolute; inset: 0; background-size: cover; background-position: center top; transition: opacity .7s ease; filter: contrast(1.1) grayscale(0.2);
         -webkit-mask-image: linear-gradient(to top, transparent 0%, black 25%);
         mask-image: linear-gradient(to top, transparent 0%, black 25%);
+        z-index: 1; opacity: 1 !important;
     }
     #hero-bg::after { 
         content: ''; position: absolute; inset: 0; 
         background: linear-gradient(to right, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, transparent 100%); 
     }
-    #hero-content { position: relative; z-index: 2; padding: 0 5vw 8vh; max-width: 800px; }
+    #hero-content { position: relative; z-index: 10; padding: 0 5vw 8vh; max-width: 800px; }
+
+    /* ════════ MEGA EVRİM VİRÜSÜ: COURIER 6 (FALLOUT) ════════ */
+    body.theme-courier {
+        background-color: #021103 !important; 
+        color: #4ade80 !important; 
+        font-family: 'JetBrains Mono', monospace !important; 
+    }
+
+    /* Vinyet ve kirlilik temizlendi */
+    body.theme-courier::after,
+    body.theme-courier::before {
+        display: none !important; 
+    }
+
+    body.theme-courier #body-theme-overlay { 
+        z-index: 0 !important; 
+        background-color: #021103 !important; 
+    }
+
+    /* Kişisel Arka Plan (Sıfır Filtre) */
+    body.theme-courier #up-bg {
+        display: block !important; 
+        opacity: 0.4 !important; 
+        filter: none !important; 
+    }
+
+    /* Saydam Profil Modalı Fixi */
+    body.theme-courier #user-profile-modal { background: #021103 !important; }
+    body.theme-courier #user-profile-modal .brut-box { background: rgba(2, 17, 3, 0.85) !important; border: 2px solid #22c55e !important; backdrop-filter: blur(4px); }
+
+    /* PP Kimlik Koruma (Sıfır Filtre) */
+    body.theme-courier #up-pp {
+        filter: none !important; 
+        border: 3px solid #451a03 !important; 
+        width: 100% !important; height: 200px !important; 
+        object-fit: cover !important; border-radius: 0 !important; background: #000;
+    }
+
+    /* ════ TRİLYONLUK ROBCO HACKING TERMINAL ANİMASYONLARI ════ */
+    /* 1. Eski Tüplü Monitör Bombesi (Köşelerden Kararma) */
+    .courier-crt-bulge {
+        position: absolute; inset: 0;
+        box-shadow: inset 0 0 150px rgba(0,0,0,0.95), inset 0 0 50px rgba(0,0,0,0.8);
+        border-radius: 10px; z-index: 4; pointer-events: none;
+    }
+
+    /* 2. Arkadan Yavaşça Akan Hacking Yazıları */
+    .courier-hacking-text {
+        position: absolute; top: 0; left: 2%; width: 100%; height: 200%;
+        color: rgba(34, 197, 94, 0.15); /* Çok silik fosforlu yeşil */
+        font-family: 'JetBrains Mono', monospace; font-size: 1.2rem;
+        line-height: 1.8; word-break: break-all; overflow: hidden;
+        animation: terminalScroll 30s linear infinite; z-index: 1; pointer-events: none;
+    }
+
+    /* 3. Lazer Tarama Çizgisi */
+    .courier-scanline {
+        position: absolute; top: 0; left: 0; width: 100%; height: 8px; background: rgba(74, 222, 128, 0.3);
+        box-shadow: 0 0 20px rgba(34, 197, 94, 0.6), 0 0 40px rgba(34, 197, 94, 0.2);
+        animation: pipboyScan 6s linear infinite; z-index: 2; pointer-events: none;
+    }
+
+    /* 4. CRT Yatay Piksel Çizgileri */
+    .courier-crt-overlay {
+        position: absolute; inset: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%);
+        background-size: 100% 4px; z-index: 3; pointer-events: none;
+    }
+
+    /* 🔪 Sabit yazıyı sildik, yerine JS ile akan terminal ekranı gelecek! */
+    body.theme-courier #profile-role-bg { display: block !important; opacity: 1 !important; background: none !important; z-index: 0; overflow: hidden; }
+
+    @keyframes terminalScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
+    @keyframes pipboyScan { 0% { top: -10%; } 100% { top: 110%; } }
+
+    /* Renk Dönüşümleri */
+    body.theme-courier .border-red-600, body.theme-courier .border-red-700, body.theme-courier .border-red-800, body.theme-courier .border-red-900 { border-color: #22c55e !important; }
+    body.theme-courier .bg-red-600, body.theme-courier .bg-red-700, body.theme-courier .bg-red-900 { background-color: #15803d !important; color: black !important; }
+    body.theme-courier .text-red-500, body.theme-courier .text-red-600 { color: #4ade80 !important; text-shadow: 0 0 8px rgba(74, 222, 128, 0.4) !important; }
+    body.theme-courier .brutalist-shadow { box-shadow: 6px 6px 0px #064e3b !important; }
+    
+    /* WANTED POSTERİ HİZALAMA */
+    body.theme-courier #up-pp-wrapper {
+        background-color: #fef3c7 !important; background-image: url('https://www.transparenttextures.com/patterns/old-wall.png');
+        padding: 65px 20px 75px 20px !important; border: 1px solid #b45309 !important; box-shadow: 5px 5px 20px rgba(0,0,0,0.8) !important;
+        transform: rotate(-3deg); width: 250px !important; height: auto !important; display: flex; flex-direction: column; align-items: center;
+    }
+    body.theme-courier #up-pp-wrapper::before {
+        content: 'WANTED'; position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+        font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; color: #451a03; letter-spacing: 0.05em; text-shadow: none; line-height: 1;
+    }
+    body.theme-courier #up-pp-wrapper::after {
+        content: 'DEAD OR ALIVE'; position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+        font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; color: #7f1d1d; font-weight: bold; border-top: 2px solid #451a03; border-bottom: 2px solid #451a03; padding: 2px 10px; white-space: nowrap;
+    }
+    body.theme-courier #up-pp-frame-overlay { display: none !important; }
 
     /* ════ ZAR TİTREME EFEKTİ ════ */
     @keyframes diceShake {
@@ -436,7 +534,6 @@
       <img id="up-bg" src="" class="w-full h-full object-cover opacity-40 hidden" />
       <div class="absolute inset-0 bg-gradient-to-t from-[#000] to-transparent"></div>
       <button onclick="closeUserProfile()" class="absolute top-6 right-8 text-white bg-red-600 border-2 border-red-600 px-4 py-2 font-display text-xl transition-all hover:bg-black hover:text-red-500 z-50 rounded-none brutalist-shadow shadow-black">KAPAT</button>
-      <button id="profile-mute-btn" onclick="toggleProfileMute()" class="absolute top-6 right-32 text-gray-400 border-2 border-gray-800 bg-black px-4 py-2 font-display text-xl transition-all hover:bg-gray-800 hover:text-white z-50 rounded-none brutalist-shadow hidden">🔊 SES</button>
     </div>
     
     <div class="max-w-7xl mx-auto px-4 sm:px-8 relative -mt-20 md:-mt-32 flex flex-col md:flex-row gap-8 items-end border-b-2 border-gray-800 pb-6 z-10">
@@ -602,10 +699,8 @@
       </div>
       
       <div class="flex gap-4 mb-8 border-b-2 border-gray-800 pb-0 overflow-x-auto">
-        <button onclick="switchMarketTab('themes')" id="market-tab-themes" class="market-tab px-6 py-3 border-b-4 border-transparent text-sm font-display text-gray-500 tracking-widest uppercase transition-all hover:text-white">🎨 PROFİL TEMALARI</button>
+        <button onclick="switchMarketTab('themes')" id="market-tab-themes" class="market-tab px-6 py-3 border-b-4 border-transparent text-sm font-display text-gray-500 tracking-widest uppercase transition-all hover:text-white">☢️ TEMALAR</button>
         <button onclick="switchMarketTab('frames')" id="market-tab-frames" class="market-tab px-6 py-3 border-b-4 border-transparent text-sm font-display text-gray-500 tracking-widest uppercase transition-all hover:text-white">🖼️ ÇERÇEVELER</button>
-        <button onclick="switchMarketTab('roles')" id="market-tab-roles" class="market-tab px-6 py-3 border-b-4 border-transparent text-sm font-display text-gray-500 tracking-widest uppercase transition-all hover:text-white">🎭 ÖZEL UNVANLAR</button>
-        <button onclick="switchMarketTab('sounds')" id="market-tab-sounds" class="market-tab px-6 py-3 border-b-4 border-transparent text-sm font-display text-gray-500 tracking-widest uppercase transition-all hover:text-white">🎵 SES EFEKTLERİ</button>
         <button onclick="switchMarketTab('entrances')" id="market-tab-entrances" class="market-tab px-6 py-3 border-b-4 border-transparent text-sm font-display text-gray-500 tracking-widest uppercase transition-all hover:text-white">🚀 GİRİŞ ŞOVLARI</button>
       </div>
       <div id="market-content" class="flex-1 overflow-y-auto pr-2 scrollbar-thin"></div>
@@ -841,6 +936,12 @@
                   <p class="text-gray-600 font-mono animate-pulse">Sokaklardan fısıltılar dinleniyor...</p>
               </div>
           </div>
+          </div> <!-- Bu Notlar section'ını kapatır -->
+        </div> <!-- Bu sağ tarafı (yazıların olduğu kolon) kapatır -->
+      </div> <!-- Bu modalın içindeki yan yana düzeni kapatır -->
+    </div> <!-- Bu modal-box'ı kapatır -->
+  </div> <!-- Bu ana modal-overlay'i kapatır -->
+
 
   <!-- KOLEKSİYONA EKLE MODALI -->
   <div id="add-collection-modal" class="fixed inset-0 z-[5000] bg-black/95 backdrop-blur-none hidden opacity-0 transition-opacity flex items-center justify-center">
@@ -1054,15 +1155,50 @@
       }
     }
 
-    // ════════════ ZQWQZ TARZI PROFİL VE STALK MOTORU ════════════
-    let currentProfileNick = ''; 
-    let profileAudio = null;
-
-    function openMyProfile() {
-      const user = localStorage.getItem('kadavra_vip_user');
-      if (user) { openUserProfile(user); } else { showToast('Giriş yapmamışsın pampik!'); }
+    // ════════════ YERALTI DUVARI (RACON) MOTORU ════════════
+    function postToWall() {
+      const input = document.getElementById('wall-input'); const text = input.value.trim();
+      if(!text || !currentProfileNick) return;
+      const loggedUser = localStorage.getItem('kadavra_vip_user') || 'Anonim';
+      const targetSafeNick = currentProfileNick.toLowerCase().replace(/[.#$\[\]]/g, '_');
+      database.ref('kullanicilar/' + targetSafeNick + '/duvar').push({ yazar: loggedUser, mesaj: text, tarih: Date.now() });
+      input.value = ''; showToast('Duvara racon kesildi!');
+      progressTask('t1'); 
     }
 
+    function loadWall(targetSafeNick, isMe) {
+      const wallDiv = document.getElementById('up-wall-feed');
+      const currentUser = localStorage.getItem('kadavra_vip_user') || '';
+      const isAdmin = adminler.includes(currentUser.toLowerCase());
+
+      database.ref('kullanicilar/' + targetSafeNick + '/duvar').on('value', snap => {
+        wallDiv.innerHTML = '';
+        if(!snap.exists()) { wallDiv.innerHTML = '<p class="text-sm text-gray-600 font-mono italic">Duvar tertemiz. İlk yazan sen ol!</p>'; return; }
+        let msgs = []; snap.forEach(child => { msgs.push({ key: child.key, ...child.val() }); }); msgs.sort((a,b) => b.tarih - a.tarih); 
+        
+        msgs.forEach(msg => {
+          const dateStr = new Date(msg.tarih).toLocaleDateString('tr-TR', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+          const canDelete = isMe || msg.yazar.toLowerCase() === currentUser.toLowerCase() || isAdmin; 
+          const delBtn = canDelete ? `<button onclick="deleteWallPost('${targetSafeNick}', '${msg.key}')" class="text-gray-700 hover:text-red-500 font-mono font-bold ml-3" title="Sil">X</button>` : '';
+
+          wallDiv.innerHTML += `
+            <div class="border border-gray-800 bg-[#050505] p-3 hover:border-red-900 transition-colors">
+              <div class="flex justify-between items-center mb-2 border-b border-gray-900 pb-1">
+                <span onclick="openUserProfile('${msg.yazar}')" class="font-display text-lg text-red-500 hover:text-white cursor-pointer tracking-widest">${msg.yazar}</span>
+                <div class="flex items-center gap-2"><span class="text-[9px] text-gray-600 font-mono">${dateStr}</span>${delBtn}</div>
+              </div>
+              <p class="text-sm text-gray-300 break-words font-mono">${msg.mesaj.replace(/\n/g, '<br>')}</p>
+            </div>
+          `;
+        });
+      });
+    }
+
+    function deleteWallPost(targetSafeNick, postKey) {
+      if(confirm('Kazıyıp atıyoruz, emin misin?')) { database.ref('kullanicilar/' + targetSafeNick + '/duvar/' + postKey).remove(); showToast('Yazı silindi.'); }
+    }
+
+    // ════════════ ZQWQZ TARZI PROFİL VE STALK MOTORU ════════════
     function openUserProfile(targetNick) {
       currentProfileNick = targetNick; 
       const myUser = localStorage.getItem('kadavra_vip_user') || '';
@@ -1077,7 +1213,6 @@
         
         document.getElementById('up-name').textContent = targetNick;
 
-        // --- YENİ KUSURSUZ RÜTBE GÖSTERİM MANTIĞI ---
         let rawFactionRank = 'Çaylak';
         let currentYol = data.yol || 'none';
         if(Ranks[currentYol]) {
@@ -1088,28 +1223,16 @@
 
         let finalRank = "";
         const pref = data.rütbeTercihi || 'auto';
-
-        if (pref === 'faction') {
-            finalRank = rawFactionRank;
-        } else if (pref === 'market' && data.ozelRol) {
-            finalRank = data.ozelRol.toUpperCase();
-        } else if (pref === 'adminCustom' && data.adminRol) {
-            finalRank = data.adminRol.toUpperCase();
-        } else if (pref === 'admin' && adminler.includes(targetNick.toLowerCase())) {
-            finalRank = '👑 LEJYON BARONU';
-        } else {
-            // AUTO MANTIĞI
-            if (data.adminRol) {
-                finalRank = data.adminRol.toUpperCase();
-            } else if (adminler.includes(targetNick.toLowerCase())) {
-                finalRank = '👑 LEJYON BARONU';
-            } else if (data.ozelRol) {
-                finalRank = data.ozelRol.toUpperCase();
-            } else if (data.infiniteKarma) {
-                finalRank = '∞ YERALTI İLAHI';
-            } else {
-                finalRank = rawFactionRank;
-            }
+        if (pref === 'faction') { finalRank = rawFactionRank; } 
+        else if (pref === 'market' && data.ozelRol) { finalRank = data.ozelRol.toUpperCase(); } 
+        else if (pref === 'adminCustom' && data.adminRol) { finalRank = data.adminRol.toUpperCase(); } 
+        else if (pref === 'admin' && adminler.includes(targetNick.toLowerCase())) { finalRank = '👑 LEJYON BARONU'; } 
+        else {
+            if (data.adminRol) finalRank = data.adminRol.toUpperCase();
+            else if (adminler.includes(targetNick.toLowerCase())) finalRank = '👑 LEJYON BARONU';
+            else if (data.ozelRol) finalRank = data.ozelRol.toUpperCase();
+            else if (data.infiniteKarma) finalRank = '∞ YERALTI İLAHI';
+            else finalRank = rawFactionRank;
         }
         document.getElementById('up-rank').textContent = finalRank;
 
@@ -1126,60 +1249,22 @@
         const bgImg = document.getElementById('up-bg');
         if(data.bg) { bgImg.src = data.bg; bgImg.classList.remove('hidden'); } else { bgImg.classList.add('hidden'); bgImg.src = ''; }
 
-        // Market kozmetiklerini uygula
         applyMarketCosmetics(data);
-        if (profileAudio) { profileAudio.pause(); profileAudio.currentTime = 0; }
-        const aktifSes = (data.marketAktif && data.marketAktif.sounds) ? data.marketAktif.sounds : null;
-        if (aktifSes) {
-            const soundData = karmaMarketItems.sounds.find(s => s.id === aktifSes);
-            if (soundData && soundData.audioUrl) {
-                profileAudio = new Audio(soundData.audioUrl);
-                profileAudio.volume = soundData.volume || 0.4; 
-                profileAudio.play().catch(e => console.log('Tarayıcı otomatik sesi engelledi.'));
-                // Müzik çalmaya başladığı an butonu göster
-                document.getElementById('profile-mute-btn').classList.remove('hidden');
-            } 
-        } else {
-            // Müzik yoksa butonu gizle
-            document.getElementById('profile-mute-btn').classList.add('hidden');
-        }
-        // ── ROLA ÖZEL ALT KISIM BOKEH ARKAPLANI ──
+        
         const profileModal = document.getElementById('user-profile-modal');
-        const aktifRol = (data.marketAktif && data.marketAktif.roles) ? data.marketAktif.roles : null;
+        const aktifTema = (data.marketAktif && data.marketAktif.themes) ? data.marketAktif.themes : null;
 
-        let bokehDiv = document.getElementById('role-bokeh-layer');
-        if (!bokehDiv) {
-          bokehDiv = document.createElement('div');
-          bokehDiv.id = 'role-bokeh-layer';
-          bokehDiv.className = 'fixed inset-0 pointer-events-none transition-opacity duration-1000 z-[-1]';
-          profileModal.appendChild(bokehDiv);
-        }
+        // 🔪 DOMAIN EXPANSION: Girdiğin adamın teması anında sana bulaşır (Geçici)
+        applyBodyTheme(aktifTema, true);
 
-        if (aktifRol === 'godfather') {
-          bokehDiv.style.background = "url('https://c4.wallpaperflare.com/wallpaper/143/596/26/the-godfather-vito-corleone-movies-wallpaper-preview.jpg') center / cover fixed no-repeat";
-          bokehDiv.style.filter = "brightness(0.3) blur(2.5px)"; bokehDiv.style.transform = "scale(1.05)"; bokehDiv.style.opacity = "1";
-        } 
-        else if (aktifRol === 'halka-tasiyici') {
-          bokehDiv.style.background = "url('https://4kwallpapers.com/images/wallpapers/lord-of-the-rings-3840x2160-11941.jpg') center / cover fixed no-repeat";
-          bokehDiv.style.filter = "brightness(0.3) sepia(0.4) blur(2.5px)"; bokehDiv.style.transform = "scale(1.05)"; bokehDiv.style.opacity = "1";
-        }
-        else if (aktifRol === 'yedinci-gunah') {
-          bokehDiv.style.background = "url('https://wallpaper.forfun.com/fetch/3b/3b357660a73f7129b6786e8fa5c67a38.jpeg') center / cover fixed no-repeat";
-          bokehDiv.style.filter = "brightness(0.3) blur(2.5px)"; bokehDiv.style.transform = "scale(1.05)"; bokehDiv.style.opacity = "1";
-        }
-        else if (aktifRol === 'lejyon-golgesi') {
-          bokehDiv.style.background = "url('https://images2.alphacoders.com/133/1338859.png') center / cover fixed no-repeat";
-          bokehDiv.style.filter = "brightness(0.3) blur(2.5px)"; bokehDiv.style.transform = "scale(1.05)"; bokehDiv.style.opacity = "1";
-        }
-        else if (aktifRol === 'derin-cukur-sefi') {
-          bokehDiv.style.background = "url('https://ca-times.brightspotcdn.com/dims4/default/8e0373b/2147483647/strip/false/crop/5537x3691+0+0/resize/1486x991!/quality/75/?url=https%3A%2F%2Fcalifornia-times-brightspot.s3.amazonaws.com%2F6c%2F8c%2F99be8f38487388baab470402f69a%2F1528012-et-the-alchemist-7494.jpg') center / cover fixed no-repeat";
-          bokehDiv.style.filter = "brightness(0.3) blur(2.5px)"; bokehDiv.style.transform = "scale(1.05)"; bokehDiv.style.opacity = "1";
-        }
-        else {
-          bokehDiv.style.opacity = "0";
-          profileModal.style.background = "#050505"; 
-        }
+        // Eski saydamlık bug'ını temizle
+        profileModal.style.background = ""; 
 
+        // ESKİ ROL SİSTEMİNİ KÖKÜNDEN SİLDİK! Eski katmanı (bokehDiv) varsa yok ediyoruz!
+        let oldBokeh = document.getElementById('role-bokeh-layer');
+        if (oldBokeh) oldBokeh.remove();
+
+        // 🔪 İŞTE SENİN EKSİK OLAN KODUN (BUTONLARIN OLDUĞU YER) BURASIYDI! 🔪
         const actionsDiv = document.getElementById('up-actions');
         if(isMe) {
           actionsDiv.innerHTML = `<span class="bg-black border-2 border-gray-800 px-6 py-2 text-gray-500 font-display text-xl uppercase tracking-widest shadow-black brutalist-shadow select-none">SENİN PROFİLİN</span>`;
@@ -1221,75 +1306,16 @@
       });
     }
 
-    function toggleFollow(targetNick) {
-      const myUser = localStorage.getItem('kadavra_vip_user'); if(!myUser) return;
-      const mySafeNick = myUser.toLowerCase().replace(/[.#$\[\]]/g, '_');
-      const targetSafeNick = targetNick.toLowerCase().replace(/[.#$\[\]]/g, '_');
-      
-      const targetRef = database.ref(`kullanicilar/${targetSafeNick}/followers/${mySafeNick}`);
-      const myRef = database.ref(`kullanicilar/${mySafeNick}/following/${targetSafeNick}`);
-      
-      targetRef.once('value').then(snap => {
-        const btn = document.getElementById('follow-btn-ui');
-        if(snap.exists()) {
-          targetRef.remove(); myRef.remove(); showToast('İrtibat koptu.');
-          if(btn) { btn.textContent = 'TAKİP ET'; btn.className = 'border-2 border-red-600 bg-red-900/20 text-white hover:bg-red-600 hover:text-black px-6 py-2 font-display text-xl uppercase tracking-widest transition-all brutalist-shadow'; }
-          document.getElementById('up-stat-followers').textContent = parseInt(document.getElementById('up-stat-followers').textContent) - 1;
-        } else {
-          targetRef.set(true); myRef.set(true); showToast('Takiptesin!');
-          sendNotification(targetNick, 'follow', `<span class="font-bold text-red-400">${myUser}</span> lavuğu seni takibe aldı!`);
-          if(btn) { btn.textContent = 'İRTİBATI KES'; btn.className = 'border-2 border-gray-800 bg-transparent text-gray-600 hover:text-red-500 hover:border-red-800 px-6 py-2 font-display text-xl uppercase tracking-widest transition-all brutalist-shadow'; }
-          document.getElementById('up-stat-followers').textContent = parseInt(document.getElementById('up-stat-followers').textContent) + 1;
-        }
-      });
-    }
-
-    function postToWall() {
-      const input = document.getElementById('wall-input'); const text = input.value.trim();
-      if(!text || !currentProfileNick) return;
-      const loggedUser = localStorage.getItem('kadavra_vip_user') || 'Anonim';
-      const targetSafeNick = currentProfileNick.toLowerCase().replace(/[.#$\[\]]/g, '_');
-      database.ref('kullanicilar/' + targetSafeNick + '/duvar').push({ yazar: loggedUser, mesaj: text, tarih: Date.now() });
-      input.value = ''; showToast('Duvara racon kesildi!');
-      progressTask('t1'); // SİSTEM AJANI
-    }
-
-    function loadWall(targetSafeNick, isMe) {
-      const wallDiv = document.getElementById('up-wall-feed');
-      const currentUser = localStorage.getItem('kadavra_vip_user') || '';
-      const isAdmin = adminler.includes(currentUser.toLowerCase());
-
-      database.ref('kullanicilar/' + targetSafeNick + '/duvar').on('value', snap => {
-        wallDiv.innerHTML = '';
-        if(!snap.exists()) { wallDiv.innerHTML = '<p class="text-sm text-gray-600 font-mono italic">Duvar tertemiz. İlk yazan sen ol!</p>'; return; }
-        let msgs = []; snap.forEach(child => { msgs.push({ key: child.key, ...child.val() }); }); msgs.sort((a,b) => b.tarih - a.tarih); 
-        
-        msgs.forEach(msg => {
-          const dateStr = new Date(msg.tarih).toLocaleDateString('tr-TR', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
-          const canDelete = isMe || msg.yazar.toLowerCase() === currentUser.toLowerCase() || isAdmin; 
-          const delBtn = canDelete ? `<button onclick="deleteWallPost('${targetSafeNick}', '${msg.key}')" class="text-gray-700 hover:text-red-500 font-mono font-bold ml-3" title="Sil">X</button>` : '';
-
-          wallDiv.innerHTML += `
-            <div class="border border-gray-800 bg-[#050505] p-3 hover:border-red-900 transition-colors">
-              <div class="flex justify-between items-center mb-2 border-b border-gray-900 pb-1">
-                <span onclick="openUserProfile('${msg.yazar}')" class="font-display text-lg text-red-500 hover:text-white cursor-pointer tracking-widest">${msg.yazar}</span>
-                <div class="flex items-center gap-2"><span class="text-[9px] text-gray-600 font-mono">${dateStr}</span>${delBtn}</div>
-              </div>
-              <p class="text-sm text-gray-300 break-words font-mono">${msg.mesaj.replace(/\n/g, '<br>')}</p>
-            </div>
-          `;
-        });
-      });
-    }
-
-    function deleteWallPost(targetSafeNick, postKey) {
-      if(confirm('Kazıyıp atıyoruz, emin misin?')) { database.ref('kullanicilar/' + targetSafeNick + '/duvar/' + postKey).remove(); showToast('Yazı silindi.'); }
-    }
-
     function closeUserProfile() { 
-        const mod = document.getElementById('user-profile-modal'); mod.classList.add('opacity-0'); setTimeout(()=> mod.classList.add('hidden'), 300); 
-        if (profileAudio) { profileAudio.pause(); profileAudio.currentTime = 0; }
-        document.getElementById('profile-mute-btn').classList.add('hidden'); // Modalı kapatırken butonu da gizle
+        const mod = document.getElementById('user-profile-modal'); 
+        mod.classList.add('opacity-0'); 
+        setTimeout(()=> {
+            mod.classList.add('hidden'); 
+            
+            // 🔪 PROFİLDEN ÇIKINCA BÜYÜ BOZULUR, KENDİ TEMANA GERİ DÖNERSİN!
+            const myTheme = localStorage.getItem('kadavra_my_theme');
+            applyBodyTheme(myTheme);
+        }, 300); 
     }
     
     function openSettings() { 
@@ -1486,7 +1512,6 @@
       } catch(e) { document.getElementById('modal-cast').textContent = 'Bilinmiyor'; }
     }
     
-    if(document.getElementById('review-text-input')) { document.getElementById('review-text-input').value = ''; setReviewScore(0); }
     function closeModal()  { document.getElementById('modal-overlay').classList.remove('open'); document.body.style.overflow = ''; document.getElementById('player-frame').src = ''; document.getElementById('modal-poster').parentElement.classList.remove('hidden'); const btnArea = document.getElementById('modal-desc').nextElementSibling; if(btnArea) btnArea.classList.remove('hidden'); const cList = document.getElementById('comments-list'); if(cList) cList.parentElement.classList.remove('hidden'); if (window.history.state && window.history.state.modalOpen) { window.history.back(); } }
     window.onpopstate = function(event) { const overlay = document.getElementById('modal-overlay'); if (overlay && overlay.classList.contains('open')) { closeModal(); } };
     function renderSeasonTabs(showId) { const tabs = document.getElementById('season-tabs'); tabs.innerHTML = ''; currentSeasons.forEach((s, i) => { const btn = document.createElement('button'); btn.className = 'season-tab' + (i === 0 ? ' active' : ''); btn.textContent = `SEZON ${s.season_number}`; btn.onclick = () => { document.querySelectorAll('.season-tab').forEach(b => b.classList.remove('active')); btn.classList.add('active'); loadEpisodes(showId, s.season_number); }; tabs.appendChild(btn); }); if (currentSeasons.length > 0) loadEpisodes(showId, currentSeasons[0].season_number); }
@@ -2364,212 +2389,261 @@
       database.ref(`kullanicilar/${safeNick}/karmaHistory`).push({ type: type, icon: icon, amount: amount, detail: detail, timestamp: Date.now() });
     }
 
+    // ════════ HESAP DÖKÜMÜ (SON 10 İŞLEM) ════════
     function openKarmaInfo() { 
-      const mod = document.getElementById('karma-info-modal'); const feed = document.getElementById('karma-history-feed'); const totalDisplay = document.getElementById('karma-total-display');
-      const user = localStorage.getItem('kadavra_vip_user'); const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
-      feed.innerHTML = '<p class="text-gray-600 font-mono text-sm">Veriler çekiliyor...</p>';
+      try {
+          const mod = document.getElementById('karma-info-modal'); 
+          const feed = document.getElementById('karma-history-feed'); 
+          const totalDisplay = document.getElementById('karma-total-display');
+          
+          if(!mod || !feed || !totalDisplay) return;
 
-      database.ref(`kullanicilar/${safeNick}`).once('value').then(snap => {
-        if(snap.exists()) { const data = snap.val(); totalDisplay.textContent = data.infiniteKarma ? '∞' : (data.karma || 0).toLocaleString('tr-TR'); }
-      });
+          const user = localStorage.getItem('kadavra_vip_user'); 
+          if(!user) return;
+          const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+          
+          feed.innerHTML = '<p class="text-gray-600 font-mono text-sm animate-pulse">Kayıtlar çekiliyor...</p>';
 
-      database.ref(`kullanicilar/${safeNick}/karmaHistory`).limitToLast(30).once('value').then(snap => {
-        feed.innerHTML = '';
-        if(!snap.exists()) { feed.innerHTML = '<p class="text-gray-600 font-mono">Kayıt yok.</p>'; return; }
-        let logs = []; snap.forEach(child => logs.push(child.val())); logs.sort((a,b) => b.timestamp - a.timestamp); 
+          database.ref(`kullanicilar/${safeNick}`).once('value').then(snap => {
+            if(snap.exists()) { 
+                const data = snap.val(); 
+                totalDisplay.textContent = data.infiniteKarma ? '∞' : (data.karma || 0).toLocaleString('tr-TR'); 
+            }
+          });
 
-        logs.forEach(log => {
-          const date = new Date(log.timestamp).toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' });
-          const dateStr = new Date(log.timestamp).toLocaleDateString('tr-TR', { day:'numeric', month:'short' });
-          const color = log.amount > 0 ? 'text-green-500' : 'text-red-500'; const sign = log.amount > 0 ? '+' : '';
+          database.ref(`kullanicilar/${safeNick}/karmaHistory`).limitToLast(10).once('value').then(snap => {
+            feed.innerHTML = '';
+            if(!snap.exists()) { feed.innerHTML = '<p class="text-gray-600 font-mono">Tertemiz, henüz icraat yok.</p>'; return; }
+            
+            let logs = []; 
+            snap.forEach(child => {
+                const val = child.val();
+                if(val && val.timestamp) logs.push(val); 
+            }); 
+            logs.sort((a,b) => b.timestamp - a.timestamp); 
 
-          feed.innerHTML += `
-            <div class="bg-black border-l-2 border-gray-800 p-3 flex justify-between items-center hover:border-yellow-600 transition-colors">
-              <div class="flex items-center gap-3">
-                <span class="text-xl">${log.icon}</span>
-                <div>
-                  <p class="text-gray-300 font-display tracking-widest text-lg">${log.detail.toUpperCase()}</p>
-                  <p class="text-[9px] text-gray-600">${dateStr} // ${date}</p>
+            logs.forEach(log => {
+              const date = new Date(log.timestamp).toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' });
+              const dateStr = new Date(log.timestamp).toLocaleDateString('tr-TR', { day:'numeric', month:'short' });
+              const amount = log.amount || 0;
+              const color = amount > 0 ? 'text-green-500' : 'text-red-500'; 
+              const sign = amount > 0 ? '+' : '';
+              const detail = log.detail ? log.detail.toUpperCase() : 'BİLİNMEYEN İŞLEM';
+              const icon = log.icon || '⚡';
+
+              feed.innerHTML += `
+                <div class="bg-black border-l-2 border-gray-800 p-3 flex justify-between items-center hover:border-yellow-600 transition-colors brutalist-card mb-2">
+                  <div class="flex items-center gap-3">
+                    <span class="text-2xl">${icon}</span>
+                    <div>
+                      <p class="text-gray-300 font-display tracking-widest text-lg">${detail}</p>
+                      <p class="text-[9px] text-gray-600 font-mono">${dateStr} // ${date}</p>
+                    </div>
+                  </div>
+                  <span class="${color} font-mono font-bold text-sm bg-[#111] px-2 py-1 border border-gray-800">${sign}${amount}</span>
                 </div>
-              </div>
-              <span class="${color} font-mono font-bold text-sm">${sign}${log.amount}</span>
-            </div>
-          `;
-        });
-      });
-      mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50); 
+              `;
+            });
+          }).catch(err => {
+              feed.innerHTML = '<p class="text-red-500 font-mono text-xs">Bağlantı hatası.</p>';
+          });
+          
+          mod.classList.remove('hidden'); 
+          setTimeout(()=> mod.classList.remove('opacity-0'), 50); 
+      } catch(e) { console.log("Hesap dökümü açılırken hata:", e); }
     }
     
     function closeKarmaInfo() { const mod = document.getElementById('karma-info-modal'); mod.classList.add('opacity-0'); setTimeout(()=> mod.classList.add('hidden'), 300); }
-    
-    // ════════════ KARMA MARKETİ MOTORU (BRUTALİST EDİSYON) ════════════
+
+    // ════════════ KARMA MARKETİ MOTORU (KUSURSUZ KOZMETİK EDİTİON) ════════════
     const karmaMarketItems = {
       themes: [
         {
-          id: 'yeraltı-kızılı', name: 'Yeraltı Kızılı', icon: '🔴', price: 25000,
-          desc: 'Mekanın kurucu rengi. Kırmızı, her zaman kırmızı.',
-          chatColor: '#f87171', chatPrefix: '🔴',
-          bodyPattern: `linear-gradient(rgba(5,5,5,0.85), rgba(5,5,5,0.95)), url('https://external-preview.redd.it/dark-crowned-king-red-aesthetic-live-wallpaper-v0-dDhvOXNqYnFwMWpnMU-GbyJJ8Dc5-e-OInSvc74eR6NWeQm-LLewq_plzNdH.png?format=pjpg&auto=webp&s=b4de35609a1bbd855267b5fa28e37fe63e5ac2ac')`,
-          bgPos: 'center, center', bgRep: 'no-repeat, no-repeat', bgAtt: 'fixed, fixed', bodySize: 'auto, cover'
+          id: 'courier-6', name: 'Courier 6 (Fallout)', icon: '☢️', price: 500000,
+          desc: 'Tüm siten Pip-Boy terminaline dönüşür. Profilin Mojave çöllerinden kopup gelen bir WANTED posteri olur.',
+          chatColor: '#4ade80', chatPrefix: '☢️'
+        },
+        // 👇 YENİ EKLENEN TEMALAR 👇
+        {
+          id: 'got-winter', name: 'Kış Rüzgarları', icon: '🐺', price: 1000000,
+          desc: 'Kuzeyin dondurucu soğuğu ve Valyria ateşi profiline çöker. Taht senin hakkın.',
+          chatColor: '#38bdf8', chatPrefix: '🐺'
         },
         {
-          id: 'godfather', name: 'The Godfather', icon: '🌹', price: 150000,
-          desc: '"Bir teklif yapacağım, reddedemeyeceksin."',
-          chatColor: '#c9a76e', chatPrefix: '🌹',
-          bodyPattern: `linear-gradient(rgba(5,5,5,0.85), rgba(5,5,5,0.95)), url('https://images7.alphacoders.com/461/thumb-1920-461499.jpg')`,
-          bgPos: 'center, center', bgRep: 'no-repeat, no-repeat', bgAtt: 'fixed, fixed', bodySize: 'auto, cover'
+          id: 'butcher-locker', name: 'Kasabın Dolabı', icon: '🔪', price: 2500000,
+          desc: 'Her yer kan revan. Paslı et kancaları ve mezbaha soğuğu. Raconu satırla kesersin.',
+          chatColor: '#dc2626', chatPrefix: '🔪'
         },
         {
-          id: 'se7en', name: 'Se7en', icon: '🔪', price: 150000,
-          desc: 'Yedi ölümcül günah. Şehrin yağmuru, suç hattı senin.',
-          chatColor: '#d97706', chatPrefix: '🔪',
-          bodyPattern: `linear-gradient(rgba(5,5,5,0.85), rgba(5,5,5,0.95)), url('https://wallpapercave.com/wp/wp2180119.jpg')`,
-          bgPos: 'center, center', bgRep: 'no-repeat, no-repeat', bgAtt: 'fixed, fixed', bodySize: 'auto, cover'
-        },
-        {
-          id: 'yuzuk-efendisi', name: 'Yüzük Efendisi', icon: '💍', price: 250000,
-          desc: 'Hepsini yönetmek için tek yüzük. Orta Dünya.',
-          chatColor: '#eab308', chatPrefix: '💍',
-          bodyPattern: `linear-gradient(rgba(5,5,5,0.85), rgba(5,5,5,0.95)), url('https://wallpaperaccess.com/full/92750.jpg')`,
-          bgPos: 'center, center', bgRep: 'no-repeat, no-repeat', bgAtt: 'fixed, fixed', bodySize: 'auto, cover'
-        },
-        {
-          id: 'kara-sovalye', name: 'Kara Şövalye', icon: '🦇', price: 500000,
-          desc: 'Neden bu kadar ciddiyim? Gotham\'ın karanlık kenti.',
-          chatColor: '#a78bfa', chatPrefix: '🦇',
-          bodyPattern: `linear-gradient(rgba(5,5,5,0.85), rgba(5,5,5,0.95)), url('https://wallpapers-clan.com/wp-content/uploads/2025/07/dc-comics-batman-stylized-art-desktop-wallpaper-preview.jpg')`,
-          bgPos: 'center, center', bgRep: 'no-repeat, no-repeat', bgAtt: 'fixed, fixed', bodySize: 'auto, cover'
+          id: 'fringe-observer', name: 'Fringe Gözcüsü', icon: '👁️', price: 4000000,
+          desc: 'Zamanın dışından izle. Siten kuantum anomalileri ve gizli FBI dosyalarıyla kodlanır.',
+          chatColor: '#9ca3af', chatPrefix: '👁️'
         }
       ],
       frames: [
         {
-          id: 'yangin-cercevesi', name: 'Yangın Çerçevesi', icon: '🔥', price: 50000,
-          desc: 'Alev alev. Yeraltının ateşi profiline yansıdı.',
+          id: 'mace-windu', name: 'Mor Işın Kılıcı', icon: '⚔️', price: 150000,
+          desc: 'ZQWQZ usulü. Kılıcın titreyen lazeri ve detaylı kabzası profilini keser.',
           apply: () => {
             const pp = document.getElementById('up-pp'); const ov = document.getElementById('up-pp-frame-overlay');
-            if(pp){ pp.style.border='4px solid #ef4444'; pp.style.boxShadow='4px 4px 0px #7f1d1d'; pp.style.filter=''; }
-            if(ov) ov.innerHTML = `<div style="position:absolute;top:-26px;left:50%;transform:translateX(-50%);font-size:30px;filter:drop-shadow(2px 2px 0px #000);pointer-events:none;white-space:nowrap;line-height:1;">🔥🔥🔥</div>`;
-          }
-        },
-        {
-          id: 'altin-tac', name: 'Altın Taç', icon: '👑', price: 100000,
-          desc: 'Lejyonun tacı senin kafanda.',
-          apply: () => {
-            const pp = document.getElementById('up-pp'); const ov = document.getElementById('up-pp-frame-overlay');
-            if(pp){ pp.style.border='4px solid #eab308'; pp.style.boxShadow='4px 4px 0px #713f12'; pp.style.filter=''; }
-            if(ov) ov.innerHTML = `<div style="position:absolute;top:-40px;left:50%;transform:translateX(-50%);font-size:48px;filter:drop-shadow(2px 2px 0px #000);pointer-events:none;line-height:1;">👑</div>`;
-          }
-        },
-        {
-          id: 'yeraltı-sigarası', name: 'Yeraltı Sigarası', icon: '🚬', price: 75000,
-          desc: 'Bir sigara, bin hikaye. Noir ruhu.',
-          apply: () => {
-            const pp = document.getElementById('up-pp'); const ov = document.getElementById('up-pp-frame-overlay');
-            if(pp){ pp.style.border='4px solid #4b5563'; pp.style.boxShadow='4px 4px 0px #1f2937'; pp.style.filter='grayscale(0.8)'; }
-            if(ov) ov.innerHTML = `<div style="position:absolute;bottom:-14px;right:-14px;font-size:40px;transform:rotate(-20deg);filter:drop-shadow(2px 2px 0px #000);pointer-events:none;">🚬</div>`;
-          }
-        },
-        {
-          id: 'godfather-gulu', name: 'Godfather Gülü', icon: '🌹', price: 150000,
-          desc: 'Don\'un imzası. Amber çerçeve.',
-          apply: () => {
-            const pp = document.getElementById('up-pp'); const ov = document.getElementById('up-pp-frame-overlay');
-            if(pp){ pp.style.border='4px solid #92400e'; pp.style.boxShadow='4px 4px 0px #451a03'; pp.style.filter='grayscale(0.5) sepia(0.5)'; }
-            if(ov) ov.innerHTML = `<div style="position:absolute;bottom:-16px;left:-16px;font-size:50px;transform:rotate(18deg);filter:drop-shadow(2px 2px 0px #000);pointer-events:none;">🌹</div>`;
-          }
-        },
-        {
-          id: 'olum-maskesi', name: 'Ölüm Maskesi', icon: '💀', price: 250000,
-          desc: 'Ölümle dans edenlerin çerçevesi.',
-          apply: () => {
-            const pp = document.getElementById('up-pp'); const ov = document.getElementById('up-pp-frame-overlay');
-            if(pp){ pp.style.border='4px solid #7c3aed'; pp.style.boxShadow='4px 4px 0px #4c1d95'; pp.style.filter='contrast(1.2) brightness(0.9)'; }
+            if(pp){ pp.style.border='2px solid #a855f7'; pp.style.boxShadow='0 0 15px rgba(168,85,247,0.6)'; pp.style.filter=''; }
             if(ov) ov.innerHTML = `
-              <div style="position:absolute;top:-36px;left:50%;transform:translateX(-50%);font-size:44px;filter:drop-shadow(2px 2px 0px #000);pointer-events:none;line-height:1;">💀</div>
-              <div style="position:absolute;inset:0;background:linear-gradient(transparent 60%, rgba(88,28,135,0.5) 100%);pointer-events:none;"></div>`;
+              <style>@keyframes saberHumMor { 0% { opacity: 0.85; transform: scaleX(0.9); } 100% { opacity: 1; transform: scaleX(1.1); } }</style>
+              <div style="position:absolute; bottom:-15px; left:10%; width:16px; height:150%; transform: rotate(18deg); transform-origin: bottom center; pointer-events:none; z-index:20; display:flex; flex-direction:column; align-items:center;">
+                  <!-- Lazer (Bıçak) -->
+                  <div style="flex:1; width:6px; background:#fff; border-radius:10px 10px 0 0; box-shadow: 0 0 10px #a855f7, 0 0 20px #a855f7, 0 0 30px #a855f7, 0 0 50px #a855f7; animation: saberHumMor 0.05s infinite alternate;"></div>
+                  <!-- Kabza (Hilt) -->
+                  <div style="width:12px; height:35px; background:linear-gradient(to right, #64748b, #f1f5f9, #64748b); border-radius:2px; border-top:2px solid #1e293b; border-bottom:4px solid #0f172a; display:flex; flex-direction:column; justify-content:space-evenly; align-items:center; filter:drop-shadow(2px 4px 6px rgba(0,0,0,0.8));">
+                      <div style="width:100%; height:2px; background:#1e293b;"></div>
+                      <div style="width:100%; height:2px; background:#1e293b;"></div>
+                      <div style="width:4px; height:4px; background:#a855f7; border-radius:50%; box-shadow:0 0 5px #a855f7;"></div>
+                  </div>
+              </div>
+            `;
           }
-        }
-      ],
-      roles: [
-        { id: 'godfather', name: 'The Godfather', icon: '🎩', price: 150000, desc: 'Suç dünyasının babası.', displayColor: '#c9a76e' },
-        { id: 'yedinci-gunah', name: 'Yedinci Günah', icon: '🔪', price: 200000, desc: 'Günahların avcısı.', displayColor: '#d97706' },
-        { id: 'halka-tasiyici', name: 'Yüzük Taşıyıcı', icon: '💍', price: 300000, desc: 'Kader omuzlarında.', displayColor: '#eab308' },
-        { id: 'lejyon-golgesi', name: 'Lejyon Gölgesi', icon: '🌑', price: 500000, desc: 'Mekanın karanlık koruyucusu.', displayColor: '#9ca3af' },
-        { id: 'derin-cukur-sefi', name: 'Derin Çukur Şefi', icon: '💀', price: 1000000, desc: 'Efsane budur.', displayColor: '#f97316' }
-      ],
-      sounds: [
-        { 
-          id: 'doc-b-beat', 
-          name: 'Doc B - Ana Altyapı', 
-          icon: '🎤', 
-          price: 100000, 
-          desc: 'Sisteme giriş yaptığında kendi ağır altyapılarından biri çalsın. Saf hip-hop.', 
-          displayColor: '#ef4444', 
-          audioUrl: 'https://cdn.discordapp.com/attachments/1499504072657469585/1499506203728810156/Griselda_-_DR_BIRDS_instrumental.mp3?ex=69f50b7a&is=69f3b9fa&hm=da13065dbf6492e03eb6250a6240f808f79c8578c576ca5184594c47cca38e02&',
-          volume: 0.10
         },
-        { 
-          id: 'sauronun-baskisi', 
-          name: 'Sauron\'un Konuşması', 
-          icon: '👁️', 
-          price: 75000, 
-          desc: 'Kara lisanı duymaya hazır ol. "Ash nazg durbatulûk, ash nazg gimbatul..."', 
-          displayColor: '#eab308', 
-          audioUrl: 'https://cdn.discordapp.com/attachments/1499504072657469585/1499505555973079140/Sauron_Black_Speech.mp3?ex=69f50ae0&is=69f3b960&hm=e75cdda7b4fd98b7d3101be42f1154dc24791492e541b6c66508759e2081febc&'
+        {
+          id: 'sith-lord', name: 'Sith Işın Kılıcı', icon: '🩸', price: 150000,
+          desc: 'Karanlık tarafın kırmızı, titreyen ve öfkeli kılıcı.',
+          apply: () => {
+            const pp = document.getElementById('up-pp'); const ov = document.getElementById('up-pp-frame-overlay');
+            if(pp){ pp.style.border='2px solid #ef4444'; pp.style.boxShadow='0 0 15px rgba(239,68,68,0.6)'; pp.style.filter=''; }
+            if(ov) ov.innerHTML = `
+              <style>@keyframes saberHumRed { 0% { opacity: 0.8; transform: scaleX(0.85); box-shadow: 0 0 10px #ef4444, 0 0 20px #ef4444; } 100% { opacity: 1; transform: scaleX(1.15); box-shadow: 0 0 15px #ef4444, 0 0 30px #ef4444, 0 0 60px #ef4444; } }</style>
+              <div style="position:absolute; bottom:-15px; right:10%; width:16px; height:150%; transform: rotate(-18deg); transform-origin: bottom center; pointer-events:none; z-index:20; display:flex; flex-direction:column; align-items:center;">
+                  <!-- Lazer (Bıçak) -->
+                  <div style="flex:1; width:6px; background:#fff; border-radius:10px 10px 0 0; animation: saberHumRed 0.03s infinite alternate;"></div>
+                  <!-- Kabza (Hilt) -->
+                  <div style="width:12px; height:35px; background:linear-gradient(to right, #3f3f46, #9ca3af, #3f3f46); border-radius:2px; border-top:2px solid #111; border-bottom:4px solid #000; display:flex; flex-direction:column; justify-content:space-evenly; align-items:center; filter:drop-shadow(-2px 4px 6px rgba(0,0,0,0.8));">
+                      <div style="width:100%; height:2px; background:#111;"></div>
+                      <div style="width:4px; height:4px; background:#ef4444; border-radius:50%; box-shadow:0 0 5px #ef4444;"></div>
+                  </div>
+              </div>
+            `;
+          }
         },
-        { 
-          id: 'ncr-radyo', 
-          name: 'Mojave Radyosu', 
-          icon: '📻', 
-          price: 50000, 
-          desc: 'Rangerlar için özel frekans. Çorak toprakların statik radyo cızırtısı.', 
-          displayColor: '#22c55e', 
-          audioUrl: 'https://cdn.discordapp.com/attachments/1499504072657469585/1499506043011469333/Marty_Robbins_-_Big_Iron_Audio.mp3?ex=69f50b54&is=69f3b9d4&hm=bc091218e6e0045161f62bd08b63b6fb01b6dee47711fd9ae8d8f9e82077e278&',
-          volume: 0.10
+        {
+          id: 'loki-taci', name: 'Loki\'nin Tacı', icon: '👑', price: 100000,
+          desc: 'Asla bozulmayan saf kod ile çizilmiş altın boynuzlar.',
+          apply: () => {
+            const pp = document.getElementById('up-pp'); const ov = document.getElementById('up-pp-frame-overlay');
+            if(pp){ pp.style.border='2px solid #eab308'; pp.style.boxShadow=''; pp.style.filter=''; }
+            if(ov) ov.innerHTML = `
+              <svg viewBox="0 0 100 100" style="position:absolute; top:-55px; left:50%; transform:translateX(-50%); width:100px; pointer-events:none; z-index:20; filter:drop-shadow(0px 6px 8px rgba(0,0,0,0.9));">
+                  <!-- Alınlık -->
+                  <path d="M 25 70 L 40 55 L 50 65 L 60 55 L 75 70 C 60 85, 40 85, 25 70 Z" fill="#eab308" stroke="#a16207" stroke-width="1.5"/>
+                  <!-- Sol Boynuz -->
+                  <path d="M 25 70 C 15 45, 5 15, 10 5 C 25 25, 35 45, 40 55 Z" fill="#facc15" stroke="#a16207" stroke-width="1.5"/>
+                  <!-- Sağ Boynuz -->
+                  <path d="M 75 70 C 85 45, 95 15, 90 5 C 75 25, 65 45, 60 55 Z" fill="#facc15" stroke="#a16207" stroke-width="1.5"/>
+              </svg>
+            `;
+          }
+        },
+        {
+          id: 'observer-fedora', name: 'Gözcü Şapkası', icon: '🎩', price: 100000,
+          desc: 'Fringe Observer fedorası. Rengini bozmaz, sadece kafana oturur.',
+          apply: () => {
+            const pp = document.getElementById('up-pp'); const ov = document.getElementById('up-pp-frame-overlay');
+            // Grayscale efektini sildim pampik, artık rengin solmayacak!
+            if(pp){ pp.style.border='2px solid #9ca3af'; pp.style.boxShadow=''; pp.style.filter=''; }
+            if(ov) ov.innerHTML = `
+              <svg viewBox="0 0 100 100" style="position:absolute; top:-40px; left:50%; transform:translateX(-50%) rotate(-6deg); width:110px; pointer-events:none; z-index:20; filter:drop-shadow(3px 8px 6px rgba(0,0,0,0.8));">
+                  <!-- Şapka Kenarı (Brim) -->
+                  <ellipse cx="50" cy="75" rx="46" ry="12" fill="#111827"/>
+                  <ellipse cx="50" cy="73" rx="45" ry="11" fill="#374151"/>
+                  <!-- Üst Kısım (Crown) -->
+                  <path d="M 25 70 C 25 25, 35 15, 50 15 C 65 15, 75 25, 75 70 Z" fill="#374151"/>
+                  <!-- Siyah Şerit (Ribbon) -->
+                  <path d="M 26 55 L 74 55 L 75 70 L 25 70 Z" fill="#030712"/>
+              </svg>
+            `;
+          }
+        },
+        {
+          id: 'gibi-kokorec', name: 'Gibi Kokariç', icon: '🌭', price: 50000,
+          desc: 'İlkkan\'ın elinde tuttuğu o efsane tabela. Tıpatıp aynısı.',
+          apply: () => {
+            const pp = document.getElementById('up-pp'); const ov = document.getElementById('up-pp-frame-overlay');
+            if(pp){ pp.style.border='2px solid #ea580c'; pp.style.boxShadow=''; pp.style.filter=''; }
+            if(ov) ov.innerHTML = `
+              <!-- SS'teki tabelanın aynısı. Beyaz plastik çerçeve, turuncu iç kısım, yıldızlar ve vidalar! -->
+              <div style="position:absolute; bottom:-35px; left:50%; transform:translateX(-50%); width:110px; background:#f8fafc; border: 2px solid #cbd5e1; border-radius:6px; padding:5px; box-shadow:0 8px 12px rgba(0,0,0,0.9); z-index:20; display:flex; flex-direction:column; align-items:center;">
+                  <!-- Üst Yıldızlar -->
+                  <div style="display:flex; justify-content:space-around; width:80%; margin-bottom:3px; font-size:8px; color:#b91c1c;"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+                  
+                  <!-- Turuncu Tabela İçi -->
+                  <div style="background:#ea580c; border:2px solid #9a3412; border-radius:2px; width:100%; padding:6px 0; text-align:center; box-shadow: inset 0 0 8px rgba(0,0,0,0.4);">
+                      <span style="font-family:'Bebas Neue', sans-serif; font-size:24px; color:#fff; letter-spacing:0.5px; line-height:1; display:block; transform: scaleY(1.1); text-shadow: 1px 1px 0 #7c2d12;">KOKARİÇ</span>
+                  </div>
+                  
+                  <!-- Alt Yıldızlar -->
+                  <div style="display:flex; justify-content:space-around; width:80%; margin-top:3px; font-size:8px; color:#b91c1c;"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+
+                  <!-- Köşe Vidaları -->
+                  <div style="position:absolute; top:3px; left:3px; width:3px; height:3px; background:#333; border-radius:50%;"></div>
+                  <div style="position:absolute; top:3px; right:3px; width:3px; height:3px; background:#333; border-radius:50%;"></div>
+                  <div style="position:absolute; bottom:3px; left:3px; width:3px; height:3px; background:#333; border-radius:50%;"></div>
+                  <div style="position:absolute; bottom:3px; right:3px; width:3px; height:3px; background:#333; border-radius:50%;"></div>
+              </div>
+            `;
+          }
         }
       ],
       entrances: [
-        { 
-          id: 'kan-yagmuru', 
-          name: 'Kan Yağmuru', 
-          icon: '🩸', 
-          price: 2000000, 
-          desc: 'Siteye her girişinde ekran kızıla boyanır, kan damlar.', 
-          displayColor: '#ef4444' 
-        },
-        { 
-          id: 'void-domain', 
-          name: 'Void Domain', 
-          icon: '🌌', 
-          price: 2500000, 
-          desc: 'Jujutsu kafası. Ekran paramparça olur, uzay boşluğuna düşersin.', 
-          displayColor: '#a855f7' 
-        },
-        { 
-          id: 'nuke-drop', 
-          name: 'Nuke Drop', 
-          icon: '☢️', 
-          price: 3000000, 
-          desc: 'Fallout stili. Ekrana nükleer bomba düşer, her yer bembeyaz olur.', 
-          displayColor: '#22c55e' 
-        }
+        { id: 'kan-yagmuru', name: 'Kan Yağmuru', icon: '🩸', price: 2000000, desc: 'Siteye her girişinde ekran kızıla boyanır, kan damlar.', displayColor: '#ef4444' },
+        { id: 'void-domain', name: 'Void Domain', icon: '🌌', price: 2500000, desc: 'Jujutsu kafası. Ekran paramparça olur, uzay boşluğuna düşersin.', displayColor: '#a855f7' },
+        { id: 'nuke-drop', name: 'Nuke Drop', icon: '☢️', price: 3000000, desc: 'Fallout stili. Ekrana nükleer bomba düşer, her yer bembeyaz olur.', displayColor: '#22c55e' }
       ]
     };
 
     let currentMarketTab = 'themes';
     let marketUserData = {};
 
-    function applyBodyTheme(themeId) {
+   function applyBodyTheme(themeId, isTemporary = false) {
+      // Eğer kendi temanı değiştiriyorsan bunu tarayıcıya kaydet
+      if (!isTemporary) {
+          if (themeId) localStorage.setItem('kadavra_my_theme', themeId);
+          else localStorage.removeItem('kadavra_my_theme');
+      }
+
       const overlay = document.getElementById('body-theme-overlay');
+      const profileBg = document.getElementById('profile-role-bg'); 
       if (!overlay) return;
-      if (!themeId) { overlay.style.backgroundImage = ''; overlay.style.backgroundSize = ''; overlay.style.backgroundPosition = ''; overlay.style.backgroundRepeat = ''; overlay.style.backgroundAttachment = ''; return; }
-      const theme = karmaMarketItems.themes.find(t => t.id === themeId);
-      if (!theme) { overlay.style.backgroundImage = ''; return; }
-      overlay.style.backgroundImage = theme.bodyPattern;
-      overlay.style.backgroundSize = theme.bodySize || 'auto';
-      overlay.style.backgroundPosition = theme.bgPos || 'center';
-      overlay.style.backgroundRepeat = theme.bgRep || 'repeat';
-      overlay.style.backgroundAttachment = theme.bgAtt || 'scroll';
+      
+      document.body.classList.remove('theme-courier', 'theme-kasap', 'theme-zindan');
+      overlay.style.backgroundImage = ''; 
+      overlay.style.backgroundSize = '';
+      overlay.style.backgroundPosition = '';
+      overlay.style.opacity = '1';
+      overlay.innerHTML = ''; 
+      if(profileBg) profileBg.innerHTML = ''; 
+
+      if (!themeId) return;
+
+      // ☢️ TRİLYONLUK ROBCO HACKING TERMINAL MOTORU ☢️
+      if (themeId === 'courier-6') {
+          document.body.classList.add('theme-courier');
+          
+          let terminalText = '';
+          const words = ['OVERSEER', 'VAULT_TEC', 'GECK', 'ENCLAVE', 'BROTHERHOOD', 'PLATINUM_CHIP', 'MR_HOUSE', 'NEW_VEGAS', 'COURIER'];
+          for(let i=0; i<40; i++) {
+              let hex = '0x' + Math.floor(Math.random()*65535).toString(16).toUpperCase().padStart(4,'0');
+              let word = words[Math.floor(Math.random()*words.length)];
+              let symbols = '!@#$%^&*()_+{}[]|:;<>,.?/'.split('').sort(() => 0.5 - Math.random()).join('').substring(0, 15);
+              terminalText += `${hex}  ${symbols} ${word} ${symbols}<br>`;
+          }
+
+          const terminalHTML = `
+              <div class="courier-crt-bulge"></div>
+              <div class="courier-hacking-text">${terminalText}${terminalText}</div>
+              <div class="courier-scanline"></div>
+              <div class="courier-crt-overlay"></div>
+          `;
+
+          overlay.innerHTML = terminalHTML;
+          if(profileBg) profileBg.innerHTML = terminalHTML; 
+      }
     }
 
     function openKarmaMarket() {
@@ -2683,10 +2757,16 @@
     }
 
     function applyMarketCosmetics(data) {
+      const aktifTema = (data.marketAktif || {}).themes || null;
       const aktifCerceve = (data.marketAktif || {}).frames || null;
+      
       const ppEl = document.getElementById('up-pp'); const frameOverlay = document.getElementById('up-pp-frame-overlay');
       if (ppEl) { ppEl.style.border='2px solid #e50914'; ppEl.style.boxShadow=''; ppEl.style.filter=''; }
       if (frameOverlay) frameOverlay.innerHTML = '';
+      
+      // 🔪 KRİTİK KURAL: Eğer adam Mega Evrim (Tema) taktıysa, çerçeveleri KİLİTLE!
+      if (aktifTema) return; 
+
       if (aktifCerceve) { const frameData = karmaMarketItems.frames.find(f => f.id === aktifCerceve); if (frameData && frameData.apply) frameData.apply(); }
     }
 
@@ -3063,7 +3143,7 @@
 
       const _safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
       database.ref(`kullanicilar/${_safeNick}/marketAktif/themes`).once('value').then(s => {
-        if(s.exists()) applyBodyTheme(s.val());
+        applyBodyTheme(s.exists() ? s.val() : null);
       });
       
       checkDailyStatus(); // GÜNLÜK SİSTEM MOTORUNU BURADA ATEŞLİYORUZ
@@ -4268,6 +4348,21 @@
                 }
             });
         });
+    }
+
+    // ════════ FİŞİ ÇEK (ÇIKIŞ YAP) ════════
+    function logoutUser() {
+        if(confirm('Mekandan çıkıyorsun. Emin misin?')) {
+            localStorage.removeItem('kadavra_vip_user');
+            localStorage.removeItem('kadavra_vip_pass');
+            showToast('FİŞ ÇEKİLDİ. SİSTEMDEN ÇIKILIYOR...', true);
+            setTimeout(() => location.reload(), 1500);
+        }
+    }
+
+    function openMyProfile() {
+      const user = localStorage.getItem('kadavra_vip_user');
+      if (user) { openUserProfile(user); } else { showToast('Giriş yapmamışsın pampik!'); }
     }
 
   </script>
