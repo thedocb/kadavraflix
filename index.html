@@ -441,6 +441,29 @@
       </div>
   </div>
 
+  <div id="observer-modal" class="fixed inset-0 z-[6500] bg-black/95 backdrop-blur-sm hidden opacity-0 transition-opacity flex items-center justify-center">
+    <div class="bg-[#050505] border-2 border-red-900 w-full max-w-3xl p-10 rounded-none relative brutalist-shadow mx-4 max-h-[85vh] flex flex-col mt-10">
+        
+        <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black rounded-full border-2 border-red-900 shadow-[0_0_30px_rgba(220,38,38,0.5)] z-20 flex items-center justify-center w-24 h-24 text-[60px]">
+            👁️
+        </div>
+
+        <button onclick="closeObserverModal()" class="absolute top-4 right-6 text-red-700 hover:text-white text-3xl font-mono leading-none font-bold z-50">X</button>
+        
+        <h2 class="text-4xl font-display text-red-600 tracking-widest mb-6 uppercase drop-shadow-[2px_2px_0_#450a0a] text-center mt-8 border-b border-red-900/50 pb-4">SİSTEM PROTOKOLLERİ</h2>
+        
+        <div id="admin-announcement-box" class="hidden bg-[#0a0000] border border-red-800 p-5 mb-6 brutalist-shadow transition-all focus-within:border-red-500 relative">
+            <p class="text-[10px] text-red-500 font-mono mb-3 uppercase font-bold animate-pulse">> YETKİ ONAYLANDI. DİREKTİF GİRİN:</p>
+            <textarea id="announcement-input" class="w-full bg-[#111] border border-gray-800 text-red-100 p-3 font-mono text-sm focus:border-red-600 outline-none resize-y" rows="2" placeholder="Yeraltına karanlık bir mesaj bırak..."></textarea>
+            <button onclick="postAnnouncement()" class="mt-4 w-full bg-red-900 hover:bg-white hover:text-black text-white font-display text-xl py-3 px-8 transition-colors border-2 border-red-700 shadow-[4px_4px_0_#7f1d1d] hover:shadow-none hover:translate-x-1 hover:translate-y-1">SİSTEME MÜDAHALE ET</button>
+        </div>
+        
+        <div id="announcements-feed" class="flex-1 overflow-y-auto scrollbar-thin pr-4 space-y-10 pt-6 pb-4">
+            <p class="text-center text-gray-600 font-mono text-sm animate-pulse">Sistem dinleniyor...</p>
+        </div>
+    </div>
+  </div>
+
   <!-- AYARLAR MENÜSÜ -->
   <div id="settings-modal" class="fixed inset-0 z-[3500] bg-black/95 backdrop-blur-sm hidden opacity-0 transition-opacity flex items-center justify-center">
     <div class="bg-[#050505] border-2 border-red-800 w-full max-w-md p-8 rounded-none relative brutalist-shadow max-h-[90vh] overflow-y-auto">
@@ -882,6 +905,7 @@
     <a href="#" class="flex items-center gap-3 select-none" onclick="closeAll();return false;">
       <div class="w-10 h-10 bg-red-600 flex items-center justify-center brutalist-shadow border-2 border-black"><span class="text-black font-display text-2xl mt-1">K</span></div>
       <span class="font-display text-3xl text-white tracking-widest drop-shadow-[2px_2px_0_#e50914] hidden sm:block mt-1">KADAVRAFLIX</span>
+      <button onclick="openObserverModal()" class="ml-4 bg-transparent border border-gray-800 text-gray-500 hover:text-red-500 hover:border-red-600 px-3 py-1 font-mono text-xs uppercase tracking-widest transition-all flex items-center gap-2 brutalist-shadow shadow-black">👁️ <span class="hidden md:block">OBSERVER</span></button>
     </a>
     <div class="hidden md:flex items-center gap-8 text-lg font-display tracking-widest text-gray-400">
       <a href="#" onclick="switchView('home'); return false;" class="hover:text-red-500 transition-colors">ANASAYFA</a>
@@ -962,6 +986,7 @@
   
   <main class="relative z-10 px-5 lg:px-12 pb-24 space-y-16 mt-8" id="main-content">
     <div id="view-home" class="space-y-16">
+
       <section id="tayfa-izliyor-section"><h2 class="section-title mb-6">TAYFA ŞU AN <span>NE İZLİYOR?</span></h2><div id="tayfa-row" class="slider-track"></div></section>
       <section id="continue-watching" class="hidden"><h2 class="section-title mb-6">KALAN <span>DOSYALAR</span></h2><div id="continue-row" class="slider-track"></div></section>
       <section id="watchlist-section" class="hidden"><h2 class="section-title mb-6">HEDEF <span>LİSTESİ</span></h2><div id="watchlist-row" class="slider-track"></div></section>
@@ -1089,13 +1114,6 @@
     <div class="absolute top-0 left-0 w-full h-32 z-[10000] opacity-0 hover:opacity-100 transition-opacity duration-500 flex justify-end p-6" style="pointer-events: none;">
       <button onclick="closePlayer()" style="pointer-events: auto;" class="bg-red-600 border-2 border-red-600 px-4 py-2 font-display text-xl transition-all hover:bg-black hover:text-red-500 rounded-none brutalist-shadow shadow-black text-white uppercase tracking-widest h-fit">SİSTEMDEN ÇIK</button>
     </div>
-
-    <div id="player-loader" class="absolute inset-0 flex flex-col items-center justify-center z-10 pointer-events-none bg-black">
-       <div class="w-16 h-16 border-4 border-gray-900 border-t-red-600 rounded-none animate-spin mb-6"></div>
-       <p class="text-white font-display text-3xl tracking-widest animate-pulse drop-shadow-[2px_2px_0_#e50914]">BAĞLANTI KURULUYOR...</p>
-    </div>
-    <iframe id="player-frame" src="" class="w-full h-full max-w-full max-h-full border-none relative z-20" allowfullscreen allow="autoplay; fullscreen" onload="document.getElementById('player-loader').style.display='none'"></iframe>
-  </div>
 
     <div id="player-loader" class="absolute inset-0 flex flex-col items-center justify-center z-10 pointer-events-none bg-black">
        <div class="w-16 h-16 border-4 border-gray-900 border-t-red-600 rounded-none animate-spin mb-6"></div>
@@ -1491,14 +1509,23 @@
     }
 
     // ════════════ BULUT GEÇMİŞ VE İZLEME LİSTESİ ════════════
-    function saveToHistory(item, type) {
+    function saveToHistory(item, type, episode = null) {
       const user = localStorage.getItem('kadavra_vip_user'); if(!user) return; const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
-      database.ref(`kullanicilar/${safeNick}/history/${item.id}`).set({ ...item, media_type: type, watchedAt: Date.now() });
+      let histData = { ...item, media_type: type, watchedAt: Date.now() };
+      
+      if (episode) {
+          histData.lastSeason = episode.season_number;
+          histData.lastEpisode = episode.episode_number;
+      }
+      // 🔪 BUG FIX: TMDB ID'lerinin başına "tmdb_" ekledik ki Firebase bunu sayı sanıp dizileri silmesin!
+      database.ref(`kullanicilar/${safeNick}/history/tmdb_${item.id}`).set(histData);
     }
     
     function removeFromHistory(itemId) {
       const user = localStorage.getItem('kadavra_vip_user'); if(!user) return; const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
-      database.ref(`kullanicilar/${safeNick}/history/${itemId}`).remove(); showToast('Geçmişten silindi!');
+      // 🔪 UYUMLULUK: Tıklanan ID'nin başına tmdb_ ekleyip siliyoruz
+      let dbId = typeof itemId === 'string' && itemId.startsWith('tmdb_') ? itemId : `tmdb_${itemId}`;
+      database.ref(`kullanicilar/${safeNick}/history/${dbId}`).remove(); showToast('Geçmişten silindi!');
     }
     
     function loadHistory() {
@@ -1506,11 +1533,18 @@
       database.ref(`kullanicilar/${safeNick}/history`).on('value', snap => {
         const section = document.getElementById('continue-watching'); const row = document.getElementById('continue-row');
         if(!snap.exists()) { section.classList.add('hidden'); return; }
-        let hist = []; snap.forEach(c => hist.push(c.val())); hist.sort((a,b) => b.watchedAt - a.watchedAt); 
+        
+        let hist = []; 
+        snap.forEach(c => { if(c.val()) hist.push(c.val()); }); 
+        hist.sort((a,b) => b.watchedAt - a.watchedAt); 
+        
         section.classList.remove('hidden'); row.innerHTML = '';
         hist.slice(0, 15).forEach(item => {
-          const title = item.title || item.name || ''; const div = document.createElement('div'); div.className = 'card-wrap relative group'; 
-          div.innerHTML = `<img class="card-img opacity-80 group-hover:opacity-100 transition-opacity" src="${IMG_BASE}w342${item.poster_path}" loading="lazy" /><button onclick="event.stopPropagation(); removeFromHistory(${item.id})" class="absolute top-2 right-2 bg-black/90 border border-red-500 hover:bg-red-600 text-white w-6 h-6 rounded-none flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-30 font-mono font-bold text-xs shadow-black brutalist-shadow" title="Sil">X</button><div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"><div class="w-16 h-16 bg-red-600/90 rounded-none flex items-center justify-center backdrop-blur border-2 border-black brutalist-shadow"><svg class="w-8 h-8 text-black" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><p class="card-title">${title}</p>`;
+          const title = item.title || item.name || ''; 
+          let epBadge = (item.media_type === 'tv' && item.lastSeason) ? `<div class="absolute top-0 left-0 bg-red-600 text-black font-bold font-mono text-[10px] px-2 py-1 z-30 brutalist-shadow shadow-black">S${item.lastSeason} B${item.lastEpisode}</div>` : '';
+          
+          const div = document.createElement('div'); div.className = 'card-wrap relative group'; 
+          div.innerHTML = `${epBadge}<img class="card-img opacity-80 group-hover:opacity-100 transition-opacity" src="${IMG_BASE}w342${item.poster_path}" loading="lazy" /><button onclick="event.stopPropagation(); removeFromHistory('tmdb_${item.id}')" class="absolute top-2 right-2 bg-black/90 border border-red-500 hover:bg-red-600 text-white w-6 h-6 rounded-none flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-30 font-mono font-bold text-xs shadow-black brutalist-shadow" title="Sil">X</button><div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"><div class="w-16 h-16 bg-red-600/90 rounded-none flex items-center justify-center backdrop-blur border-2 border-black brutalist-shadow"><svg class="w-8 h-8 text-black" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><p class="card-title">${title}</p>`;
           div.addEventListener('click', () => openModal(item, item.media_type)); row.appendChild(div);
         });
       });
@@ -1633,7 +1667,64 @@
     function closeModal()  { document.getElementById('modal-overlay').classList.remove('open'); document.body.style.overflow = ''; document.getElementById('player-frame').src = ''; document.getElementById('modal-poster').parentElement.classList.remove('hidden'); const btnArea = document.getElementById('modal-desc').nextElementSibling; if(btnArea) btnArea.classList.remove('hidden'); const cList = document.getElementById('comments-list'); if(cList) cList.parentElement.classList.remove('hidden'); if (window.history.state && window.history.state.modalOpen) { window.history.back(); } }
     window.onpopstate = function(event) { const overlay = document.getElementById('modal-overlay'); if (overlay && overlay.classList.contains('open')) { closeModal(); } };
     function renderSeasonTabs(showId) { const tabs = document.getElementById('season-tabs'); tabs.innerHTML = ''; currentSeasons.forEach((s, i) => { const btn = document.createElement('button'); btn.className = 'season-tab' + (i === 0 ? ' active' : ''); btn.textContent = `SEZON ${s.season_number}`; btn.onclick = () => { document.querySelectorAll('.season-tab').forEach(b => b.classList.remove('active')); btn.classList.add('active'); loadEpisodes(showId, s.season_number); }; tabs.appendChild(btn); }); if (currentSeasons.length > 0) loadEpisodes(showId, currentSeasons[0].season_number); }
-    async function loadEpisodes(showId, seasonNum) { const list = document.getElementById('episode-list'); list.innerHTML = '<div class="text-red-600 font-mono">Taranıyor...</div>'; try { const data = await tmdb(`/tv/${showId}/season/${seasonNum}`); list.innerHTML = ''; (data.episodes || []).forEach(ep => { const div = document.createElement('div'); div.className = 'bg-black border border-gray-800 p-4 hover:border-red-600 cursor-pointer transition flex flex-col gap-1 group'; div.innerHTML = `<div class="text-xs text-red-500 font-mono mb-1">BÖLÜM ${ep.episode_number}</div><div class="text-sm font-bold text-gray-300 uppercase truncate group-hover:text-white">${ep.name}</div><div class="text-[10px] font-mono text-gray-600 flex justify-between mt-2"><span>${ep.runtime ? ep.runtime+' DK' : ''}</span><svg class="w-4 h-4 text-gray-800 group-hover:text-red-500 transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>`; div.onclick = () => playEpisode(ep); list.appendChild(div); }); } catch(e) { list.innerHTML = '<p class="text-red-600 font-mono text-xs">Arşiv Bozuk.</p>'; } }
+    async function loadEpisodes(showId, seasonNum) { 
+        const list = document.getElementById('episode-list'); 
+        list.innerHTML = '<div class="text-red-600 font-mono">Taranıyor...</div>'; 
+        
+        const user = localStorage.getItem('kadavra_vip_user');
+        const safeNick = user ? user.toLowerCase().replace(/[.#$\[\]]/g, '_') : '';
+        let watched = {};
+        if(safeNick) {
+            const wSnap = await database.ref(`kullanicilar/${safeNick}/watchedEpisodes/${showId}`).once('value');
+            if(wSnap.exists()) watched = wSnap.val();
+        }
+
+        try { 
+            const data = await tmdb(`/tv/${showId}/season/${seasonNum}`); 
+            list.innerHTML = ''; 
+            (data.episodes || []).forEach(ep => { 
+                const epKey = `S${seasonNum}E${ep.episode_number}`;
+                const isWatched = watched[epKey];
+                const bgClass = isWatched ? 'bg-green-900/10 border-green-700/50' : 'bg-black border-gray-800';
+                const textClass = isWatched ? 'text-green-500' : 'text-red-500';
+                
+                const div = document.createElement('div'); 
+                div.className = `${bgClass} border p-4 hover:border-red-600 cursor-pointer transition flex flex-col gap-1 group relative`; 
+                
+                // 🔪 EFSANEVİ MANUEL İZLENDİ BUTONU BURADA! 🔪
+                div.innerHTML = `
+                    <div class="flex justify-between items-center mb-1">
+                        <div class="text-xs ${textClass} font-mono font-bold">BÖLÜM ${ep.episode_number}</div>
+                        <button onclick="event.stopPropagation(); toggleEpisodeWatched('${showId}', '${epKey}')" class="text-[10px] font-mono border px-2 py-1 transition-colors z-30 brutalist-shadow shadow-black ${isWatched ? 'bg-green-600 text-black border-green-600' : 'bg-black text-gray-500 border-gray-600 hover:text-white hover:border-white'}">${isWatched ? '✓ İZLENDİ' : 'İZLENDİ İŞARETLE'}</button>
+                    </div>
+                    <div class="text-sm font-bold ${isWatched ? 'text-gray-400' : 'text-gray-300'} uppercase truncate group-hover:text-white pr-4">${ep.name}</div>
+                    <div class="text-[10px] font-mono text-gray-600 mt-2">${ep.runtime ? ep.runtime+' DK' : ''}</div>
+                `; 
+                div.onclick = () => playEpisode(ep); 
+                list.appendChild(div); 
+            }); 
+        } catch(e) { list.innerHTML = '<p class="text-red-600 font-mono text-xs">Arşiv Bozuk.</p>'; } 
+    }
+
+    // 🔪 MANUEL İZLENDİ İŞARETLEME MOTORU (Kodun herhangi bir yerine, fonksiyonların arasına ekleyebilirsin)
+    window.toggleEpisodeWatched = function(showId, epKey) {
+        const user = localStorage.getItem('kadavra_vip_user'); if(!user) { showToast('Önce yeraltına gir!'); return; }
+        const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
+        const ref = database.ref(`kullanicilar/${safeNick}/watchedEpisodes/${showId}/${epKey}`);
+        ref.once('value').then(snap => {
+            if(snap.exists()) { ref.remove(); showToast('İZLENMEDİ YAPILDI'); }
+            else { ref.set(Date.now()); showToast('İZLENDİ İŞARETLENDİ'); }
+            
+            // Eğer sezon açıksa sayfayı yenilemeden rengi değiştirmek için tekrar yükle
+            if(currentSeasons && currentSeasons.length > 0) {
+                const activeTab = document.querySelector('.season-tab.active');
+                if(activeTab) {
+                    const sNum = parseInt(activeTab.textContent.replace('SEZON ', ''));
+                    loadEpisodes(showId, sNum);
+                }
+            }
+        });
+    }
     
     // ════════════ YENİ VİDSRC PLAYER VE İZLEDİKÇE KATLANAN KARMA SİSTEMİ ════════════
     // ════════════ YENİ VİDSRC PLAYER & AFK ANTİ-HİLE MOTORU ════════════
@@ -1642,11 +1733,43 @@
     let isAFK = false;
 
     function playEpisode(ep) { openPlayer(currentItem, ep); } 
-    function playModal() { if (!currentItem) return; openPlayer(currentItem, null); }
+    async function playModal() { 
+        if (!currentItem) return; 
+        
+        // 🔪 HERO'DAN DİREKT TIKLANDIYSA IMDB ID EKSİK OLUR, ONU ZORLA ÇEK!
+        if (!currentItem.imdb_id) {
+            try {
+                const details = await tmdb(`/${currentItem.media_type}/${currentItem.id}`, { append_to_response: 'external_ids' });
+                currentItem.imdb_id = details.imdb_id || (details.external_ids && details.external_ids.imdb_id);
+            } catch(e) {}
+        }
+
+        if (currentItem.media_type === 'movie') {
+            openPlayer(currentItem, null);
+        } else {
+            const user = localStorage.getItem('kadavra_vip_user');
+            const safeNick = user ? user.toLowerCase().replace(/[.#$\[\]]/g, '_') : '';
+            let s = 1, e = 1; 
+            if(safeNick) {
+                const snap = await database.ref(`kullanicilar/${safeNick}/history/tmdb_${currentItem.id}`).once('value');
+                if (snap.exists() && snap.val().lastSeason) {
+                    s = snap.val().lastSeason; 
+                    e = snap.val().lastEpisode;
+                }
+                
+                const wSnap = await database.ref(`kullanicilar/${safeNick}/watchedEpisodes/${currentItem.id}/S${s}E${e}`).once('value');
+                if (wSnap.exists()) {
+                    e = e + 1; 
+                }
+            }
+            openPlayer(currentItem, { season_number: s, episode_number: e });
+        }
+    }
     
     function openPlayer(item, episode) { 
         const imdb = item.imdb_id; if (!imdb) { showToast('🎬 Dosya Kodu Eksik.'); return; } 
-        saveToHistory(item, item.media_type); broadcastToTayfa(item, episode); 
+        saveToHistory(item, item.media_type, episode); 
+        broadcastToTayfa(item, episode); 
         
         const overlay = document.getElementById('player-overlay');
         overlay.classList.remove('hidden'); overlay.classList.add('flex'); 
@@ -1657,15 +1780,23 @@
 
         // Yükleme ekranını başlat
         document.getElementById('player-loader').style.display = 'flex';
+        
+        // 🔪 BUG FİX SİGORTASI: İframe takılırsa 5 saniye sonra o yazıyı zorla kapat!
+        setTimeout(() => {
+            const loader = document.getElementById('player-loader');
+            if(loader) loader.style.display = 'none';
+        }, 5000);
+        
 
         // 🔪 PLAYIMDB ANA DAMARI 🔪
         let url = '';
-        if (episode) {
-            url = `https://streamimdb.ru/embed/tv?imdb=${imdb}&season=${episode.season_number}&episode=${episode.episode_number}`; 
+        if (item.media_type === 'tv') {
+            let s = episode ? episode.season_number : 1;
+            let e = episode ? episode.episode_number : 1;
+            url = `https://streamimdb.ru/embed/tv?imdb=${imdb}&season=${s}&episode=${e}`; 
         } else {
             url = `https://streamimdb.ru/embed/movie?imdb=${imdb}`;
         }
-        
         document.getElementById('player-frame').src = url;
 
         const user = localStorage.getItem('kadavra_vip_user'); 
@@ -1673,14 +1804,50 @@
             const safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
             watchTicksSession = 0;
             isAFK = false;
-            clearInterval(karmaTimer);
             
+            // Eski zamanlayıcıları temizle
+            clearInterval(karmaTimer);
+            if(window.episodeWatchInterval) clearInterval(window.episodeWatchInterval);
+            let secondsWatched = 0;
+
+            // 🔪 YARI OTOMATİK İZLENDİ CASUSU (35 DAKİKA) 🔪
+            if (item.media_type === 'tv' && episode) {
+                const epKey = `S${episode.season_number}E${episode.episode_number}`;
+                
+                // Her saniye tık tık sayan kronometre
+                window.episodeWatchInterval = setInterval(() => {
+                    // Eğer AFK ekranı (20. dk uyarısı) çıkmadıysa süreyi saymaya devam et!
+                    if (!isAFK) {
+                        secondsWatched++;
+                        
+                        // 35 Dakika = 2100 saniye (Test etmek istersen 2100 yerine 10 falan yazabilirsin)
+                        if (secondsWatched === 600) { 
+                            // 35 dakika doldu, izlendi tikini bas!
+                            database.ref(`kullanicilar/${safeNick}/watchedEpisodes/${item.id}/${epKey}`).set(Date.now());
+                            showToast('BÖLÜM BİTTİ: OTOMATİK İZLENDİ İŞARETLENDİ! ✅', true);
+                            clearInterval(window.episodeWatchInterval); // İşi bitti, casusu kapat
+                            
+                            // Arka plandaki modalın yeşil tikleri güncellensin diye listeyi yeniden yükle
+                            if (document.getElementById('modal-seasons-wrap') && !document.getElementById('modal-seasons-wrap').classList.contains('hidden')) {
+                                const activeTab = document.querySelector('.season-tab.active');
+                                if (activeTab) {
+                                    const sNum = parseInt(activeTab.textContent.replace('SEZON ', ''));
+                                    loadEpisodes(item.id, sNum);
+                                }
+                            }
+                        }
+                    }
+                }, 1000);
+            }
+
+            // 🔪 KARMA VE 20 DAKİKALIK AFK SİSTEMİ 🔪
             karmaTimer = setInterval(() => {
-                if (isAFK) return;
+                if (isAFK) return; // AFK ise karma kazanmayı durdur
                 
                 watchTicksSession++;
+                // Her 4 tick (4 x 5 dk = 20 dk) dolduğunda AFK ekranını çıkar!
                 if (watchTicksSession % 4 === 0) {
-                    isAFK = true;
+                    isAFK = true; // AFK moduna girdi, KRONOMETRE DE DURDU!
                     showAFKCheck();
                     return; 
                 }
@@ -1692,7 +1859,7 @@
                         database.ref(`kullanicilar/${safeNick}`).update({ karma: (snap.val().karma || 0) + gain, watchTicks: (snap.val().watchTicks || 0) + 1 });
                     }
                 });
-            }, 300000); 
+            }, 300000); // 5 dakikada bir çalışır
         }
     }
     
@@ -1705,7 +1872,10 @@
         // CRT EFEKTİNİ GERİ GETİREN KOD
         document.body.classList.remove('watching-movie');
         
+        // Bütün zamanlayıcıları ve casusları İMHA ET
         clearInterval(karmaTimer); 
+        if(window.episodeWatchInterval) clearInterval(window.episodeWatchInterval); 
+        
         const afkDiv = document.getElementById('afk-check-box');
         if(afkDiv) afkDiv.remove();
     }
@@ -3296,13 +3466,16 @@
       if(adminler.includes(user.toLowerCase())) {
         const navAdminBtn = document.getElementById('nav-admin-btn');
         if(navAdminBtn) navAdminBtn.classList.remove('hidden');
+        
+        // 🔪 ADMİN İSE OBSERVER KÜRSÜSÜNÜ AÇ!
+        const adminBox = document.getElementById('admin-announcement-box');
+        if(adminBox) adminBox.classList.remove('hidden');
       }
       
       const loginScreen = document.getElementById('login-screen');
       if (loginScreen) { if(isAuto) { loginScreen.style.display = 'none'; showToast(`SİSTEME BAĞLANILDI: ${user}`); } else { loginScreen.style.opacity = '0'; setTimeout(() => { loginScreen.remove(); showToast(`SİSTEME BAĞLANILDI: ${user}`); }, 300); } }
       listenTayfa(); listenChat(); init(); listenNotifications();
-      database.ref('yeralti_girisler').push({ user: user, timestamp: Date.now() });
-      listenEntrances();
+      listenAnnouncements(); // 🔪 DUYURULARI ATEŞLE
 
       const _safeNick = user.toLowerCase().replace(/[.#$\[\]]/g, '_');
       database.ref(`kullanicilar/${_safeNick}/marketAktif/themes`).once('value').then(s => {
@@ -4511,6 +4684,92 @@
                 }
             });
         });
+    }
+
+// ════════════ OBSERVER (DUYURU) MOTORU ════════════
+    window.postAnnouncement = function() {
+        const input = document.getElementById('announcement-input');
+        const text = input.value.trim();
+        if(!text) return;
+        database.ref('sistem_duyurulari').push({ text: text, timestamp: Date.now() });
+        input.value = '';
+        showToast('OBSERVER MÜDAHALESİ TAMAMLANDI', true);
+    }
+
+    let isFirstAnnLoad = true;
+    let latestAnnTimestamp = 0;
+
+    function listenAnnouncements() {
+        database.ref('sistem_duyurulari').limitToLast(10).on('value', snap => {
+            const feed = document.getElementById('announcements-feed');
+            if(!feed) return;
+            feed.innerHTML = '';
+            
+            if(!snap.exists()) {
+                feed.innerHTML = '<p class="text-center text-gray-600 font-mono text-xs border border-gray-800 bg-black p-4">Sistem stabil. Yeni protokol yok.</p>';
+                return;
+            }
+            
+            let ann = [];
+            snap.forEach(c => { ann.push({...c.val(), _key: c.key}); });
+
+            // 🔪 YENİ DUYURU ALARMI VE SİNEMATİK SES! 🔪
+            let newestAnn = ann[ann.length - 1]; // Firebase her zaman eski->yeni atar
+            if (!isFirstAnnLoad && newestAnn && newestAnn.timestamp > latestAnnTimestamp) {
+                // Sadece sonradan gelen taze duyurularda bu sesi patlat!
+                const systemBootSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2573/2573-preview.mp3');
+                systemBootSound.volume = 0.8;
+                systemBootSound.play().catch(e=>{});
+                
+                showToast('👁️ DİKKAT: OBSERVER SİSTEME MÜDAHALE ETTİ!', true);
+            }
+            if(newestAnn) latestAnnTimestamp = newestAnn.timestamp;
+            isFirstAnnLoad = false;
+
+            ann.sort((a,b) => b.timestamp - a.timestamp); // Ekrana basarken en yeniyi en üste al
+
+            const currentUser = localStorage.getItem('kadavra_vip_user') || '';
+            const isAdmin = adminler.includes(currentUser.toLowerCase());
+
+            ann.forEach(item => {
+                const date = new Date(item.timestamp).toLocaleDateString('tr-TR', { day:'numeric', month:'long', hour:'2-digit', minute:'2-digit' });
+                const delBtn = isAdmin ? `<button onclick="deleteAnnouncement('${item._key}')" class="absolute top-2 right-2 text-gray-600 hover:text-red-500 font-bold font-mono text-xs transition-colors z-20 border border-transparent hover:border-red-900 px-2 bg-black uppercase">SİL X</button>` : '';
+
+                feed.innerHTML += `
+                    <div class="bg-[#050000] border-2 border-red-900/40 p-6 brutalist-card shadow-black brutalist-shadow relative transition-all hover:border-red-600 hover:bg-[#0a0000] mt-6">
+                        <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black px-6 py-1 border-2 border-red-700 shadow-[0_0_15px_rgba(220,38,38,0.4)] z-20 text-red-500 font-display text-2xl tracking-[0.2em] whitespace-nowrap">
+                            OBSERVER
+                        </div>
+                        
+                        ${delBtn}
+                        
+                        <p class="text-gray-200 font-mono text-sm leading-relaxed whitespace-pre-wrap relative z-10 pt-4 text-center">${item.text}</p>
+                        
+                        <div class="mt-5 pt-3 border-t border-red-900/30 text-center">
+                            <span class="text-[10px] text-gray-600 font-mono tracking-widest uppercase">${date}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        });
+    }
+
+    window.deleteAnnouncement = function(key) {
+        if(confirm('Protokolü sistemden siliyoruz?')) {
+            database.ref(`sistem_duyurulari/${key}`).remove();
+            showToast('PROTOKOL İMHA EDİLDİ.');
+        }
+    }
+
+    // Modal Açma / Kapama Tuşları
+    window.openObserverModal = function() {
+        const user = localStorage.getItem('kadavra_vip_user'); if(!user) { showToast('Önce giriş yap!'); return; }
+        const mod = document.getElementById('observer-modal');
+        mod.classList.remove('hidden'); setTimeout(()=> mod.classList.remove('opacity-0'), 50);
+    }
+    window.closeObserverModal = function() {
+        const mod = document.getElementById('observer-modal');
+        mod.classList.add('opacity-0'); setTimeout(()=> mod.classList.add('hidden'), 300);
     }
 
     // ════════ FİŞİ ÇEK (ÇIKIŞ YAP) ════════
