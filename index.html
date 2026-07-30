@@ -42,6 +42,28 @@
     
     .neon-text  { color: #fecaca; text-shadow: 2px 2px 0px #e50914; }
 
+    /* Tüplü TV (CRT) Kapanma Efekti */
+.crt-off {
+  animation: crtTurnOff 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+@keyframes crtTurnOff {
+  0% { transform: scale(1, 1); filter: brightness(1); opacity: 1; }
+  60% { transform: scale(1, 0.005); filter: brightness(10); opacity: 1; }
+  100% { transform: scale(0, 0.005); filter: brightness(0); opacity: 0; display: none; }
+}
+
+/* Ufak bir titreme efekti (Logoya vereceğiz) */
+.glitch-slight {
+  animation: slightGlitch 2s infinite;
+}
+
+@keyframes slightGlitch {
+  0%, 100% { opacity: 1; transform: translateX(0); }
+  98% { opacity: 0.8; transform: translateX(-2px); }
+  99% { opacity: 1; transform: translateX(2px); }
+}
+
     /* ════ SİLİNEN ANA OMURGA GERİ GELDİ (BUTONLAR, NAVBAR, HERO) ════ */
     /* Jilet Gibi Butonlar */
     .neon-btn { 
@@ -1115,11 +1137,16 @@
       <button onclick="closePlayer()" style="pointer-events: auto;" class="bg-red-600 border-2 border-red-600 px-4 py-2 font-display text-xl transition-all hover:bg-black hover:text-red-500 rounded-none brutalist-shadow shadow-black text-white uppercase tracking-widest h-fit">SİSTEMDEN ÇIK</button>
     </div>
 
-    <div id="player-loader" class="absolute inset-0 flex flex-col items-center justify-center z-10 pointer-events-none bg-black">
-       <div class="w-16 h-16 border-4 border-gray-900 border-t-red-600 rounded-none animate-spin mb-6"></div>
-       <p class="text-white font-display text-3xl tracking-widest animate-pulse drop-shadow-[2px_2px_0_#e50914]">BAĞLANTI KURULUYOR...</p>
+    <div id="player-loader" class="absolute inset-0 flex flex-col items-center justify-center z-30 pointer-events-none bg-[#050505]">
+       <!-- Film Logosu Buraya Gelecek -->
+       <img id="player-movie-logo" src="" class="max-w-[80vw] md:max-w-[500px] max-h-[200px] object-contain mb-8 animate-pulse hidden" style="filter: drop-shadow(0 0 15px rgba(229,9,20,0.4));" />
+       
+       <!-- Logo Yoksa Yedek Yazı Çıkacak -->
+       <h2 id="player-movie-title" class="text-5xl font-display text-white tracking-widest mb-8 uppercase drop-shadow-[4px_4px_0_#e50914] hidden text-center px-4"></h2>
+       
+       <p class="text-red-600 font-mono text-sm tracking-widest uppercase border-t border-red-900 pt-4 animate-bounce">> SİNYAL ŞİFRELENİYOR...</p>
     </div>
-    <iframe id="player-frame" src="" class="w-full h-full max-w-full max-h-full border-none relative z-20" allowfullscreen allow="autoplay; fullscreen" onload="document.getElementById('player-loader').style.display='none'"></iframe>
+    <iframe id="player-frame" src="" class="w-full h-full max-w-full max-h-full border-none relative z-20" allowfullscreen allow="autoplay; fullscreen"></iframe>
   </div>
 
   <!-- KARMA BİLGİ -->
@@ -1225,7 +1252,27 @@
         snap.forEach(child => {
           const u = child.val(); const date = u.sonGiris ? new Date(u.sonGiris).toLocaleString('tr-TR') : 'Bilinmiyor';
           const karmaStr = u.infiniteKarma ? '∞' : (u.karma || 0);
-          html += `<div class="bg-black border border-gray-800 p-3 rounded-none mb-2 hover:border-red-900 transition-colors"><div class="flex justify-between items-center"><span class="text-white font-bold uppercase font-display tracking-widest">${child.key.replace(/_/g, '.')}</span><span class="text-yellow-600 text-xs font-mono font-bold">⚡ ${karmaStr}</span></div><p class="text-[9px] font-mono text-gray-600 mt-1">> SON AKTİVİTE: ${date}</p></div>`;
+          
+          html += `
+          <div class="bg-black border border-gray-800 p-3 rounded-none mb-2 hover:border-red-900 transition-colors">
+            <!-- ÜST KISIM (TIKLANABİLİR) -->
+            <div class="flex justify-between items-center cursor-pointer select-none" onclick="document.getElementById('admin-detay-${child.key}').classList.toggle('hidden')">
+              <span class="text-white font-bold uppercase font-display tracking-widest">${child.key.replace(/_/g, '.')} ▾</span>
+              <span class="text-yellow-600 text-xs font-mono font-bold">⚡ ${karmaStr}</span>
+            </div>
+            <p class="text-[9px] font-mono text-gray-600 mt-1">> SON AKTİVİTE: ${date}</p>
+            
+            <!-- GİZLİ DETAY BÖLMESİ (BÜTÜN BİLGİLER BURADA) -->
+            <div id="admin-detay-${child.key}" class="hidden mt-4 pt-3 border-t border-gray-800 space-y-2 text-xs font-mono text-gray-400">
+              <p><span class="text-red-500 font-bold">ŞİFRE:</span> <span class="text-white">${u.sifre || 'Yok'}</span></p>
+              <p><span class="text-red-500 font-bold">REF KODU:</span> <span class="text-blue-400">${u.refKodu || 'Yok'}</span></p>
+              <p><span class="text-red-500 font-bold">IP ADRESİ:</span> ${u.ip || 'Bilinmiyor'}</p>
+              <p><span class="text-red-500 font-bold">CİHAZ:</span> <span class="text-[9px] text-gray-500">${u.cihaz || 'Bilinmiyor'}</span></p>
+              <p><span class="text-red-500 font-bold">FRAKSİYON:</span> ${u.yol || 'Seçilmemiş'}</p>
+              
+              </div>
+            </div>
+          </div>`;
         });
         document.getElementById('admin-user-list').innerHTML = html;
       });
@@ -1657,7 +1704,17 @@
       loadMovieReviews(item.id);
       document.getElementById('modal-seasons-wrap').classList.add('hidden'); document.getElementById('modal-cast').textContent = 'Taranıyor...'; const trailerBtn = document.getElementById('modal-trailer-btn'); trailerBtn.classList.add('hidden');
       try {
-        const details = await tmdb(`/${type}/${item.id}`, { append_to_response: 'external_ids,seasons,credits,videos' }); currentItem.imdb_id = details.imdb_id || (details.external_ids && details.external_ids.imdb_id);
+        const details = await tmdb(`/${type}/${item.id}`, { append_to_response: 'external_ids,seasons,credits,videos,images', include_image_language: 'en,tr,null' }); 
+        currentItem.imdb_id = details.imdb_id || (details.external_ids && details.external_ids.imdb_id);
+        
+        // --- LOGO ÇEKME OPERASYONU ---
+        if (details.images && details.images.logos && details.images.logos.length > 0) {
+            const engLogo = details.images.logos.find(l => l.iso_639_1 === 'en') || details.images.logos[0];
+            currentItem.logo_path = engLogo.file_path;
+        } else {
+            currentItem.logo_path = null;
+        }
+
         if (details.credits && details.credits.cast) { document.getElementById('modal-cast').textContent = details.credits.cast.slice(0, 6).map(c => c.name).join(', ') || 'Gizli'; }
         if (details.videos && details.videos.results) { const trailer = details.videos.results.find(v => v.type === 'Trailer' && v.site === 'YouTube'); if (trailer) { trailerBtn.classList.remove('hidden'); trailerBtn.onclick = () => window.open(`https://www.youtube.com/watch?v=${trailer.key}`, '_blank'); } }
         if (type === 'tv' && details.seasons) { currentSeasons = details.seasons.filter(s => s.season_number > 0); document.getElementById('modal-seasons-wrap').classList.remove('hidden'); renderSeasonTabs(item.id); }
@@ -1778,8 +1835,37 @@
         // CRT Efektini sustur
         document.body.classList.add('watching-movie');
 
-        // Yükleme ekranını başlat
-        document.getElementById('player-loader').style.display = 'flex';
+        // 🔪 LOGOLU YÜKLEME EKRANI BAŞLAT 🔪
+        const loader = document.getElementById('player-loader');
+        const logoImg = document.getElementById('player-movie-logo');
+        const titleText = document.getElementById('player-movie-title');
+        
+        // Ekranı hazırla ve göster
+        loader.classList.remove('crt-off');
+        loader.style.display = 'flex';
+        logoImg.classList.add('glitch-slight'); 
+        
+        // Logoyu Bas
+        if (item.logo_path) {
+            logoImg.src = `https://image.tmdb.org/t/p/w500${item.logo_path}`;
+            logoImg.classList.remove('hidden');
+            titleText.classList.add('hidden');
+        } else {
+            logoImg.classList.add('hidden');
+            titleText.textContent = item.title || item.name || 'GİZLİ DOSYA';
+            titleText.classList.remove('hidden');
+        }
+
+        // NETFLIX INTRONUN BEYNİ: 4 saniye bekle, sonra TV'yi kapat
+        setTimeout(() => {
+            loader.classList.add('crt-off'); // TV çökme efekti
+            
+            setTimeout(() => {
+                loader.style.display = 'none'; // Arkadan tamamen sil ki filme tıklansın
+            }, 500); 
+            
+        }, 4000); 
+        // 🔪 LOGOLU YÜKLEME EKRANI BİTİŞ 🔪
         
         // 🔪 BUG FİX SİGORTASI: İframe takılırsa 5 saniye sonra o yazıyı zorla kapat!
         setTimeout(() => {
